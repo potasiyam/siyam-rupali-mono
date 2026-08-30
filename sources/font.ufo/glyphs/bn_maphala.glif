@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_maphala" format="2">
+	<advance width="410"/>
+	<outline>
+		<contour>
+			<point x="-228" y="5" type="qcurve"/>
+			<point x="-240" y="5"/>
+			<point x="-269" y="-7"/>
+			<point x="-295" y="-27"/>
+			<point name="fh14" x="-313" y="-51"/>
+			<point x="-313" y="-63" type="qcurve"/>
+			<point x="-313" y="-77"/>
+			<point name="fh03" x="-292" y="-100"/>
+			<point name="fh04" x="-261" y="-117"/>
+			<point name="fh05" x="-224" y="-127"/>
+			<point name="fh06" x="-206" y="-127" type="qcurve"/>
+			<point name="mv01" x="-252" y="-238" type="line"/>
+			<point name="fh07" x="-292" y="-238"/>
+			<point name="fh08" x="-365" y="-211"/>
+			<point name="mh02" x="-422" y="-163"/>
+			<point name="mh01" x="-454" y="-96"/>
+			<point name="mv03" x="-454" y="-55" type="qcurve"/>
+			<point x="-454" y="-16"/>
+			<point name="mv04" x="-411" y="57"/>
+			<point name="fh15" x="-341" y="113"/>
+			<point x="-249" y="147"/>
+			<point name="mh04" x="-201" y="147" type="qcurve"/>
+			<point name="fh01" x="-121" y="147"/>
+			<point name="fh02" x="24" y="67"/>
+			<point name="fh11" x="91" y="-5" type="qcurve"/>
+			<point x="91" y="1401" type="line"/>
+			<point x="-93" y="1401" type="line"/>
+			<point x="-93" y="1543" type="line"/>
+			<point name="av01" x="438" y="1543" type="line"/>
+			<point name="fh12" x="438" y="1401" type="line"/>
+			<point name="mh03" x="233" y="1401" type="line"/>
+			<point name="mv02" x="233" y="-401" type="line"/>
+			<point name="mh05" x="91" y="-401" type="line"/>
+			<point x="91" y="-251" type="line"/>
+			<point x="91" y="-205"/>
+			<point name="fh09" x="22" y="-113"/>
+			<point name="fh10" x="-78" y="-41"/>
+			<point name="fh13" x="-187" y="5"/>
+		</contour>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="alignv" point="av01" align="round"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+		</dict>
+	</lib>
+</glyph>

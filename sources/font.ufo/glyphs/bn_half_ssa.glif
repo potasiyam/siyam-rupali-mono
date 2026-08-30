@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_half_ssa" format="2">
+	<advance width="1134"/>
+	<outline>
+		<contour>
+			<point name="fh09" x="868" y="1401" type="line"/>
+			<point name="fh10" x="895" y="1363"/>
+			<point name="fh11" x="922" y="1265"/>
+			<point x="922" y="1208" type="qcurve"/>
+			<point name="fh12" x="922" y="1130"/>
+			<point name="fh01" x="841" y="984"/>
+			<point name="fh02" x="711" y="871"/>
+			<point name="fh13" x="551" y="802"/>
+			<point name="mv04" x="473" y="802" type="qcurve"/>
+			<point name="mv02" x="413" y="802"/>
+			<point name="fh05" x="310" y="849"/>
+			<point name="fh06" x="234" y="929"/>
+			<point name="mh06" x="190" y="1035"/>
+			<point name="fh18" x="190" y="1095" type="qcurve"/>
+			<point name="fh14" x="190" y="1192"/>
+			<point name="fh03" x="263" y="1351"/>
+			<point name="fh15" x="335" y="1401" type="qcurve"/>
+			<point x="-258" y="1401" type="line"/>
+			<point name="av01" x="-258" y="1543" type="line"/>
+			<point x="1184" y="1543" type="line"/>
+			<point x="1184" y="1401" type="line"/>
+		</contour>
+		<contour>
+			<point x="780" y="1208" type="qcurve"/>
+			<point x="780" y="1235"/>
+			<point x="764" y="1288"/>
+			<point x="730" y="1331"/>
+			<point x="680" y="1361"/>
+			<point name="mh01" x="647" y="1363" type="qcurve"/>
+			<point x="620" y="1363"/>
+			<point name="mh02" x="533" y="1350"/>
+			<point name="fh07" x="459" y="1308" type="qcurve"/>
+			<point name="mv03" x="722" y="1061" type="line"/>
+			<point x="751" y="1096"/>
+			<point x="780" y="1169"/>
+		</contour>
+		<contour>
+			<point name="mh03" x="385" y="1247" type="line"/>
+			<point name="fh17" x="358" y="1208"/>
+			<point name="fh16" x="332" y="1135"/>
+			<point name="mh04" x="332" y="1100" type="qcurve"/>
+			<point name="fh04" x="332" y="1071"/>
+			<point name="mh07" x="354" y="1014"/>
+			<point name="fh08" x="390" y="971"/>
+			<point x="441" y="944"/>
+			<point name="mv01" x="470" y="944" type="qcurve"/>
+			<point x="572" y="934"/>
+			<point name="mh05" x="661" y="1002" type="qcurve"/>
+		</contour>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="mdeltah" point="mh01" delta="1" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="mdeltah" point="mh02" delta="-1" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="mdeltah" point="mh03" delta="-2" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="mdeltah" point="mh04" delta="-2" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="mdeltah" point="mh05" delta="1" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="alignv" point="av01" align="round"/&gt;
+    &lt;ttc code="mdeltav" point="mh01" delta="4" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="singlev" point1="av01" point2="mh02" round="true"/&gt;
+    &lt;ttc code="mdeltav" point="mh02" delta="3" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="mdeltav" point="mh03" delta="1" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="mdeltav" point="mv01" delta="-2" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="fdeltah" point="fh01" delta="-4" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh01" delta="-3" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="fh02" delta="-4" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh02" delta="-2" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="fh03" delta="3" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh03" delta="4" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltah" point="mh03" delta="-2" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="mh04" delta="-3" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh04" delta="-3" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh01" delta="2" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltav" point="fh01" delta="4" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh02" delta="3" ppm1="14" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh03" delta="-2" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fh03" delta="-1" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="mh03" delta="2" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltav" point="fh04" delta="-3" ppm1="15" ppm2="15"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+		</dict>
+	</lib>
+</glyph>

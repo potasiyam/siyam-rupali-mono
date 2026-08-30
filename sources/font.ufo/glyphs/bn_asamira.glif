@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_asamira" format="2">
+	<unicode hex="09F0"/>
+	<advance width="1216"/>
+	<outline>
+		<contour>
+			<point name="fh02" x="1015" y="0" type="line"/>
+			<point x="873" y="0" type="line"/>
+			<point name="fv03" x="873" y="246" type="line"/>
+			<point name="fh03" x="861" y="288"/>
+			<point name="fh04" x="788" y="394"/>
+			<point name="fh01" x="683" y="506"/>
+			<point x="556" y="613"/>
+			<point x="424" y="698"/>
+			<point x="297" y="749"/>
+			<point x="246" y="749" type="qcurve"/>
+			<point x="235" y="749"/>
+			<point x="216" y="747"/>
+			<point x="208" y="744" type="qcurve"/>
+			<point name="fh05" x="116" y="894" type="line"/>
+			<point name="fv01" x="464" y="1162"/>
+			<point name="fv02" x="873" y="1282" type="qcurve"/>
+			<point x="873" y="1401" type="line"/>
+			<point x="-19" y="1401" type="line"/>
+			<point x="-19" y="1543" type="line"/>
+			<point name="av01" x="1225" y="1543" type="line"/>
+			<point name="fh06" x="1225" y="1401" type="line"/>
+			<point name="fh07" x="1015" y="1401" type="line"/>
+		</contour>
+		<contour>
+			<point name="fv04" x="873" y="697" type="line"/>
+			<point x="498" y="976" type="line"/>
+			<point x="444" y="945"/>
+			<point x="355" y="890"/>
+			<point x="335" y="868" type="qcurve"/>
+			<point x="371" y="864"/>
+			<point x="471" y="825"/>
+			<point x="581" y="763"/>
+			<point name="fh08" x="691" y="686"/>
+			<point name="fh09" x="787" y="603"/>
+			<point name="fh10" x="859" y="522"/>
+			<point name="fv05" x="873" y="489" type="qcurve"/>
+		</contour>
+		<contour>
+			<point x="873" y="1142" type="line"/>
+			<point x="834" y="1134"/>
+			<point x="707" y="1080"/>
+			<point x="636" y="1045" type="qcurve"/>
+			<point name="fh11" x="873" y="868" type="line"/>
+		</contour>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="alignv" point="av01" align="round"/&gt;
+    &lt;ttc code="fdeltah" point="fh01" delta="-2" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fh01" delta="-3" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fv01" delta="2" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fv02" delta="4" ppm1="11" ppm2="11"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+		</dict>
+	</lib>
+</glyph>

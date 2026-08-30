@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_rrikaar" format="2">
+	<unicode hex="09C4"/>
+	<advance width="3"/>
+	<outline>
+		<contour>
+			<point x="-404" y="-336" type="line"/>
+			<point x="-592" y="-464" type="line"/>
+			<point x="-93" y="-764" type="line"/>
+			<point name="fh01" x="-173" y="-898" type="line"/>
+			<point x="-892" y="-476" type="line"/>
+			<point x="-556" y="-256" type="line"/>
+			<point x="-713" y="-171" type="line"/>
+			<point x="-292" y="84" type="line"/>
+			<point x="-249" y="221" type="line"/>
+			<point x="-148" y="-3" type="line"/>
+			<point x="-412" y="-160" type="line"/>
+			<point x="31" y="-412" type="line"/>
+			<point x="-57" y="-536" type="line"/>
+		</contour>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="fdeltah" point="fh01" delta="2" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh01" delta="-2" ppm1="15" ppm2="15"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+		</dict>
+	</lib>
+</glyph>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_kh_r_uukaar" format="2">
+	<advance width="1741"/>
+	<outline>
+		<component base="bn_kha"/>
+		<component base="bn_raphala" xOffset="1741" yOffset="260"/>
+		<component base="bn_uukaar.1" xOffset="1340"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="mdeltah" point="mv01-1" delta="1" ppm1="15" ppm2="15"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.9341,0.648,0.952,1</string>
+		</dict>
+	</lib>
+</glyph>

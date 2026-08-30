@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_asamib_ra" format="2">
+	<advance width="1227"/>
+	<outline>
+		<contour>
+			<point x="1006" y="1142" type="line"/>
+			<point x="976" y="1135"/>
+			<point name="fh01" x="884" y="1100"/>
+			<point x="779" y="1053"/>
+			<point x="667" y="996"/>
+			<point x="567" y="940"/>
+			<point x="487" y="888"/>
+			<point x="467" y="868" type="qcurve"/>
+			<point x="504" y="864"/>
+			<point x="603" y="825"/>
+			<point x="713" y="763"/>
+			<point x="825" y="686"/>
+			<point x="919" y="603"/>
+			<point x="991" y="522"/>
+			<point x="1006" y="489" type="qcurve"/>
+		</contour>
+		<contour>
+			<point x="1147" y="0" type="line"/>
+			<point x="1006" y="0" type="line"/>
+			<point x="1006" y="246" type="line"/>
+			<point name="fh02" x="994" y="288"/>
+			<point name="fh03" x="921" y="394"/>
+			<point name="fh04" x="817" y="506"/>
+			<point name="fh05" x="688" y="613"/>
+			<point name="fv01" x="558" y="698"/>
+			<point x="431" y="749"/>
+			<point x="379" y="749" type="qcurve"/>
+			<point x="369" y="749"/>
+			<point x="348" y="747"/>
+			<point name="fh11" x="340" y="744" type="qcurve"/>
+			<point x="248" y="894" type="line"/>
+			<point x="597" y="1162"/>
+			<point x="1006" y="1282" type="qcurve"/>
+			<point x="1006" y="1401" type="line"/>
+			<point x="-36" y="1401" type="line"/>
+			<point x="-36" y="1543" type="line"/>
+			<point name="av01" x="1327" y="1543" type="line"/>
+			<point x="1327" y="1401" type="line"/>
+			<point x="1147" y="1401" type="line"/>
+		</contour>
+		<contour>
+			<point x="763" y="105" type="line"/>
+			<point x="728" y="166"/>
+			<point x="621" y="283"/>
+			<point x="491" y="379"/>
+			<point name="fh06" x="348" y="450"/>
+			<point x="277" y="464" type="qcurve"/>
+			<point x="359" y="591" type="line"/>
+			<point x="433" y="574"/>
+			<point name="fh07" x="582" y="501"/>
+			<point x="715" y="401"/>
+			<point x="823" y="278"/>
+			<point x="857" y="211" type="qcurve"/>
+		</contour>
+		<contour>
+			<point x="749" y="-92" type="qcurve"/>
+			<point x="698" y="-100"/>
+			<point x="593" y="-123"/>
+			<point x="489" y="-143"/>
+			<point x="385" y="-158"/>
+			<point x="335" y="-158" type="qcurve"/>
+			<point name="fh08" x="261" y="-158"/>
+			<point x="140" y="-95"/>
+			<point x="55" y="12"/>
+			<point x="8" y="148"/>
+			<point x="8" y="221" type="qcurve"/>
+			<point x="8" y="282"/>
+			<point x="43" y="402"/>
+			<point x="82" y="456" type="qcurve"/>
+			<point x="211" y="420" type="line"/>
+			<point x="181" y="378"/>
+			<point x="153" y="279"/>
+			<point x="153" y="230" type="qcurve"/>
+			<point x="153" y="182"/>
+			<point x="180" y="93"/>
+			<point x="232" y="24"/>
+			<point name="fh09" x="310" y="-16"/>
+			<point name="fh10" x="362" y="-16" type="qcurve"/>
+			<point x="389" y="-16"/>
+			<point x="466" y="-5"/>
+			<point x="555" y="9"/>
+			<point x="647" y="27"/>
+			<point x="729" y="42"/>
+			<point x="794" y="53"/>
+			<point x="810" y="53" type="qcurve"/>
+			<point x="844" y="53"/>
+			<point x="887" y="45"/>
+			<point x="926" y="20"/>
+			<point x="971" y="-24"/>
+			<point x="1006" y="-61" type="qcurve"/>
+			<point x="1006" y="675" type="line"/>
+			<point x="1147" y="675" type="line"/>
+			<point x="1147" y="-396" type="line"/>
+			<point x="1006" y="-396" type="line"/>
+			<point x="1006" y="-248" type="line"/>
+			<point x="964" y="-194"/>
+			<point x="905" y="-131"/>
+			<point x="850" y="-100"/>
+			<point x="791" y="-92"/>
+		</contour>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="alignv" point="av01" align="round"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.952,0.9413,0.648,1</string>
+		</dict>
+	</lib>
+</glyph>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_gh_ba" format="2">
+	<advance width="1328"/>
+	<outline>
+		<component base="bn_gha"/>
+		<component base="bn_below_ba" xOffset="1733" yOffset="30"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="mdeltah" point="mh01-1" delta="-3" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="mdeltah" point="mh03-1" delta="1" ppm1="10" ppm2="10"/&gt;
+    &lt;ttc code="mdeltah" point="mh03-1" delta="-5" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="mdeltah" point="mh02-1" delta="-3" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="mdeltah" point="mh04-1" delta="1" ppm1="10" ppm2="10"/&gt;
+    &lt;ttc code="fdeltah" point="rsb" delta="4" ppm1="10" ppm2="10"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.9341,0.648,0.952,1</string>
+		</dict>
+	</lib>
+</glyph>

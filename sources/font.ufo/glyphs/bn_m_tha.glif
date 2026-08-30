@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_m_tha" format="2">
+	<advance width="2252"/>
+	<outline>
+		<component base="bn_half_ma"/>
+		<component base="bn_tha" xOffset="880"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="fdeltah" point="fh11-0" delta="-3" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh27-0" delta="-2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh10-0" delta="3" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="sv01-0" delta="4" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="fh05-1" delta="2" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltah" point="fh06-1" delta="1" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltah" point="fh06-1" delta="2" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh23-1" delta="-2" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh14-1" delta="-2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh17-1" delta="-2" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltah" point="fh20-1" delta="-2" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltah" point="fh14-1" delta="-3" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fv02-0" delta="2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fv03-0" delta="3" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh11-0" delta="-4" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh27-0" delta="-1" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh07-0" delta="3" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh08-0" delta="3" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="sv01-0" delta="1" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltav" point="fv03-1" delta="2" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh05-1" delta="-1" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltav" point="fh06-1" delta="-2" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltav" point="fh06-1" delta="-2" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh23-1" delta="1" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh14-1" delta="-3" ppm1="11" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh20-1" delta="-4" ppm1="13" ppm2="13"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.6838,0.952,0.648,1</string>
+		</dict>
+	</lib>
+</glyph>

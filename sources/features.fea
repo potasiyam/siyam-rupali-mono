@@ -1,0 +1,648 @@
+# Glyph classes
+@back_bases = [bn_kha bn_ga bn_gha bn_ja bn_nna bn_tha bn_da bn_dha bn_na bn_pa bn_ba bn_ma bn_ya bn_ra bn_la bn_sha bn_ssa bn_sa];
+@front_bases = [bn_ka bn_nga bn_cha bn_jha bn_nya bn_tta bn_ttha bn_dda bn_ddha bn_ta bn_pha bn_ha bn_k_ssa];
+@kaars = [bn_ukaar bn_uukaar bn_rikaar];
+@main_bases = [bn_ka bn_kha bn_ga bn_gha bn_nga bn_ca bn_cha bn_ja bn_jha bn_nya bn_tta bn_ttha bn_dda bn_ddha bn_nna bn_ta bn_tha bn_da bn_dha bn_na bn_pa bn_pha bn_ba bn_bha bn_ma bn_ya bn_ra bn_la bn_sha bn_ssa bn_sa bn_ha bn_rra bn_rrha bn_yya];
+@main_bases_half = [bn_k_half bn_kh_half bn_g_half bn_gh_half bn_ng_half bn_c_half bn_ch_half bn_j_half bn_jh_half bn_ny_half bn_tt_half bn_tth_half bn_dd_half bn_ddh_half bn_nn_half bn_t_half bn_th_half bn_d_half bn_dh_half bn_n_half bn_p_half bn_ph_half bn_b_half bn_bh_half bn_m_half bn_y_half bn_half_ra bn_l_half bn_sh_half bn_ss_half bn_s_half bn_h_half bn_rr_half bn_rrh_half bn_yy_half];
+@main_bases_haln = [bn_k_hasanta bn_kh_hasanta bn_g_hasanta bn_gh_hasanta bn_ng_hasanta bn_c_hasanta bn_ch_hasanta bn_j_hasanta bn_jh_hasanta bn_ny_hasanta bn_tt_hasanta bn_tth_hasanta bn_dd_hasanta bn_ddh_hasanta bn_nn_hasanta bn_t_hasanta bn_th_hasanta bn_d_hasanta bn_dh_hasanta bn_n_hasanta bn_p_hasanta bn_ph_hasanta bn_b_hasanta bn_bh_hasanta bn_m_hasanta bn_y_hasanta bn_r_hasanta bn_l_hasanta bn_sh_hasanta bn_ss_hasanta bn_s_hasanta bn_h_hasanta bn_rr_hasanta bn_rrh_hasanta bn_yy_hasanta];
+
+# Mark classes
+markClass bn_rikaar <anchor -1350 -105> @kaar.blwm;
+markClass bn_ukaar <anchor -1380 60> @kaar.blwm;
+markClass bn_uukaar <anchor -1365 30> @kaar.blwm;
+
+# Lookups
+lookup init {
+    sub bn_ekaar by bn_ekaar.init;
+    sub bn_aikaar by bn_aikaar.init;
+} init;
+
+lookup akhn {
+    sub bn_ka bn_hasanth bn_ssa by bn_k_ssa;
+    sub bn_ja bn_hasanth bn_nya by bn_j_nya;
+} akhn;
+
+lookup rphf {
+    sub bn_ra bn_hasanth by bn_half_ra;
+    sub asa_ra bn_hasanth by bn_half_ra;
+} rphf;
+
+lookup blwf {
+    sub bn_ra bn_hasanth by bn_r_phala;
+    sub bn_ba bn_hasanth by bn_b_phala;
+    sub asa_ra bn_hasanth by bn_r_phala;
+    sub asa_ba bn_hasanth by bn_b_phala;
+} blwf;
+
+lookup blwf_bng2 {
+    sub bn_hasanth bn_ra by bn_r_phala;
+    sub bn_hasanth bn_ba by bn_b_phala;
+    sub bn_hasanth asa_ra by bn_r_phala;
+} blwf_bng2;
+
+lookup half {
+    # sub @main_bases bn_hasanth by @main_bases_half;
+    sub bn_ka bn_hasanth by bn_k_half;
+    sub bn_kha bn_hasanth by bn_kh_half;
+    sub bn_ga bn_hasanth by bn_g_half;
+    sub bn_gha bn_hasanth by bn_gh_half;
+    sub bn_nga bn_hasanth by bn_ng_half;
+    sub bn_ca bn_hasanth by bn_c_half;
+    sub bn_cha bn_hasanth by bn_ch_half;
+    sub bn_ja bn_hasanth by bn_j_half;
+    sub bn_jha bn_hasanth by bn_jh_half;
+    sub bn_nya bn_hasanth by bn_ny_half;
+    sub bn_tta bn_hasanth by bn_tt_half;
+    sub bn_ttha bn_hasanth by bn_tth_half;
+    sub bn_dda bn_hasanth by bn_dd_half;
+    sub bn_ddha bn_hasanth by bn_ddh_half;
+    sub bn_nna bn_hasanth by bn_nn_half;
+    sub bn_ta bn_hasanth by bn_t_half;
+    sub bn_tha bn_hasanth by bn_th_half;
+    sub bn_da bn_hasanth by bn_d_half;
+    sub bn_dha bn_hasanth by bn_dh_half;
+    sub bn_na bn_hasanth by bn_n_half;
+    sub bn_pa bn_hasanth by bn_p_half;
+    sub bn_pha bn_hasanth by bn_ph_half;
+    sub bn_ba bn_hasanth by bn_b_half;
+    sub bn_bha bn_hasanth by bn_bh_half;
+    sub bn_ma bn_hasanth by bn_m_half;
+    sub bn_ya bn_hasanth by bn_y_half;
+    sub bn_ra bn_hasanth by bn_half_ra;
+    sub bn_la bn_hasanth by bn_l_half;
+    sub bn_sha bn_hasanth by bn_sh_half;
+    sub bn_ssa bn_hasanth by bn_ss_half;
+    sub bn_sa bn_hasanth by bn_s_half;
+    sub bn_ha bn_hasanth by bn_h_half;
+    sub bn_rra bn_hasanth by bn_rr_half;
+    sub bn_rrha bn_hasanth by bn_rrh_half;
+    sub bn_yya bn_hasanth by bn_yy_half;
+    sub bn_k_ssa bn_hasanth by bn_k_ss_half;
+} half;
+
+lookup pstf {
+    sub bn_ya bn_hasanth by bn_y_phala;
+} pstf;
+
+lookup pstf_bng2 {
+    sub bn_hasanth bn_ya by bn_y_phala;
+} pstf_bng2;
+
+lookup vatu {
+    sub bn_ka bn_r_phala by bn_k_ra;
+    sub bn_kha bn_r_phala by bn_kh_ra;
+    sub bn_ga bn_r_phala by bn_g_ra;
+    sub bn_gha bn_r_phala by bn_gh_ra;
+    sub bn_ca bn_r_phala by bn_c_ra;
+    sub bn_cha bn_r_phala by bn_ch_ra;
+    sub bn_ja bn_r_phala by bn_j_ra;
+    sub bn_ja bn_b_phala by bn_j_ba;
+    sub bn_tta bn_r_phala by bn_tt_ra;
+    sub bn_ttha bn_r_phala by bn_tth_ra;
+    sub bn_dda bn_r_phala by bn_dd_ra;
+    sub bn_ddha bn_r_phala by bn_ddh_ra;
+    sub bn_ta bn_r_phala by bn_t_ra;
+    sub bn_tha bn_r_phala by bn_th_ra;
+    sub bn_da bn_r_phala by bn_d_ra;
+    sub bn_dha bn_r_phala by bn_dh_ra;
+    sub bn_na bn_r_phala by bn_n_ra;
+    sub bn_pa bn_r_phala by bn_p_ra;
+    sub bn_pha bn_r_phala by bn_ph_ra;
+    sub bn_ba bn_r_phala by bn_b_ra;
+    sub bn_bha bn_r_phala by bn_bh_ra;
+    sub bn_ma bn_r_phala by bn_m_ra;
+    sub bn_ya bn_r_phala by bn_y_ra;
+    sub bn_sha bn_r_phala by bn_sh_ra;
+    sub bn_ssa bn_r_phala by bn_ss_ra;
+    sub bn_sa bn_r_phala by bn_s_ra;
+    sub bn_ha bn_r_phala by bn_h_ra;
+    sub asa_ra bn_r_phala by asa_r_ra;
+    sub asa_ba bn_r_phala by asa_b_ra;
+    sub bn_k_ssa bn_r_phala by bn_k_ss_ra;
+} vatu;
+
+lookup pres {
+    sub bn_k_half bn_ka by bn_k_ka;
+    sub bn_k_half bn_tta by bn_k_tta;
+    sub bn_k_half bn_tt_ra by bn_k_tt_ra;
+    sub bn_k_half bn_ta by bn_k_ta;
+    sub bn_k_half bn_t_ra by bn_k_t_ra;
+    sub bn_k_half bn_na by bn_k_na;
+    sub bn_k_half bn_ma by bn_k_ma;
+    sub bn_k_half bn_la by bn_k_la;
+    sub bn_k_half bn_sa by bn_k_sa;
+    sub bn_k_ss_half bn_ma by bn_k_ss_ma;
+    sub bn_k_ss_half bn_na by bn_k_ss_na;
+    sub bn_k_ss_half bn_nna by bn_k_ss_nna;
+    sub bn_g_half bn_ga by bn_g_ga;
+    sub bn_g_half bn_da by bn_g_da;
+    sub bn_g_half bn_dha by bn_g_dha;
+    sub bn_g_half bn_na by bn_g_na;
+    sub bn_g_half bn_ma by bn_g_ma;
+    sub bn_g_half bn_la by bn_g_la;
+    sub bn_gh_half bn_na by bn_gh_na;
+    sub bn_ng_half bn_ka by bn_ng_ka;
+    sub bn_ng_half bn_k_ra by bn_ng_k_ra;
+    sub bn_ng_half bn_k_ssa by bn_ng_k_ssa;
+    sub bn_ng_half bn_kha by bn_ng_kha;
+    sub bn_ng_half bn_ga by bn_ng_ga;
+    sub bn_ng_half bn_gha by bn_ng_gha;
+    sub bn_ng_half bn_ma by bn_ng_ma;
+    sub bn_c_half bn_ca by bn_c_ca;
+    sub bn_c_half bn_cha by bn_c_cha;
+    sub bn_c_half bn_ch_ra by bn_c_ch_ra;
+    sub bn_c_half bn_nya by bn_c_nya;
+    sub bn_c_half bn_na by bn_c_na;
+    sub bn_j_half bn_ja by bn_j_ja;
+    sub bn_j_half bn_jha by bn_j_jha;
+    sub bn_j_half bn_nya by bn_j_nya;
+    sub bn_ny_half bn_ca by bn_ny_ca;
+    sub bn_ny_half bn_cha by bn_ny_cha;
+    sub bn_ny_half bn_ja by bn_ny_ja;
+    sub bn_ny_half bn_jha by bn_ny_jha;
+    sub bn_tt_half bn_tta by bn_tt_tta;
+    sub bn_tt_half bn_tt_ra by bn_tt_tt_ra;
+    sub bn_tt_half bn_ma by bn_tt_ma;
+    sub bn_dd_half bn_ga by bn_dd_ga;
+    sub bn_dd_half bn_dda by bn_dd_dda;
+    sub bn_dd_half bn_ma by bn_dd_ma;
+    sub bn_rr_half bn_ga by bn_rr_ga;
+    sub bn_nn_half bn_tta by bn_nn_tta;
+    sub bn_nn_half bn_tt_ra by bn_nn_tt_ra;
+    sub bn_nn_half bn_ttha by bn_nn_ttha;
+    sub bn_nn_half bn_dda by bn_nn_dda;
+    sub bn_nn_half bn_dd_ra by bn_nn_dd_ra;
+    sub bn_nn_half bn_ddha by bn_nn_ddha;
+    sub bn_nn_half bn_na by bn_nn_nna;
+    sub bn_nn_half bn_nna by bn_nn_nna;
+    sub bn_nn_half bn_ma by bn_nn_ma;
+    sub bn_t_half bn_ta by bn_t_ta;
+    sub bn_t_half bn_tha by bn_t_tha;
+    sub bn_t_half bn_na by bn_t_na;
+    sub bn_t_half bn_ma by bn_t_ma;
+    sub bn_t_half bn_la by bn_t_la;
+    sub bn_d_half bn_ga by bn_d_ga;
+    sub bn_d_half bn_gha by bn_d_gha;
+    sub bn_d_half bn_da by bn_d_da;
+    sub bn_d_half bn_d_ra by bn_d_d_ra;
+    sub bn_d_half bn_dha by bn_d_dha;
+    sub bn_d_half bn_dh_ba by bn_d_dh_ba;
+    sub bn_d_half bn_na by bn_d_na;
+    sub bn_d_half bn_bha by bn_d_bha;
+    sub bn_d_half bn_bh_ra by bn_d_bh_ra;
+    sub bn_d_half bn_ma by bn_d_ma;
+    sub bn_dh_half bn_na by bn_dh_na;
+    sub bn_dh_half bn_ma by bn_dh_ma;
+    sub bn_n_half bn_tta by bn_n_tta;
+    sub bn_n_half bn_tt_ra by bn_n_tt_ra;
+    sub bn_n_half bn_ttha by bn_n_ttha;
+    sub bn_n_half bn_dda by bn_n_dda;
+    sub bn_n_half bn_dd_ra by bn_n_dd_ra;
+    sub bn_n_half bn_ddha by bn_n_ddha;
+    sub bn_n_half bn_ta by bn_n_ta;
+    sub bn_n_half bn_t_ra by bn_n_t_ra;
+    sub bn_n_half bn_tha by bn_n_tha;
+    sub bn_n_half bn_da by bn_n_da;
+    sub bn_n_half bn_d_ra by bn_n_d_ra;
+    sub bn_n_half bn_dha by bn_n_dha;
+    sub bn_n_half bn_dh_ra by bn_n_dh_ra;
+    sub bn_n_half bn_na by bn_n_na;
+    sub bn_n_half bn_ma by bn_n_ma;
+    sub bn_n_half bn_sa by bn_n_sa;
+    sub bn_p_half bn_tta by bn_p_tta;
+    sub bn_p_half bn_ta by bn_p_ta;
+    sub bn_p_half bn_pa by bn_p_pa;
+    sub bn_p_half bn_ma by bn_p_ma;
+    sub bn_p_half bn_na by bn_p_na;
+    sub bn_p_half bn_la by bn_p_la;
+    sub bn_p_half bn_sa by bn_p_sa;
+    sub bn_ph_half bn_tta by bn_ph_tta;
+    sub bn_ph_half bn_la by bn_ph_la;
+    sub bn_b_half bn_ja by bn_b_ja;
+    sub bn_b_half bn_da by bn_b_da;
+    sub bn_b_half bn_d_ra by bn_b_d_ra;
+    sub bn_b_half bn_dha by bn_b_dha;
+    sub bn_b_half bn_na by bn_b_na;
+    sub bn_b_half bn_bha by bn_b_bha;
+    sub bn_b_half bn_la by bn_b_la;
+    sub bn_bh_half bn_la by bn_bh_la;
+    sub bn_m_half bn_ta by bn_m_ta;
+    sub bn_m_half bn_tha by bn_m_tha;
+    sub bn_m_half bn_da by bn_m_da;
+    sub bn_m_half bn_na by bn_m_na;
+    sub bn_m_half bn_pa by bn_m_pa;
+    sub bn_m_half bn_p_ra by bn_m_p_ra;
+    sub bn_m_half bn_pha by bn_m_pha;
+    sub bn_m_half bn_ph_ra by bn_m_ph_ra;
+    sub bn_ma bn_b_phala bn_r_phala by bn_m_b_ra;
+    sub bn_m_half bn_bha by bn_m_bha;
+    sub bn_m_half bn_bh_ra by bn_m_bh_ra;
+    sub bn_m_half bn_ma by bn_m_ma;
+    sub bn_m_half bn_la by bn_m_la;
+    sub bn_m_half bn_sa by bn_m_sa;
+    sub bn_m_half bn_s_ra by bn_m_s_ra;
+    sub bn_l_half bn_ka by bn_l_ka;
+    sub bn_l_half bn_ga by bn_l_ga;
+    sub bn_l_half bn_tta by bn_l_tta;
+    sub bn_l_half bn_tt_ra by bn_l_tt_ra;
+    sub bn_l_half bn_dda by bn_l_dda;
+    sub bn_l_half bn_dd_ra by bn_l_dd_ra;
+    sub bn_l_half bn_ta by bn_l_ta;
+    sub bn_l_half bn_da by bn_l_da;
+    sub bn_l_half bn_dha by bn_l_dha;
+    sub bn_l_half bn_pa by bn_l_pa;
+    sub bn_l_half bn_pha by bn_l_pha;
+    sub bn_l_half bn_ph_ra by bn_l_ph_ra;
+    sub bn_l_half bn_ma by bn_l_ma;
+    sub bn_l_half bn_la by bn_l_la;
+    sub bn_sh_half bn_ca by bn_sh_ca;
+    sub bn_sh_half bn_cha by bn_sh_cha;
+    sub bn_sh_half bn_ta by bn_sh_ta;
+    sub bn_sh_half bn_na by bn_sh_na;
+    sub bn_sh_half bn_ma by bn_sh_ma;
+    sub bn_sh_half bn_la by bn_sh_la;
+    sub bn_ss_half bn_ka by bn_ss_ka;
+    sub bn_ss_half bn_k_ra by bn_ss_k_ra;
+    sub bn_ss_half bn_tta by bn_ss_tta;
+    sub bn_ss_half bn_tt_ra by bn_ss_tt_ra;
+    sub bn_ss_half bn_ttha by bn_ss_ttha;
+    sub bn_ss_half bn_nna by bn_ss_nna;
+    sub bn_ss_half bn_pa by bn_ss_pa;
+    sub bn_ss_half bn_p_ra by bn_ss_p_ra;
+    sub bn_ss_half bn_pha by bn_ss_pha;
+    sub bn_ss_half bn_ph_ra by bn_ss_ph_ra;
+    sub bn_ss_half bn_ma by bn_ss_ma;
+    sub bn_s_half bn_ka by bn_s_ka;
+    sub bn_s_half bn_k_ra by bn_s_k_ra;
+    sub bn_s_half bn_kha by bn_s_kha;
+    sub bn_s_half bn_tta by bn_s_tta;
+    sub bn_s_half bn_tt_ra by bn_s_tt_ra;
+    sub bn_s_half bn_ta by bn_s_ta;
+    sub bn_s_half bn_t_ra by bn_s_t_ra;
+    sub bn_s_half bn_tha by bn_s_tha;
+    sub bn_s_half bn_na by bn_s_na;
+    sub bn_s_half bn_pa by bn_s_pa;
+    sub bn_s_half bn_p_ra by bn_s_p_ra;
+    sub bn_s_half bn_pha by bn_s_pha;
+    sub bn_s_half bn_ph_ra by bn_s_ph_ra;
+    sub bn_s_half bn_ma by bn_s_ma;
+    sub bn_s_half bn_la by bn_s_la;
+    sub bn_h_half bn_nna by bn_h_nna;
+    sub bn_h_half bn_na by bn_h_na;
+    sub bn_h_half bn_ma by bn_h_ma;
+    sub bn_h_half bn_la by bn_h_la;
+    sub bn_rr_half bn_ga by bn_rr_ga;
+    sub bn_m_half bn_p_half bn_la by bn_m_p_la;
+    sub bn_s_half bn_k_half bn_la by bn_s_k_la;
+    sub bn_s_half bn_p_half bn_la by bn_s_p_la;
+    sub bn_m_half bn_b_phala bn_ra by bn_m_b_ra;
+} pres;
+
+lookup blws {
+    sub bn_ka bn_b_phala by bn_k_ba;
+    sub bn_k_ta bn_b_phala by bn_k_t_ba;
+    sub bn_k_ssa bn_b_phala by bn_k_ss_ba;
+    sub bn_kh_ra bn_ukaar by bn_kh_r_ukaar;
+    sub bn_kh_ra bn_uukaar by bn_kh_r_uukaar;
+    sub bn_ga bn_ukaar by bn_g_ukaar;
+    sub bn_ga bn_b_phala by bn_g_ba;
+    sub bn_g_dha bn_b_phala by bn_g_dh_ba;
+    sub bn_g_ra bn_ukaar by bn_g_r_ukaar;
+    sub bn_g_ra bn_uukaar by bn_g_r_uukaar;
+    sub bn_g_la bn_ukaar by bn_g_l_ukaar;
+    sub bn_g_la bn_uukaar by bn_g_l_uukaar;
+    sub bn_gha bn_b_phala by bn_gh_ba;
+    sub bn_ng_ka bn_r_phala by bn_ng_k_ra;
+    sub bn_ng_k_ssa bn_r_phala by bn_ng_k_ss_ra;
+    sub bn_ca bn_b_phala by bn_c_ba;
+    sub bn_c_cha bn_b_phala by bn_c_ch_ba;
+    sub bn_cha bn_b_phala by bn_ch_ba;
+    sub bn_ja bn_b_phala by bn_j_ba;
+    sub bn_j_ja bn_b_phala by bn_j_j_ba;
+    sub bn_j_ra bn_ukaar by bn_j_r_ukaar;
+    sub bn_j_ra bn_uukaar by bn_j_r_uukaar;
+    sub bn_tta bn_b_phala by bn_tt_ba;
+    sub bn_tt_tta bn_r_phala by bn_tt_tt_ra;
+    sub bn_dda bn_b_phala by bn_dd_ba;
+    sub bn_nna bn_b_phala by bn_nn_ba;
+    sub bn_ta bn_b_phala by bn_t_ba;
+    sub bn_t_ta bn_b_phala by bn_t_t_ba;
+    sub bn_t_ra bn_ukaar by bn_t_r_ukaar;
+    sub bn_t_ra bn_uukaar by bn_t_r_uukaar;
+    sub bn_tha bn_b_phala by bn_th_ba;
+    sub bn_th_ra bn_ukaar by bn_th_r_ukaar;
+    sub bn_th_ra bn_uukaar by bn_th_r_uukaar;
+    sub bn_da bn_ukaar by bn_d_ukaar;
+    sub bn_da bn_b_phala by bn_d_ba;
+    sub bn_d_ra bn_ukaar by bn_d_r_ukaar;
+    sub bn_d_ra bn_uukaar by bn_d_r_uukaar;
+    sub bn_d_da bn_b_phala by bn_d_d_ba;
+    sub bn_d_dha bn_b_phala by bn_d_dh_ba;
+    sub bn_dha bn_b_phala by bn_dh_ba;
+    sub bn_dh_ra bn_ukaar by bn_dh_r_ukaar;
+    sub bn_dh_ra bn_uukaar by bn_dh_r_uukaar;
+    sub bn_na bn_b_phala by bn_n_ba;
+    sub bn_n_ta bn_ukaar by bn_n_t_ukaar;
+    sub bn_n_ta bn_b_phala by bn_n_t_ba;
+    sub bn_n_d_ra bn_ukaar by bn_n_d_r_ukaar;
+    sub bn_n_d_ra bn_uukaar by bn_n_d_r_uukaar;
+    sub bn_n_da bn_b_phala by bn_n_d_ba;
+    sub bn_n_dha bn_b_phala by bn_n_dh_ba;
+    sub bn_pa bn_b_phala by bn_p_ba;
+    sub bn_p_ra bn_ukaar by bn_p_r_ukaar;
+    sub bn_p_ra bn_uukaar by bn_p_r_uukaar;
+    sub bn_p_la bn_ukaar by bn_p_l_ukaar;
+    sub bn_p_la bn_uukaar by bn_p_l_uukaar;
+    sub bn_ba bn_b_phala by bn_b_ba;
+    sub bn_b_ra bn_ukaar by bn_b_r_ukaar;
+    sub bn_b_ra bn_uukaar by bn_b_r_uukaar;
+    sub bn_b_la bn_ukaar by bn_b_l_ukaar;
+    sub bn_b_la bn_uukaar by bn_b_l_uukaar;
+    sub bn_bh_ra bn_ukaar by bn_bh_r_ukaar;
+    sub bn_bh_ra bn_uukaar by bn_bh_r_uukaar;
+    sub bn_bha bn_b_phala by bn_bh_ba;
+    sub bn_ma bn_b_phala by bn_m_ba;
+    sub bn_m_ra bn_ukaar by bn_m_r_ukaar;
+    sub bn_m_ra bn_uukaar by bn_m_r_uukaar;
+    sub bn_m_p_ra bn_ukaar by bn_m_p_r_ukaar;
+    sub bn_m_p_ra bn_uukaar by bn_m_p_r_uukaar;
+    sub bn_la bn_b_phala by bn_l_ba;
+    sub bn_sha bn_ukaar by bn_sh_ukaar;
+    sub bn_sha bn_b_phala by bn_sh_ba;
+    sub bn_sh_ra bn_ukaar by bn_sh_r_ukaar;
+    sub bn_sh_ra bn_uukaar by bn_sh_r_uukaar;
+    sub bn_sh_la bn_ukaar by bn_sh_l_ukaar;
+    sub bn_sh_la bn_uukaar by bn_sh_l_uukaar;
+    sub bn_sa bn_b_phala by bn_s_ba;
+    sub bn_s_ta bn_b_phala by bn_s_t_ba;
+    sub bn_s_ta bn_ukaar by bn_s_t_ukaar;
+    sub bn_s_ra bn_ukaar by bn_s_r_ukaar;
+    sub bn_s_ra bn_uukaar by bn_s_r_uukaar;
+    sub bn_s_la bn_ukaar by bn_s_l_ukaar;
+    sub bn_s_la bn_uukaar by bn_s_l_uukaar;
+    sub bn_s_la bn_uukaar by bn_s_l_uukaar;
+    sub bn_s_p_ra bn_ukaar by bn_s_p_r_ukaar;
+    sub bn_s_p_ra bn_uukaar by bn_s_p_r_uukaar;
+    sub bn_s_p_la bn_ukaar by bn_s_p_l_ukaar;
+    sub bn_s_p_la bn_uukaar by bn_s_p_l_uukaar;
+    sub bn_ss_p_ra bn_ukaar by bn_ss_p_r_ukaar;
+    sub bn_ss_p_ra bn_uukaar by bn_ss_p_r_uukaar;
+    sub bn_ha bn_b_phala by bn_h_ba;
+    sub bn_ha bn_ukaar by bn_h_ukaar;
+    sub bn_ha bn_rikaar by bn_h_rikaar;
+    sub bn_ra bn_ukaar by bn_r_ukaar;
+    sub bn_ra bn_uukaar by bn_r_uukaar;
+    sub bn_la bn_b_phala by bn_l_ba;
+    sub bn_l_ga bn_ukaar by bn_l_g_ukaar;
+    sub bn_ya bn_nukta by bn_yya;
+    sub bn_dda bn_nukta by bn_rra;
+    sub bn_ddha bn_nukta by bn_rrha;
+    sub asa_ra bn_ukaar by asa_r_ukaar;
+    sub asa_ra bn_uukaar by asa_r_uukaar;
+    sub asa_ba bn_ukaar by asa_b_ukaar;
+    sub asa_ba bn_uukaar by asa_b_uukaar;
+    sub asa_b_ra bn_ukaar by asa_b_r_ukaar;
+    sub asa_b_ra bn_uukaar by asa_b_r_uukaar;
+} blws;
+
+lookup psts {
+    sub bn_da ZWJ bn_y_phala by bn_d_ya;
+    sub bn_na ZWJ bn_y_phala by bn_n_ya;
+    sub bn_la ZWJ bn_y_phala by bn_l_ya;
+    sub bn_sha ZWJ bn_y_phala by bn_sh_ya;
+    sub bn_sa ZWJ bn_y_phala by bn_s_ya.2;
+    sub bn_ssa ZWJ bn_y_phala by bn_ss_ya;
+    sub bn_ha ZWJ bn_y_phala by bn_h_ya;
+} psts;
+
+lookup haln {
+    # sub @main_bases bn_hasanth by @main_bases_haln;
+    sub bn_ka bn_hasanth by bn_k_hasanta;
+    sub bn_kha bn_hasanth by bn_kh_hasanta;
+    sub bn_ga bn_hasanth by bn_g_hasanta;
+    sub bn_gha bn_hasanth by bn_gh_hasanta;
+    sub bn_nga bn_hasanth by bn_ng_hasanta;
+    sub bn_ca bn_hasanth by bn_c_hasanta;
+    sub bn_cha bn_hasanth by bn_ch_hasanta;
+    sub bn_ja bn_hasanth by bn_j_hasanta;
+    sub bn_jha bn_hasanth by bn_jh_hasanta;
+    sub bn_nya bn_hasanth by bn_ny_hasanta;
+    sub bn_tta bn_hasanth by bn_tt_hasanta;
+    sub bn_ttha bn_hasanth by bn_tth_hasanta;
+    sub bn_dda bn_hasanth by bn_dd_hasanta;
+    sub bn_ddha bn_hasanth by bn_ddh_hasanta;
+    sub bn_nna bn_hasanth by bn_nn_hasanta;
+    sub bn_ta bn_hasanth by bn_t_hasanta;
+    sub bn_tha bn_hasanth by bn_th_hasanta;
+    sub bn_da bn_hasanth by bn_d_hasanta;
+    sub bn_dha bn_hasanth by bn_dh_hasanta;
+    sub bn_na bn_hasanth by bn_n_hasanta;
+    sub bn_pa bn_hasanth by bn_p_hasanta;
+    sub bn_pha bn_hasanth by bn_ph_hasanta;
+    sub bn_ba bn_hasanth by bn_b_hasanta;
+    sub bn_bha bn_hasanth by bn_bh_hasanta;
+    sub bn_ma bn_hasanth by bn_m_hasanta;
+    sub bn_ya bn_hasanth by bn_y_hasanta;
+    sub bn_ra bn_hasanth by bn_r_hasanta;
+    sub bn_la bn_hasanth by bn_l_hasanta;
+    sub bn_sha bn_hasanth by bn_sh_hasanta;
+    sub bn_ssa bn_hasanth by bn_ss_hasanta;
+    sub bn_sa bn_hasanth by bn_s_hasanta;
+    sub bn_ha bn_hasanth by bn_h_hasanta;
+    sub bn_rra bn_hasanth by bn_rr_hasanta;
+    sub bn_rrha bn_hasanth by bn_rrh_hasanta;
+    sub bn_yya bn_hasanth by bn_yy_hasanta;
+} haln;
+
+lookup locl {
+    sub [bn_dari bn_dari_2] by [bn_dari bn_dari_2];
+} locl;
+
+lookup blwm {
+    pos base bn_kha
+        <anchor 0 0> mark @kaar.blwm;
+    pos base bn_ga
+        <anchor 45 0> mark @kaar.blwm;
+    pos base bn_gha
+        <anchor -45 0> mark @kaar.blwm;
+    pos base bn_ja
+        <anchor 325 0> mark @kaar.blwm;
+    pos base bn_nna
+        <anchor -25 -15> mark @kaar.blwm;
+    pos base bn_tha
+        <anchor 0 0> mark @kaar.blwm;
+    pos base bn_da
+        <anchor -70 0> mark @kaar.blwm;
+    pos base bn_dha
+        <anchor -90 0> mark @kaar.blwm;
+    pos base bn_na
+        <anchor -25 0> mark @kaar.blwm;
+    pos base bn_pa
+        <anchor 125 0> mark @kaar.blwm;
+    pos base bn_ba
+        <anchor -150 0> mark @kaar.blwm;
+    pos base bn_ma
+        <anchor 25 0> mark @kaar.blwm;
+    pos base bn_ya
+        <anchor -75 0> mark @kaar.blwm;
+    pos base bn_ra
+        <anchor -135 0> mark @kaar.blwm;
+    pos base bn_la
+        <anchor 135 15> mark @kaar.blwm;
+    pos base bn_sha
+        <anchor 120 0> mark @kaar.blwm;
+    pos base bn_ssa
+        <anchor -60 0> mark @kaar.blwm;
+    pos base bn_sa
+        <anchor 125 -15> mark @kaar.blwm;
+    pos base bn_ka
+        <anchor -120 15> mark @kaar.blwm;
+    pos base bn_nga
+        <anchor -210 -30> mark @kaar.blwm;
+    pos base bn_cha
+        <anchor -255 0> mark @kaar.blwm;
+    pos base bn_jha
+        <anchor -140 0> mark @kaar.blwm;
+    pos base bn_nya
+        <anchor 230 0> mark @kaar.blwm;
+    pos base bn_tta
+        <anchor -465 120> mark @kaar.blwm;
+    pos base bn_ttha
+        <anchor -405 -70> mark @kaar.blwm;
+    pos base bn_dda
+        <anchor -75 120> mark @kaar.blwm;
+    pos base bn_ddha
+        <anchor -345 -30 <device 14 1> <device 14 -1>> mark @kaar.blwm;
+    pos base bn_ta
+        <anchor -60 0> mark @kaar.blwm;
+    pos base bn_pha
+        <anchor -90 0> mark @kaar.blwm;
+    pos base bn_ha
+        <anchor -165 60> mark @kaar.blwm;
+    pos base bn_k_ssa
+        <anchor 60 -15> mark @kaar.blwm;
+} blwm;
+
+# Features
+feature akhn {
+    script beng;
+    language dflt;
+    lookup akhn;
+    script bng2;
+    language dflt;
+    lookup akhn;
+} akhn;
+
+feature blwf {
+    script beng;
+    language dflt;
+    lookup blwf;
+    script bng2;
+    language dflt;
+    lookup blwf_bng2;
+} blwf;
+
+feature blwm {
+    script beng;
+    language dflt;
+    lookup blwm;
+    script bng2;
+    language dflt;
+    lookup blwm;
+} blwm;
+
+feature blws {
+    script beng;
+    language dflt;
+    lookup blws;
+    script bng2;
+    language dflt;
+    lookup blws;
+} blws;
+
+feature haln {
+    script beng;
+    language dflt;
+    lookup haln;
+    script bng2;
+    language dflt;
+    lookup haln;
+} haln;
+
+feature half {
+    script beng;
+    language dflt;
+    lookup half;
+    script bng2;
+    language dflt;
+    lookup half;
+} half;
+
+feature init {
+    script beng;
+    language dflt;
+    lookup init;
+    script bng2;
+    language dflt;
+    lookup init;
+} init;
+
+feature locl {
+    script beng;
+    language dflt;
+    lookup locl;
+    script bng2;
+    language dflt;
+    lookup locl;
+} locl;
+
+feature pstf {
+    script beng;
+    language dflt;
+    lookup pstf;
+    script bng2;
+    language dflt;
+    lookup pstf_bng2;
+} pstf;
+
+feature psts {
+    script beng;
+    language dflt;
+    lookup psts;
+    script bng2;
+    language dflt;
+    lookup psts;
+} psts;
+
+feature pres {
+    script beng;
+    language dflt;
+    lookup pres;
+    script bng2;
+    language dflt;
+    lookup pres;
+} pres;
+
+feature rphf {
+    script beng;
+    language dflt;
+    lookup rphf;
+    script bng2;
+    language dflt;
+    lookup rphf;
+} rphf;
+
+feature vatu {
+    script beng;
+    language dflt;
+    lookup vatu;
+    script bng2;
+    language dflt;
+    lookup vatu;
+} vatu;
+
+@GDEF_base = [glyph0 glyph1 glyph2 glyph3 glyph4 glyph5 glyph6 glyph7 glyph8 glyph9 glyph10 glyph11 glyph12 glyph13 glyph14 glyph15 glyph16 glyph17 glyph18 glyph19 glyph20 glyph21 glyph22 glyph23 glyph24 glyph25 glyph26 glyph27 glyph28 glyph29 glyph30 glyph31 glyph32 glyph33 glyph34 glyph35 glyph36 ZWNJ ZWJ \NULL bn_dari bn_dari_2 bn_chand bn_anush bn_bish bn_a bn_aa bn_i bn_ii bn_u bn_uu bn_ri bn_li bn_e bn_ai bn_o bn_oi bn_ka bn_kha bn_ga bn_gha bn_nga bn_ca bn_cha bn_ja bn_jha bn_nya bn_tta bn_ttha bn_dda bn_ddha bn_nna bn_ta bn_tha bn_da bn_dha bn_na bn_pa bn_pha bn_ba bn_bha bn_ma bn_ya bn_ra bn_la bn_sha bn_ssa bn_sa bn_ha bn_nukta glyph90 bn_akaar bn_ikaar bn_iikaar bn_ririkaar bn_ekaar bn_aikaar bn_okaar bn_oikaar bn_hasanth bn_xxxx bn_rra bn_rrha bn_yya glyph107 glyph108 glyph109 glyph110 bn_0 bn_1 bn_2 bn_3 bn_4 bn_5 bn_6 bn_7 bn_8 bn_9 asa_ra asa_ba glyph123 bn_tk glyph125 glyph126 glyph127 glyph128 glyph129 glyph130 glyph131 bn_ekaar.init bn_aikaar.init bn_reph glyph135 glyph136 glyph137 glyph138 glyph139 glyph140 glyph141 glyph142 glyph143 glyph144 glyph145 bn_k_half bn_kh_half bn_g_half bn_gh_half bn_ng_half bn_c_half glyph152 bn_ch_half bn_j_half bn_jh_half bn_ny_half bn_tt_half bn_tth_half bn_dd_half bn_ddh_half bn_nn_half bn_t_half bn_th_half bn_d_half bn_dh_half bn_n_half bn_p_half bn_ph_half bn_b_half bn_bh_half bn_m_half bn_y_half bn_half_ra bn_l_half bn_sh_half bn_ss_half bn_s_half bn_h_half bn_rr_half bn_rrh_half bn_yy_half glyph182 glyph183 bn_kh_phala bn_ph_phala glyph186 glyph187 glyph188 bn_y_phala bn_k_ra glyph191 bn_kh_ra bn_g_ra bn_gh_ra bn_c_ra bn_ch_ra bn_j_ra bn_tt_ra bn_tth_ra bn_dd_ra bn_ddh_ra bn_t_ra glyph203 bn_th_ra bn_d_ra bn_dh_ra bn_nn_ra bn_n_ra bn_p_ra bn_ph_ra bn_b_ra bn_bh_ra glyph213 bn_m_ra bn_y_ra bn_sh_ra bn_ss_ra glyph218 bn_s_ra bn_h_ra asa_r_ra asa_b_ra bn_k_ss_ra bn_k_ka bn_k_tta bn_k_tt_ra bn_k_ta glyph228 bn_k_t_ba glyph230 bn_k_t_ra glyph232 glyph233 bn_k_na bn_k_ma bn_k_la bn_k_ssa bn_k_ss_nna bn_k_ss_ma bn_k_sa bn_g_ga bn_g_da bn_g_dha bn_g_dh_ba bn_g_la bn_g_na bn_g_ma bn_gh_na bn_ng_ka bn_ng_k_ra bn_ng_k_ssa bn_ng_k_ss_ra bn_ng_kha bn_ng_ga bn_ng_gha bn_ng_gh_ra bn_ng_ma bn_ng_ma.1 bn_c_ca bn_c_cha bn_c_ch_ba bn_c_ch_ra bn_c_nya bn_c_na bn_j_ja bn_j_j_ba bn_j_jha bn_j_nya bn_ny_ca bn_ny_cha bn_ny_ja bn_ny_jha bn_tt_tta bn_tt_tt_ra bn_tt_ma bn_dd_ga bn_dd_dda bn_dd_ma bn_nn_tta bn_nn_tt_ra bn_nn_ttha bn_nn_dda glyph283 bn_nn_dd_ra glyph285 bn_nn_ddha bn_nn_nna bn_nn_ma bn_t_ta bn_t_t_ba bn_t_tha bn_t_na bn_t_ma glyph294 bn_t_la bn_d_ga bn_d_gha bn_d_da bn_d_d_ba bn_d_d_ra bn_d_dha bn_d_dh_ba bn_d_na bn_d_bha bn_d_bh_ra glyph306 bn_d_ma bn_dh_na bn_dh_ma bn_n_tta bn_n_tt_ra bn_n_ttha bn_n_dda bn_n_dd_ra bn_n_ddha bn_n_ta bn_n_t_ba bn_n_t_ra glyph319 bn_n_tha bn_n_da bn_n_d_ba bn_n_d_ra bn_n_dha bn_n_dh_ba bn_n_dh_ra bn_n_na glyph328 bn_n_ma bn_n_sa bn_p_tta bn_p_ta bn_p_pa bn_p_ma bn_p_na bn_p_la bn_p_sa bn_ph_tta bn_ph_la bn_b_ja bn_b_da bn_b_d_ra bn_b_dha bn_b_na bn_b_bha bn_b_la bn_bh_la bn_m_ta bn_m_tha bn_m_da bn_m_na glyph352 bn_m_pa bn_m_p_ra bn_m_p_la bn_m_pha bn_m_ph_ra bn_m_bha bn_m_bh_ra glyph360 bn_m_ma glyph362 bn_m_la glyph364 bn_m_sa bn_m_s_ra bn_l_ka bn_l_ga bn_l_tta bn_l_tt_ra bn_l_dda bn_l_dd_ra bn_l_ta bn_l_da bn_l_dha bn_l_pa bn_l_pha bn_l_ph_ra bn_l_ma bn_l_la bn_sh_ca bn_sh_cha bn_sh_ta bn_sh_na bn_sh_ma bn_sh_la bn_ss_ka bn_ss_k_ra glyph389 bn_ss_tta glyph391 bn_ss_tt_ra glyph393 bn_ss_ttha bn_ss_nna bn_ss_pa bn_ss_p_ra bn_ss_pha bn_ss_ph_ra bn_ss_ma glyph401 bn_s_ka bn_s_k_ra glyph404 bn_s_kha bn_s_tta glyph407 bn_s_tt_ra glyph409 bn_s_ta bn_s_t_ba bn_s_t_ra glyph413 bn_s_tha bn_s_na glyph416 bn_s_pa bn_s_p_ra bn_s_p_la bn_s_pha bn_s_ph_ra bn_s_ma glyph423 bn_s_la glyph425 bn_h_nna bn_h_na bn_h_ma glyph429 bn_h_la bn_rr_ga bn_k_ba bn_g_ba bn_gh_ba bn_c_ba bn_ch_ba bn_j_ba bn_tt_ba bn_dd_ba bn_nn_ba bn_t_ba bn_th_ba bn_d_ba bn_dh_ba glyph445 bn_n_ba glyph447 bn_p_ba bn_b_ba bn_bh_ba bn_m_ba bn_m_b_ra glyph453 glyph454 bn_l_ba bn_sh_ba bn_s_ba glyph458 bn_h_ba glyph460 bn_kh_r_ukaar bn_kh_r_uukaar bn_g_ukaar bn_g_r_ukaar bn_g_r_uukaar bn_g_l_ukaar bn_g_l_uukaar bn_j_r_ukaar bn_j_r_uukaar bn_t_r_ukaar bn_t_r_uukaar bn_th_r_ukaar bn_th_r_uukaar bn_d_ukaar bn_d_r_ukaar bn_d_r_uukaar bn_dh_r_ukaar bn_dh_r_uukaar bn_n_ukaar bn_n_uukaar bn_n_rikaar bn_n_t_ukaar bn_n_d_r_ukaar bn_n_d_r_uukaar bn_p_r_ukaar bn_p_r_uukaar bn_p_l_ukaar bn_p_l_uukaar bn_b_r_ukaar bn_b_r_uukaar bn_b_l_ukaar bn_b_l_uukaar bn_bh_r_ukaar bn_bh_r_uukaar bn_m_r_ukaar bn_m_r_uukaar bn_m_p_r_ukaar bn_m_p_r_uukaar bn_r_ukaar bn_r_uukaar bn_l_g_ukaar bn_sh_ukaar bn_sh_r_ukaar bn_sh_r_uukaar bn_sh_l_ukaar bn_sh_l_uukaar bn_ss_p_r_ukaar bn_ss_p_r_uukaar bn_s_ukaar bn_s_uukaar bn_s_rikaar bn_s_t_ukaar bn_s_r_ukaar bn_s_r_uukaar bn_s_p_r_ukaar bn_s_p_r_uukaar bn_s_p_l_ukaar bn_s_p_l_uukaar bn_s_l_ukaar bn_s_l_uukaar bn_h_ukaar bn_h_rikaar asa_r_ukaar asa_r_uukaar asa_b_ukaar asa_b_uukaar asa_b_r_ukaar asa_b_r_uukaar bn_k_hasanta bn_kh_hasanta bn_g_hasanta bn_gh_hasanta bn_ng_hasanta bn_c_hasanta bn_ch_hasanta bn_j_hasanta bn_jh_hasanta bn_ny_hasanta bn_tt_hasanta bn_tth_hasanta bn_dd_hasanta bn_ddh_hasanta bn_nn_hasanta bn_t_hasanta bn_th_hasanta bn_d_hasanta bn_dh_hasanta bn_n_hasanta bn_p_hasanta bn_ph_hasanta bn_b_hasanta bn_bh_hasanta bn_m_hasanta bn_y_hasanta bn_r_hasanta bn_l_hasanta bn_sh_hasanta bn_ss_hasanta bn_s_hasanta bn_h_hasanta bn_rr_hasanta bn_rrh_hasanta bn_yy_hasanta glyph564 glyph565 glyph566 bn_k_ss_half glyph568 glyph569 glyph570 glyph571 glyph572 glyph573 glyph574 glyph575 bn_b_phala glyph577 glyph578 glyph579 glyph580 bn_r_phala glyph582 glyph583 glyph584 glyph585 glyph586 bn_d_ya bn_n_ya bn_l_ya bn_sh_ya bn_ss_ya bn_s_ya bn_s_ya.2 bn_h_ya glyph595 glyph596 glyph597 glyph598 glyph599 glyph600 glyph601 glyph602 bn_s_k_la bn_k_ss_ba bn_k_ss_na];
+@GDEF_mark = [bn_ukaar bn_uukaar bn_rikaar];
+table GDEF {
+    GlyphClassDef @GDEF_base, , @GDEF_mark, ;
+} GDEF;

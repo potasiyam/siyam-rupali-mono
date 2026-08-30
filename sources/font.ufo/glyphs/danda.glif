@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="danda" format="2">
+	<unicode hex="0964"/>
+	<advance width="742"/>
+	<outline>
+		<contour>
+			<point x="531" y="1422" type="line"/>
+			<point x="531" y="82" type="line"/>
+			<point x="405" y="82" type="line"/>
+			<point x="405" y="1422" type="line"/>
+		</contour>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="fdeltah" point="rsb" delta="5" ppm1="9" ppm2="9"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.6838,0.952,0.648,1</string>
+		</dict>
+	</lib>
+</glyph>

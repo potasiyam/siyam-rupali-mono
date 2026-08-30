@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="A.001" format="2">
+	<advance width="1478"/>
+	<outline>
+		<contour>
+			<point x="1305" y="449" type="qcurve"/>
+			<point x="1315" y="436"/>
+			<point x="1338" y="405"/>
+			<point x="1350" y="374"/>
+			<point x="1366" y="320"/>
+			<point name="fh01" x="1366" y="285" type="qcurve"/>
+			<point name="fh02" x="1366" y="232"/>
+			<point name="fh03" x="1320" y="130"/>
+			<point name="fh04" x="1224" y="53"/>
+			<point name="fh05" x="1100" y="21"/>
+			<point name="mv01" x="1042" y="21" type="qcurve"/>
+			<point x="946" y="21"/>
+			<point name="fh06" x="760" y="107"/>
+			<point name="fh07" x="588" y="254"/>
+			<point x="446" y="438"/>
+			<point x="306" y="739"/>
+			<point name="fh08" x="277" y="828" type="qcurve"/>
+			<point name="fh09" x="398" y="867" type="line"/>
+			<point x="468" y="680"/>
+			<point x="561" y="497"/>
+			<point x="694" y="333"/>
+			<point x="823" y="226"/>
+			<point x="965" y="153"/>
+			<point name="mv02" x="1058" y="150" type="qcurve"/>
+			<point name="fv01" x="1131" y="153"/>
+			<point name="fh10" x="1193" y="183"/>
+			<point name="fh11" x="1234" y="235"/>
+			<point name="fh12" x="1245" y="334"/>
+			<point x="1198" y="396" type="qcurve"/>
+			<point x="1182" y="393"/>
+			<point x="1138" y="389" type="qcurve"/>
+			<point x="1071" y="386"/>
+			<point x="1009" y="414" type="qcurve"/>
+			<point x="1045" y="525" type="line"/>
+			<point x="1085" y="508"/>
+			<point x="1139" y="507" type="qcurve"/>
+			<point x="1188" y="514"/>
+			<point x="1224" y="539"/>
+			<point x="1266" y="571"/>
+			<point x="1310" y="633"/>
+			<point x="1312" y="702" type="qcurve"/>
+			<point x="1289" y="778"/>
+			<point x="1266" y="840"/>
+			<point x="1216" y="913"/>
+			<point x="1184" y="959" type="qcurve"/>
+			<point name="fh13" x="1090" y="711" type="line"/>
+			<point x="1048" y="783"/>
+			<point name="fh14" x="1006" y="875"/>
+			<point name="fh15" x="940" y="954"/>
+			<point x="857" y="1013"/>
+			<point name="fv02" x="817" y="1013" type="qcurve"/>
+			<point name="fh16" x="707" y="1001"/>
+			<point x="636" y="864" type="qcurve"/>
+			<point x="707" y="891"/>
+			<point x="774" y="905"/>
+			<point name="fh17" x="800" y="905" type="qcurve"/>
+			<point name="fh18" x="827" y="905"/>
+			<point x="885" y="886"/>
+			<point name="fh19" x="939" y="852"/>
+			<point name="fh20" x="946" y="784" type="qcurve"/>
+			<point name="fh21" x="939" y="729"/>
+			<point x="878" y="657" type="qcurve"/>
+			<point name="mv03" x="764" y="524" type="line"/>
+			<point x="659" y="592" type="line"/>
+			<point x="719" y="652"/>
+			<point x="753" y="689"/>
+			<point x="787" y="729"/>
+			<point name="fh22" x="810" y="755"/>
+			<point x="810" y="760" type="qcurve"/>
+			<point x="810" y="788"/>
+			<point x="768" y="788" type="qcurve"/>
+			<point x="727" y="772"/>
+			<point x="671" y="749"/>
+			<point x="634" y="749" type="qcurve"/>
+			<point x="620" y="749"/>
+			<point x="572" y="760"/>
+			<point x="539" y="782"/>
+			<point x="518" y="822"/>
+			<point x="518" y="852" type="qcurve"/>
+			<point x="518" y="897"/>
+			<point name="fh23" x="570" y="1000"/>
+			<point name="fh24" x="662" y="1085"/>
+			<point name="fv03" x="764" y="1138"/>
+			<point name="mv04" x="810" y="1138" type="qcurve"/>
+			<point name="fv04" x="855" y="1138"/>
+			<point name="fv05" x="923" y="1123"/>
+			<point name="fh25" x="984" y="1086"/>
+			<point name="fh26" x="1041" y="1023"/>
+			<point name="fv06" x="1074" y="973" type="qcurve"/>
+			<point name="fh27" x="1151" y="1160" type="line"/>
+			<point x="1213" y="1096"/>
+			<point name="fh28" x="1314" y="970"/>
+			<point name="fh29" x="1384" y="846"/>
+			<point x="1424" y="718"/>
+			<point x="1424" y="650" type="qcurve"/>
+			<point x="1424" y="621"/>
+			<point x="1403" y="566"/>
+			<point x="1376" y="509"/>
+			<point x="1330" y="468"/>
+		</contour>
+	</outline>
+</glyph>

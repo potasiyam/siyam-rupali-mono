@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_sh_r_uukaar" format="2">
+	<advance width="1822"/>
+	<outline>
+		<component base="bn_sha"/>
+		<component base="bn_raphala" xOffset="1849" yOffset="337"/>
+		<component base="bn_uukaar.1" xOffset="1422"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>public.markColor</key>
+			<string>0.9341,0.648,0.952,1</string>
+		</dict>
+	</lib>
+</glyph>

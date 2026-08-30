@@ -1,5 +1,14 @@
 # Siyam Rupali Mono — Terminal Conversion Plan
 
+> **Execution status (2026-08-30):** v1 shipped as strict mono — see
+> `docs/WORKLOG.md` and `AGENTS.md` for what changed during execution and
+> why: (1) base is the `1.070ship` binary, not the vfb/UFO path (the 1.064
+> vfb/vtp are divergent snapshots); (2) strict 1-cell mono replaced the
+> 600/1200 hybrid (terminals derive width from wcwidth, so 2-cell Bengali
+> desyncs the grid; Monotty, the reference model, is deprecated by its own
+> maintainers); (3) upem is 2048 → cell = 1024; (4) spacing matras fixed
+> via 252 generated CV ligatures. The original plan text follows unchanged.
+
 > Goal: Convert Siyam Rupali (proportional Bangla) to `Siyam Rupali Mono/Term` — **hybrid mono/duo**: `1 grapheme cluster = 1 or 2 terminal cells` (adaptive width, fixed grid).
 > Owner: potasiyam (original author) — no license fork issue.
 > Reference model: `Monotty` (Tamil mono) + `Sarasa Term` (CJK duospace) — same `GSUB/GPOS -> 1 or 2 cells` constraint.

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_ng_gha" format="2">
+	<advance width="2135"/>
+	<outline>
+		<component base="bn_half_nga"/>
+		<component base="bn_gha" xOffset="807"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>public.markColor</key>
+			<string>0.952,0.9413,0.648,1</string>
+		</dict>
+	</lib>
+</glyph>

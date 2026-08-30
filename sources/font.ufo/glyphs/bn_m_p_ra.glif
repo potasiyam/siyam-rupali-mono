@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_m_p_ra" format="2">
+	<advance width="2358"/>
+	<outline>
+		<component base="bn_m_pa"/>
+		<component base="bn_raphala" xOffset="2732" yOffset="271"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="mdeltah" point="mh01-1" delta="1" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="fdeltah" point="fh33-0" delta="2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="rsb" delta="3" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="fdeltah" point="av01-1" delta="-1" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh33-0" delta="2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh01-1" delta="2" ppm1="10" ppm2="10"/&gt;
+    &lt;ttc code="fdeltav" point="fh08-1" delta="-4" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh06-1" delta="3" ppm1="10" ppm2="10"/&gt;
+    &lt;ttc code="fdeltav" point="av01-1" delta="-2" ppm1="12" ppm2="12"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.6838,0.952,0.648,1</string>
+		</dict>
+	</lib>
+</glyph>

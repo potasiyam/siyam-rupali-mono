@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_currency4" format="2">
+	<unicode hex="09F7"/>
+	<advance width="437"/>
+	<outline>
+		<contour>
+			<point x="185" y="1523" type="qcurve"/>
+			<point x="235" y="1523"/>
+			<point x="292" y="1408"/>
+			<point x="292" y="1308" type="qcurve"/>
+			<point x="292" y="379" type="line"/>
+			<point x="292" y="331"/>
+			<point x="317" y="288"/>
+			<point x="364" y="288" type="qcurve"/>
+			<point x="367" y="288" type="line"/>
+			<point x="367" y="130"/>
+			<point x="266" y="130" type="qcurve"/>
+			<point x="150" y="130"/>
+			<point x="150" y="362" type="qcurve"/>
+			<point x="150" y="1266" type="line"/>
+			<point x="150" y="1372"/>
+			<point x="63" y="1372" type="qcurve"/>
+			<point x="80" y="1523"/>
+		</contour>
+	</outline>
+</glyph>

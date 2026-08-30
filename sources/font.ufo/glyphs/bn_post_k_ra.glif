@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_post_k_ra" format="2">
+	<advance width="425"/>
+	<outline>
+		<contour>
+			<point x="-39" y="1401" type="line"/>
+			<point x="-39" y="1543" type="line"/>
+			<point name="av01" x="435" y="1543" type="line"/>
+			<point x="435" y="1401" type="line"/>
+		</contour>
+		<contour>
+			<point x="-689" y="514" type="line"/>
+			<point x="-744" y="578"/>
+			<point x="-744" y="664" type="qcurve"/>
+			<point x="-744" y="710"/>
+			<point x="-706" y="810"/>
+			<point name="fh01" x="-643" y="905"/>
+			<point name="fh02" x="-559" y="988"/>
+			<point x="-466" y="1052"/>
+			<point x="-370" y="1089"/>
+			<point x="-327" y="1089" type="qcurve"/>
+			<point x="-278" y="1089"/>
+			<point name="fh03" x="-194" y="1048"/>
+			<point name="fh04" x="-134" y="971"/>
+			<point x="-100" y="865"/>
+			<point name="fh21" x="-100" y="802" type="qcurve"/>
+			<point name="fv01" x="-62" y="834"/>
+			<point x="-1" y="875"/>
+			<point x="59" y="898"/>
+			<point x="127" y="907"/>
+			<point x="171" y="907" type="qcurve"/>
+			<point x="215" y="907"/>
+			<point name="fh05" x="297" y="865"/>
+			<point name="fh06" x="360" y="799"/>
+			<point x="398" y="714"/>
+			<point x="398" y="672" type="qcurve"/>
+			<point x="398" y="605"/>
+			<point x="340" y="506"/>
+			<point name="fh07" x="298" y="473" type="qcurve"/>
+			<point x="205" y="570" type="line"/>
+			<point x="254" y="610"/>
+			<point x="254" y="670" type="qcurve"/>
+			<point x="254" y="694"/>
+			<point x="231" y="730"/>
+			<point x="192" y="755"/>
+			<point x="143" y="765"/>
+			<point x="119" y="765" type="qcurve"/>
+			<point x="81" y="765"/>
+			<point name="fh22" x="-24" y="676"/>
+			<point x="-100" y="583" type="qcurve"/>
+			<point name="mh01" x="-100" y="-95" type="line"/>
+			<point name="fv02" x="-240" y="-95" type="line"/>
+			<point x="-240" y="45" type="line"/>
+			<point name="fv03" x="-375" y="161"/>
+			<point name="fv04" x="-539" y="161" type="qcurve"/>
+			<point name="fv05" x="-559" y="161"/>
+			<point name="fv06" x="-637" y="150"/>
+			<point x="-724" y="138"/>
+			<point x="-801" y="127"/>
+			<point x="-818" y="127" type="qcurve"/>
+			<point name="fh08" x="-894" y="127"/>
+			<point name="fh09" x="-1023" y="192"/>
+			<point name="fv07" x="-1119" y="301"/>
+			<point name="fv08" x="-1175" y="444"/>
+			<point name="mh02" x="-1175" y="522" type="qcurve"/>
+			<point x="-1175" y="639"/>
+			<point name="fh10" x="-1100" y="815" type="qcurve"/>
+			<point name="fh11" x="-990" y="744" type="line"/>
+			<point name="fh12" x="-1013" y="687"/>
+			<point name="fh13" x="-1034" y="564"/>
+			<point name="fh14" x="-1034" y="495" type="qcurve"/>
+			<point name="fh15" x="-1034" y="446"/>
+			<point name="fh16" x="-992" y="360"/>
+			<point name="fh17" x="-921" y="300"/>
+			<point x="-828" y="266"/>
+			<point x="-776" y="266" type="qcurve"/>
+			<point x="-759" y="266"/>
+			<point x="-682" y="277"/>
+			<point name="fv09" x="-595" y="290"/>
+			<point name="fv10" x="-516" y="301"/>
+			<point name="fv11" x="-495" y="301" type="qcurve"/>
+			<point name="fv12" x="-352" y="301"/>
+			<point name="fh18" x="-240" y="221" type="qcurve"/>
+			<point x="-240" y="818" type="line"/>
+			<point name="fh23" x="-240" y="886"/>
+			<point x="-293" y="948"/>
+			<point x="-343" y="948" type="qcurve"/>
+			<point name="fv13" x="-382" y="948"/>
+			<point x="-474" y="891"/>
+			<point name="fh24" x="-552" y="806"/>
+			<point x="-606" y="706"/>
+			<point x="-606" y="664" type="qcurve"/>
+			<point x="-606" y="653"/>
+			<point name="fh19" x="-597" y="628"/>
+			<point name="fh20" x="-589" y="612" type="qcurve"/>
+		</contour>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="alignv" point="av01" align="round"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+		</dict>
+	</lib>
+</glyph>

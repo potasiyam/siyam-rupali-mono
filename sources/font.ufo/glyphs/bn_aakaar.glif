@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_aakaar" format="2">
+	<unicode hex="09BE"/>
+	<advance width="536"/>
+	<outline>
+		<contour>
+			<point name="ah03" x="-146" y="1543" type="line"/>
+			<point x="52" y="1543" type="line"/>
+			<point x="72" y="1530"/>
+			<point x="106" y="1504"/>
+			<point x="142" y="1469"/>
+			<point x="183" y="1422"/>
+			<point x="210" y="1388" type="qcurve"/>
+			<point name="sh01" x="210" y="1771" type="line"/>
+			<point name="ah04" x="352" y="1771" type="line"/>
+			<point name="av01" x="352" y="1543" type="line"/>
+			<point name="ah02" x="597" y="1543" type="line"/>
+			<point name="sv01" x="597" y="1401" type="line"/>
+			<point name="sv02" x="352" y="1401" type="line"/>
+			<point name="ah01" x="352" y="0" type="line"/>
+			<point name="sh02" x="210" y="0" type="line"/>
+			<point x="210" y="1197" type="line"/>
+			<point x="183" y="1270"/>
+			<point x="79" y="1378"/>
+			<point x="7" y="1401" type="qcurve"/>
+			<point name="sv03" x="-146" y="1401" type="line"/>
+		</contour>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="alignh" point="ah01" align="round"/&gt;
+    &lt;ttc code="alignh" point="ah02" align="round"/&gt;
+    &lt;ttc code="alignh" point="ah03" align="round"/&gt;
+    &lt;ttc code="alignh" point="ah04" align="round"/&gt;
+    &lt;ttc code="mdeltah" point="ah04" delta="8" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="singleh" point1="ah04" point2="sh01" round="true"/&gt;
+    &lt;ttc code="mdeltah" point="ah02" delta="8" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="mdeltah" point="ah01" delta="8" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="singleh" point1="ah01" point2="sh02" round="true"/&gt;
+    &lt;ttc code="alignv" point="ah03" align="round"/&gt;
+    &lt;ttc code="alignv" point="ah02" align="round"/&gt;
+    &lt;ttc code="alignv" point="av01" align="round"/&gt;
+    &lt;ttc code="alignv" point="ah01" align="round"/&gt;
+    &lt;ttc code="singlev" point1="ah02" point2="sv01" round="true"/&gt;
+    &lt;ttc code="singlev" point1="av01" point2="sv02" round="true"/&gt;
+    &lt;ttc code="singlev" point1="ah03" point2="sv03" round="true"/&gt;
+    &lt;ttc code="fdeltah" point="rsb" delta="5" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="fdeltav" point="sv01" delta="-2" ppm1="18" ppm2="18"/&gt;
+    &lt;ttc code="fdeltav" point="sv02" delta="-2" ppm1="18" ppm2="18"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.6838,0.952,0.648,1</string>
+		</dict>
+	</lib>
+</glyph>

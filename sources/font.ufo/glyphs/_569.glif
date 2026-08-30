@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="_569" format="2">
+	<outline>
+		<contour>
+			<point name="fh01" x="-127" y="522" type="qcurve"/>
+			<point name="fh02" x="16" y="436"/>
+			<point name="fh19" x="16" y="298" type="qcurve"/>
+			<point name="fh20" x="16" y="221"/>
+			<point name="fh03" x="-51" y="97"/>
+			<point name="fh21" x="-171" y="9"/>
+			<point x="-338" y="-36"/>
+			<point name="mv01" x="-435" y="-36" type="qcurve"/>
+			<point x="-741" y="-36"/>
+			<point name="fh22" x="-1191" y="418"/>
+			<point name="fh04" x="-1338" y="871" type="qcurve"/>
+			<point name="fh05" x="-1206" y="910" type="line"/>
+			<point x="-1154" y="728"/>
+			<point name="fh06" x="-996" y="432"/>
+			<point name="fh07" x="-797" y="223"/>
+			<point name="fv01" x="-563" y="108"/>
+			<point x="-435" y="108" type="qcurve"/>
+			<point name="fh23" x="-124" y="108"/>
+			<point name="fh34" x="-124" y="293" type="qcurve"/>
+			<point x="-124" y="406"/>
+			<point x="-263" y="437" type="qcurve"/>
+			<point x="-298" y="404"/>
+			<point name="fh08" x="-454" y="404" type="qcurve"/>
+			<point name="fh09" x="-454" y="539" type="line"/>
+			<point x="-377" y="543"/>
+			<point name="fh24" x="-270" y="562"/>
+			<point name="fh25" x="-204" y="601"/>
+			<point x="-174" y="670"/>
+			<point x="-174" y="725" type="qcurve"/>
+			<point x="-174" y="757"/>
+			<point name="fh10" x="-244" y="805"/>
+			<point name="fh35" x="-339" y="836"/>
+			<point x="-432" y="852"/>
+			<point x="-456" y="852" type="qcurve"/>
+			<point x="-508" y="852"/>
+			<point name="fh26" x="-602" y="826"/>
+			<point name="fh11" x="-675" y="779"/>
+			<point name="fh27" x="-718" y="714"/>
+			<point x="-718" y="675" type="qcurve"/>
+			<point name="fh28" x="-718" y="620"/>
+			<point name="fh29" x="-652" y="567"/>
+			<point name="fh12" x="-581" y="567" type="qcurve"/>
+			<point name="fh13" x="-602" y="423" type="line"/>
+			<point name="fh14" x="-732" y="441"/>
+			<point name="fh30" x="-860" y="567"/>
+			<point name="fh31" x="-860" y="678" type="qcurve"/>
+			<point name="fh32" x="-860" y="747"/>
+			<point name="fh15" x="-794" y="861"/>
+			<point name="fh16" x="-683" y="945"/>
+			<point x="-539" y="992"/>
+			<point name="mv02" x="-459" y="992" type="qcurve"/>
+			<point x="-382" y="992"/>
+			<point name="fh17" x="-230" y="949"/>
+			<point name="fh18" x="-109" y="876"/>
+			<point name="fh33" x="-34" y="778"/>
+			<point name="fh36" x="-34" y="722" type="qcurve"/>
+			<point x="-34" y="580"/>
+		</contour>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="mdeltav" point="mv01" delta="-1" ppm1="8" ppm2="9"/&gt;
+    &lt;ttc code="mdeltav" point="mv02" delta="4" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="mdeltav" point="mv02" delta="3" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltah" point="fh01" delta="-3" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh01" delta="-3" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh02" delta="-2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh03" delta="-6" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh03" delta="-3" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="fdeltah" point="fh03" delta="-2" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltah" point="fh03" delta="-2" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltah" point="fh03" delta="-1" ppm1="10" ppm2="10"/&gt;
+    &lt;ttc code="fdeltah" point="fh04" delta="3" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltah" point="fh04" delta="3" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh05" delta="1" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh05" delta="2" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltah" point="fh06" delta="-3" ppm1="14" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh07" delta="-2" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="fh08" delta="2" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltah" point="fh09" delta="1" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltah" point="fh09" delta="2" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltah" point="fh10" delta="3" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="fh11" delta="-3" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="fh12" delta="-2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh12" delta="-1" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltah" point="fh13" delta="-3" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh13" delta="-2" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltah" point="fh14" delta="1" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh15" delta="4" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh16" delta="1" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="fh17" delta="-1" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltah" point="fh17" delta="2" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="fh18" delta="-4" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltah" point="fh18" delta="-3" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fh01" delta="-2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh02" delta="-2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh03" delta="2" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltav" point="fh03" delta="2" ppm1="10" ppm2="10"/&gt;
+    &lt;ttc code="fdeltav" point="fh03" delta="2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh03" delta="3" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="fdeltav" point="fh03" delta="3" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fh04" delta="-3" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltav" point="fh04" delta="-3" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh05" delta="-2" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltav" point="fh05" delta="-1" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh06" delta="-2" ppm1="14" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh07" delta="-2" ppm1="14" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh08" delta="1" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltav" point="fh09" delta="3" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltav" point="fh10" delta="2" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltav" point="fh11" delta="2" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltav" point="fh12" delta="1" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh13" delta="1" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltav" point="fh13" delta="1" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh14" delta="3" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh15" delta="-2" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh16" delta="3" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltav" point="fh17" delta="-2" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltav" point="fh17" delta="1" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltav" point="fh18" delta="-3" ppm1="8" ppm2="8"/&gt;
+    &lt;ttc code="fdeltav" point="fh18" delta="-2" ppm1="11" ppm2="11"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+		</dict>
+	</lib>
+</glyph>

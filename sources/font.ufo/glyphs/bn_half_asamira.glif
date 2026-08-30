@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_half_asamira" format="2">
+	<advance width="3"/>
+	<outline>
+		<contour>
+			<point x="-562" y="1562" type="line"/>
+			<point x="-649" y="1667" type="line"/>
+			<point x="135" y="2337" type="line"/>
+			<point x="224" y="2232" type="line"/>
+		</contour>
+	</outline>
+</glyph>

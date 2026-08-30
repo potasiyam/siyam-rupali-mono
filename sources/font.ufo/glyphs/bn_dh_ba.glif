@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_dh_ba" format="2">
+	<advance width="2015"/>
+	<outline>
+		<component base="bn_dha"/>
+		<component base="bn_baphala1" xOffset="1150"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="mdeltav" point="fv02-1" delta="-3" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltah" point="fv01-0" delta="-1" ppm1="10" ppm2="10"/&gt;
+    &lt;ttc code="fdeltah" point="fh10-1" delta="-1" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="fdeltah" point="fh11-1" delta="-2" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="fdeltah" point="fh08-1" delta="1" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltah" point="fh08-1" delta="2" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="fdeltah" point="fh09-1" delta="1" ppm1="10" ppm2="10"/&gt;
+    &lt;ttc code="fdeltav" point="fh10-1" delta="-3" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="fdeltav" point="fh11-1" delta="-1" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="fdeltav" point="fv03-1" delta="-2" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fv04-1" delta="-1" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fh07-1" delta="2" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fv02-1" delta="-4" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="fdeltav" point="fv02-1" delta="-3" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fv02-1" delta="-2" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltav" point="fh08-1" delta="-4" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltav" point="fh08-1" delta="-3" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fh08-1" delta="-3" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltav" point="fh08-1" delta="-3" ppm1="16" ppm2="16"/&gt;
+    &lt;ttc code="fdeltav" point="fh09-1" delta="-2" ppm1="14" ppm2="14"/&gt;
+    &lt;ttc code="fdeltav" point="fh09-1" delta="2" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fh09-1" delta="-2" ppm1="10" ppm2="10"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.9341,0.648,0.952,1</string>
+		</dict>
+	</lib>
+</glyph>

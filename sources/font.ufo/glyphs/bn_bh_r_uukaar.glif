@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_bh_r_uukaar" format="2">
+	<advance width="1905"/>
+	<outline>
+		<component base="bn_bh_ra"/>
+		<component base="bn_uukaar.1" xOffset="1510"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="fdeltah" point="fh17-0" delta="-1" ppm1="11" ppm2="11"/&gt;
+    &lt;ttc code="fdeltav" point="fh02-1" delta="-4" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltav" point="fh02-1" delta="-3" ppm1="11" ppm2="11"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.9341,0.648,0.952,1</string>
+		</dict>
+	</lib>
+</glyph>

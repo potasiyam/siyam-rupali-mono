@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_s_rikaar" format="2">
+	<advance width="1335"/>
+	<outline>
+		<component base="bn_half_sa"/>
+		<component base="bn_rikaar" xOffset="1303" yOffset="952"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="fdeltah" point="fh04-1" delta="-4" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltah" point="fh05-1" delta="-1" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltah" point="fh01-1" delta="1" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltav" point="fh04-1" delta="-1" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="fdeltav" point="fh05-1" delta="-2" ppm1="13" ppm2="13"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.9341,0.648,0.952,1</string>
+		</dict>
+	</lib>
+</glyph>

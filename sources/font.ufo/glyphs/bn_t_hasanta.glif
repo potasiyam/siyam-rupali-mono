@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_t_hasanta" format="2">
+	<advance width="1610"/>
+	<outline>
+		<component base="bn_ta"/>
+		<component base="bn_hasanta" xOffset="1320" yOffset="-38"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="mdeltah" point="fh04-1" delta="4" ppm1="13" ppm2="13"/&gt;
+    &lt;ttc code="mdeltav" point="fh04-1" delta="-6" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="fdeltah" point="fh01-1" delta="-6" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh01-1" delta="-3" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh01-1" delta="-2" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="fdeltah" point="fh02-1" delta="2" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh03-1" delta="-8" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltah" point="fh03-1" delta="-6" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltah" point="fh03-1" delta="-4" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="fdeltav" point="fv02-0" delta="2" ppm1="11" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh01-1" delta="2" ppm1="9" ppm2="9"/&gt;
+    &lt;ttc code="fdeltav" point="fh01-1" delta="4" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh02-1" delta="2" ppm1="15" ppm2="15"/&gt;
+    &lt;ttc code="fdeltav" point="fh03-1" delta="2" ppm1="12" ppm2="12"/&gt;
+    &lt;ttc code="fdeltav" point="fh03-1" delta="2" ppm1="15" ppm2="15"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+			<key>public.markColor</key>
+			<string>0.6838,0.952,0.648,1</string>
+		</dict>
+	</lib>
+</glyph>

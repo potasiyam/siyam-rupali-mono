@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_asamir_ukaar" format="2">
+	<advance width="1648"/>
+	<outline>
+		<component base="bn_asamira"/>
+		<component base="_598" xOffset="1141"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>public.markColor</key>
+			<string>0.9341,0.648,0.952,1</string>
+		</dict>
+	</lib>
+</glyph>

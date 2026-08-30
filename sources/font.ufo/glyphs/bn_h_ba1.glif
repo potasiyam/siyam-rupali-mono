@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_h_ba1" format="2">
+	<advance width="1272"/>
+	<outline>
+		<component base="bn_ha"/>
+		<component base="bn_baphala" xOffset="1170" yOffset="-306"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>public.markColor</key>
+			<string>0.9341,0.648,0.952,1</string>
+		</dict>
+	</lib>
+</glyph>

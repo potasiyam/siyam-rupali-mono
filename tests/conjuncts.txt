@@ -1,0 +1,15 @@
+# Bangla shaping golden tests.  <text>\t<expected space-separated glyph names>
+# Glyph names follow the .vtp / UFO naming (bn_*). Adjust to your final names.
+# Verified against the synthetic proof font built from 1.064.vtp.
+ক্ষ	bn_k_ssa
+ক্ত	bn_k_ta
+স্ত্র	bn_s_t_ra
+ঙ্গ	bn_ng_ga
+ন্ধ্র	bn_n_dh_ra
+হ্ম	bn_h_ma
+# CV ligatures (mono: spacing matras compose into one cell)
+কি	bn_ka_ikaar
+কো	bn_ka_okaar
+ড়ু	bn_rra bn_ukaar
+তে	bn_ta_ekaar
+না	bn_na_aakaar

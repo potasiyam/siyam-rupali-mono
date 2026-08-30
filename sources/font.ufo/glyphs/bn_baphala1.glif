@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_baphala1" format="2">
+	<advance width="876"/>
+	<outline>
+		<contour>
+			<point name="fh10" x="-27" y="868" type="qcurve"/>
+			<point x="54" y="848"/>
+			<point name="fh01" x="221" y="765"/>
+			<point name="fh02" x="371" y="659"/>
+			<point name="fh11" x="490" y="536"/>
+			<point x="524" y="475" type="qcurve"/>
+			<point x="524" y="1145" type="line"/>
+			<point x="493" y="1135"/>
+			<point name="fh03" x="396" y="1095"/>
+			<point name="fv01" x="285" y="1045"/>
+			<point name="fv03" x="167" y="987"/>
+			<point name="fv04" x="66" y="932"/>
+			<point x="-11" y="884"/>
+		</contour>
+		<contour>
+			<point x="524" y="0" type="line"/>
+			<point x="524" y="243" type="line"/>
+			<point name="fh04" x="498" y="300"/>
+			<point name="fh05" x="409" y="420"/>
+			<point name="fh06" x="298" y="531"/>
+			<point name="fh07" x="171" y="629"/>
+			<point name="fh12" x="39" y="702"/>
+			<point x="-90" y="744"/>
+			<point x="-149" y="744" type="qcurve"/>
+			<point name="fv02" x="-220" y="894" type="line"/>
+			<point name="fh08" x="142" y="1180"/>
+			<point name="fh09" x="524" y="1282" type="qcurve"/>
+			<point x="524" y="1401" type="line"/>
+			<point x="-90" y="1401" type="line"/>
+			<point x="-90" y="1543" type="line"/>
+			<point name="av01" x="950" y="1543" type="line"/>
+			<point x="950" y="1401" type="line"/>
+			<point x="666" y="1401" type="line"/>
+			<point x="666" y="0" type="line"/>
+		</contour>
+	</outline>
+	<lib>
+		<dict>
+			<key>com.fontlab.ttprogram</key>
+			<string>  &lt;ttProgram&gt;
+    &lt;ttc code="alignv" point="av01" align="round"/&gt;
+  &lt;/ttProgram&gt;
+</string>
+		</dict>
+	</lib>
+</glyph>

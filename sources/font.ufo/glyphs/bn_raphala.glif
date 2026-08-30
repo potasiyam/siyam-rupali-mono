@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_raphala" format="2">
+	<outline>
+		<contour>
+			<point name="fv06" x="-1031" y="-243" type="qcurve"/>
+			<point name="fv03" x="-1048" y="-243"/>
+			<point name="fv07" x="-1113" y="-258"/>
+			<point name="fv01" x="-1203" y="-275"/>
+			<point name="fv02" x="-1285" y="-277" type="qcurve"/>
+			<point name="fh18" x="-1396" y="-277"/>
+			<point name="fh01" x="-1567" y="-219"/>
+			<point name="fh05" x="-1683" y="-115"/>
+			<point name="fh02" x="-1744" y="28"/>
+			<point name="fh23" x="-1744" y="113" type="qcurve"/>
+			<point name="fh20" x="-1744" y="167"/>
+			<point name="fh07" x="-1719" y="286"/>
+			<point name="fh08" x="-1692" y="348" type="qcurve"/>
+			<point name="av01" x="-1565" y="315" type="line"/>
+			<point name="fh21" x="-1604" y="193"/>
+			<point name="fh22" x="-1604" y="143" type="qcurve"/>
+			<point name="fh09" x="-1604" y="67"/>
+			<point name="fh03" x="-1563" y="-38"/>
+			<point name="fh10" x="-1472" y="-105"/>
+			<point name="fh16" x="-1323" y="-135"/>
+			<point name="fv08" x="-1220" y="-132" type="qcurve"/>
+			<point name="fh19" x="-1194" y="-129"/>
+			<point name="fh17" x="-1137" y="-119"/>
+			<point name="fh11" x="-1084" y="-107"/>
+			<point name="fh12" x="-1034" y="-101"/>
+			<point name="fv04" x="-1010" y="-101" type="qcurve"/>
+			<point name="fv05" x="-929" y="-101"/>
+			<point name="fh06" x="-783" y="-167"/>
+			<point name="fh14" x="-716" y="-219" type="qcurve"/>
+			<point name="fh04" x="-716" y="409" type="line"/>
+			<point name="fh24" x="-574" y="409" type="line"/>
+			<point name="mh01" x="-574" y="-551" type="line"/>
+			<point name="mv01" x="-716" y="-551" type="line"/>
+			<point name="fh15" x="-716" y="-404" type="line"/>
+			<point x="-744" y="-371"/>
+			<point x="-821" y="-313"/>
+			<point name="fh13" x="-906" y="-269"/>
+			<point name="fv09" x="-994" y="-243"/>
+		</contour>
+	</outline>
+</glyph>

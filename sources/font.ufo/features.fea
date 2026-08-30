@@ -1,0 +1,69 @@
+
+
+
+feature aalt{
+  feature init;
+  feature akhn;
+  feature rphf;
+  feature half;
+  feature blwf;
+  feature pstf;
+  feature vatu;
+  feature pres;
+  feature blws;
+  feature psts;
+  feature haln;
+  feature locl;
+} aalt;
+
+feature blwm { # Below-Base Mark Positioning
+ script beng; # Bengali
+} blwm;
+
+feature init { # Initial Forms
+ script beng; # Bengali
+} init;
+
+feature akhn { # Akhands
+ script beng; # Bengali
+} akhn;
+
+feature rphf { # Reph Form
+ script beng; # Bengali
+} rphf;
+
+feature half { # Half Forms
+ script beng; # Bengali
+} half;
+
+feature blwf { # Below-Base Forms
+ script beng; # Bengali
+} blwf;
+
+feature pstf { # Post-base Forms
+ script beng; # Bengali
+} pstf;
+
+feature vatu { # Vattu Variants
+ script beng; # Bengali
+} vatu;
+
+feature pres { # Pre-base Substitutions
+ script beng; # Bengali
+} pres;
+
+feature blws { # Below-Base Substitutions
+ script beng; # Bengali
+} blws;
+
+feature psts { # Post-base Substitutions
+ script beng; # Bengali
+} psts;
+
+feature haln { # Halant Forms
+ script beng; # Bengali
+} haln;
+
+feature locl { # Localized Forms
+ script beng; # Bengali
+} locl;

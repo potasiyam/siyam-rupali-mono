@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glyph name="bn_gh_na" format="2">
+	<advance width="1328"/>
+	<outline>
+		<component base="bn_gha"/>
+		<component base="bn_naphala" xOffset="1740" yOffset="223"/>
+	</outline>
+	<lib>
+		<dict>
+			<key>public.markColor</key>
+			<string>0.952,0.9413,0.648,1</string>
+		</dict>
+	</lib>
+</glyph>
