@@ -56,26 +56,31 @@ typed order the curl lands over the base. No ligatures (useless in WT).
 Correct in WT, wrong anywhere that shapes — a specialist, not the
 answer.
 
-### 0.0.2 — `Siyam Rupali Mono` (UNIVERSAL — the current font)
+### 0.0.2 — `Siyam Rupali Mono` (first universal — one bug)
 
-One font that adapts to the renderer:
+One font that adapts to the renderer: the six pre-base/above marks
+(ি ে ৈ ো ৌ ং) ship with **shifted art under their original names** (for
+Windows Terminal's codepoint-order rendering), `_shaped` twins hold
+centered art, a GSUB restore lookup swaps shifted → centered for
+shaping renderers, and CV ligatures give shaping terminals exact
+1-cell clusters.
 
-- The six matras ship with **shifted art under their original names**
-  (WT renders those, unshaped, correctly).
-- `_shaped` twins hold the centered art; an appended GSUB restore rule
-  swaps shifted → centered **after** the ligature rules have matched —
-  so shaping renderers see classic correct forms.
-- CV ligatures (396 rules) give shaping terminals the exact 1-cell
-  clusters their grids demand.
+**Bug found in author testing:** WT *does* apply GSUB `pres` lookups
+(correcting an earlier wrong conclusion — it just never does the
+Bengali reordering). The restore therefore misfired in WT, pulling the
+centered ি into its own cell — detached from the ক.
 
-Result by environment:
+### 0.0.3 — `Siyam Rupali Mono` (CURRENT)
+
+Same universal architecture, **restore lookup removed** (now an
+opt-in flag). Result:
 
 | Where | What you see |
 |---|---|
-| Windows Terminal | 2 columns per কি-class cluster, split art, curl over the base, grid-consistent |
+| Windows Terminal | 2 columns per কি-class cluster, split art, curl over the base — the reported bug fixed |
 | WezTerm (Windows) | Merged ligature art + a phantom gap per cluster (ConPTY charges 2, art uses 1) |
 | kitty / VTE / WezTerm-on-Linux | Merged ligature exactly 1 column — grid-perfect |
-| Editors (VS Code, Word…) | Ligatures + correctly-centered leftovers |
+| Editors (VS Code, Word…) | Ligatures; non-ligated leftovers keep shifted art (rare, already-degraded cases) |
 
 Known platform limit (no font can fix): WT renders conjuncts
 letter-by-letter (ক্ষ = ক+ষ) until WT itself ships Bengali shaping
@@ -87,10 +92,10 @@ letter-by-letter (ক্ষ = ক+ষ) until WT itself ships Bengali shaping
 
 | Family (font picker name) | File | Version | Status |
 |---|---|---|---|
-| **Siyam Rupali Mono** | `%LOCALAPPDATA%\Microsoft\Windows\Fonts\SiyamRupaliMono.ttf` | 0.0.2 | **USE THIS** — universal, works everywhere |
+| **Siyam Rupali Mono** | `%LOCALAPPDATA%\Microsoft\Windows\Fonts\SiyamRupaliMono-003.ttf` | 0.0.3 | **USE THIS** — universal, works everywhere |
 | Siyam Rupali Mono Edit | `…\SiyamRupaliMono-Edit.ttf` | 0.0.1 | Optional — unsqueezed 2-cell view for editors |
-| Siyam Rupali Mono Wide | `…\SiyamRupaliMono-Wide-Alpha.ttf` | 0.0.1 | Superseded by 0.0.2 — safe to uninstall |
-| Siyam Rupali Mono WT | `…\SiyamRupaliMono-WT.ttf` | 0.0.1 | Superseded by 0.0.2 — safe to uninstall |
+| Siyam Rupali Mono Wide | `…\SiyamRupaliMono-Wide-Alpha.ttf` | 0.0.1 | Superseded by 0.0.3 — safe to uninstall |
+| Siyam Rupali Mono WT | `…\SiyamRupaliMono-WT.ttf` | 0.0.1 | Superseded by 0.0.3 — safe to uninstall |
 | Siyam Rupali | Avro's folder (system) | 1.070 | Original — managed by Avro, leave it |
 
 To uninstall the superseded ones yourself: Windows Settings →

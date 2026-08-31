@@ -179,6 +179,12 @@ def main():
                     help="rename family (e.g. 'Siyam Rupali Mono Wide')")
     ap.add_argument("--version", default=None,
                     help="version string, e.g. 1.101")
+    ap.add_argument("--restore-shifted", action="store_true",
+                    help="append a pres restore lookup swapping shifted "
+                         "pre-base art to the _shaped copies for non-"
+                         "ligated leftovers. OFF by default: Windows "
+                         "Terminal applies pres WITHOUT reordering, so "
+                         "the restore misfires there (WORKLOG late 9)")
     args = ap.parse_args()
 
     orig = TTFont(args.original)
@@ -315,37 +321,38 @@ def main():
 
     gs = font["GSUB"].table
 
-    # Universal-build restore: with mono_convert --prebase-shift, the six
-    # pre-base/above-mark glyphs carry SHIFTED art under their original
-    # names (for Windows Terminal's unshaped renderer). The ligature
-    # lookup must run FIRST (it keys on those same names — art is
-    # irrelevant to matching); afterwards this single-substitution hands
-    # non-ligated leftovers their centered art back so shaping renderers
-    # draw matras on the correct side. No VOLT lookup covers these six
-    # glyphs (verified 2026-08-31), so ordering after VOLT's pres lookups
-    # is safe.
+    # Optional restore (--restore-shifted): swaps shifted pre-base art back
+    # to centered copies for non-ligated leftovers. OFF BY DEFAULT — pixel-
+    # forensics 2026-08-31 (WORKLOG late 9) proved Windows Terminal 1.24
+    # applies pres GSUB WITHOUT the Bengali reorder: the restore misfired
+    # there, pulling the centered matra into the wrong cell (the author's
+    # "ি too far from ক" bug). With the restore omitted, WT renders the
+    # shifted art as designed (curl over the base cell); shaping renderers
+    # ligate in pres anyway, and the only cost is non-ligated leftovers
+    # (conjunct+matra — already a degraded case) keep shifted art.
     new_lookups = [lookup]
-    known = set(font.getGlyphOrder())
-    shaped_pairs = []
-    for base_name in sorted(PREBASE_SHIFT):
-        shaped = base_name + "_shaped"
-        if shaped in known and base_name in known:
-            # (coverage glyph, substitute): the cmap/default glyph carries
-            # shifted art; shaping renderers get the centered copy back
-            # after the ligature lookup has had its pass.
-            shaped_pairs.append((base_name, shaped))
-    if shaped_pairs:
-        # fontTools 4.x SingleSubst is format-switching: give it a
-        # {coverage_glyph: substitute} mapping and it picks the binary
-        # format itself (manual Format/Coverage/substitute attrs are
-        # silently ignored — found the hard way 2026-08-31).
-        ss = otTables.SingleSubst()
-        ss.mapping = {p[0]: p[1] for p in shaped_pairs}
-        ss_lookup = otTables.Lookup()
-        ss_lookup.LookupType = 1  # Single Substitution
-        ss_lookup.LookupFlag = 0
-        ss_lookup.SubTable = [ss]
-        new_lookups.append(ss_lookup)
+    if args.restore_shifted:
+        known = set(font.getGlyphOrder())
+        shaped_pairs = []
+        for base_name in sorted(PREBASE_SHIFT):
+            shaped = base_name + "_shaped"
+            if shaped in known and base_name in known:
+                # (coverage glyph, substitute): the cmap/default glyph
+                # carries shifted art; shaping renderers get the centered
+                # copy back after the ligature lookup has had its pass.
+                shaped_pairs.append((base_name, shaped))
+        if shaped_pairs:
+            # fontTools 4.x SingleSubst is format-switching: give it a
+            # {coverage_glyph: substitute} mapping and it picks the binary
+            # format itself (manual Format/Coverage/substitute attrs are
+            # silently ignored — found the hard way 2026-08-31).
+            ss = otTables.SingleSubst()
+            ss.mapping = {p[0]: p[1] for p in shaped_pairs}
+            ss_lookup = otTables.Lookup()
+            ss_lookup.LookupType = 1  # Single Substitution
+            ss_lookup.LookupFlag = 0
+            ss_lookup.SubTable = [ss]
+            new_lookups.append(ss_lookup)
 
     for lk in new_lookups:
         gs.LookupList.Lookup.append(lk)

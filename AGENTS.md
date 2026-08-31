@@ -35,7 +35,10 @@ project-specific decisions. Session history + evidence: `docs/WORKLOG.md`.
   the font binaries runs 1.002–1.070). Wide/Edit current = 1.105.
 - **Naming:** `bn_` snake_case, inherited from the base binary; generated
   CV ligatures follow `bn_<base>_<matra>`; standard (non-init) matra
-  variants get `_std` suffix (e.g. `bn_ka_ekaar_std`).
+  variants get `_std` suffix (e.g. `bn_ka_ekaar_std`); shifted WT art
+  lives under the ORIGINAL matra names with centered twins as
+  `<name>_shaped` (restore lookup omitted by default — WT applies pres
+  without reorder, WORKLOG late 9).
 - **fsType = 0** on output (we are the original author; ttfautohint also
   refuses the inherited restricted bit).
 - **Source of truth:** `legacy/base-1.070ship.ttf` (read-only input) +
@@ -44,28 +47,28 @@ project-specific decisions. Session history + evidence: `docs/WORKLOG.md`.
 - **Cell width variants (state 2026-08-31, universal era):** CV clusters
   carry ~1.7x a letter's ink, so at 1024 they squeeze to ~0.32
   (unreadable — author verdict). **PRIMARY DELIVERABLE = Universal
-  `Siyam Rupali Mono` 0.0.2** (`--prebase-shift` + ligatures): one font
+  `Siyam Rupali Mono` 0.0.3** (`--prebase-shift` + ligatures): one font
   that adapts to the renderer — the six pre-base/above-mark glyphs
   (ikaar ekaar aikaar okaar aukaar anusvara) carry SHIFTED art under
   their original names (Windows Terminal renders them codepoint-order,
-  unshaped), `_shaped` copies hold centered art, and an appended pres
-  restore lookup (LigatureSubst, then SingleSubst via `mapping` dict)
-  swaps shifted→centered for shaping renderers AFTER ligatures have
-  matched (order is load-bearing: restore renames the glyph). Result:
-  WT = correct split-cell look at WT's own per-codepoint grant; shaping
-  terminals (kitty/VTE) = 1-cell ligatures; editors = ligatures +
-  centered leftovers. Rules cover BOTH matra art variants (GSUB `init`
-  swaps bn_ekaar→bn_initekaar word-initially; mid-word ে/ৈ need `_std`
-  rules). Faithful ligature layout = original pen offsets (bbox packing
-  double-counted interlocks: 0.52 vs 0.68). **Kar glyphs are never
-  squeezed** (is_kar: native ink centered, advance = cell, symmetric
-  overflow). Specialist variants (kept in build/, installed for the
-  author's comparison): **Wide** (no prebase-shift; shaping terminals
-  that grant 1 cell/cluster), **WT** (no ligatures; WT only), **Edit**
-  (mono_convert only; matras keep own cell; gridless-editor maximalism).
-  Tested-and-withdrawn: Fullwidth 2048 (dead bearings around Latin),
-  2-cell "WideCV" (no terminal supports per-codepoint width), NBSP
-  2-cell system (designed, deferred — open work #6).
+  no reorder), `_shaped` copies hold centered art (unused unless the
+  opt-in `--restore-shifted` is passed — see WORKLOG late 9 for why the
+  restore misfires in WT), and appended pres LigatureSubst merges
+  clusters for shaping renderers. Result: WT = correct split-cell look
+  at WT's own per-codepoint grant; shaping terminals (kitty/VTE) =
+  1-cell ligatures; editors = ligatures. Rules cover BOTH matra art
+  variants (GSUB `init` swaps bn_ekaar→bn_initekaar word-initially;
+  mid-word ে/ৈ need `_std` rules). Faithful ligature layout = original
+  pen offsets (bbox packing double-counted interlocks: 0.52 vs 0.68).
+  **Kar glyphs are never squeezed** (is_kar: native ink centered,
+  advance = cell, symmetric overflow). Specialist variants (kept in
+  build/, installed for the author's comparison): **Wide** (no
+  prebase-shift; shaping terminals that grant 1 cell/cluster), **WT**
+  (no ligatures; WT only), **Edit** (mono_convert only; matras keep own
+  cell; gridless-editor maximalism). Tested-and-withdrawn: Fullwidth
+  2048 (dead bearings around Latin), 2-cell "WideCV" (no terminal
+  supports per-codepoint width), NBSP 2-cell system (designed,
+  deferred — open work #6).
 
 ## Build (reproducible; drive the scripts directly — no GNU make here)
 
@@ -74,9 +77,9 @@ uharfbuzz + vharfbuzz + wcwidth (brain venv absent on the Windows box).
 `PY=<python>` below.
 
 ```
-# UNIVERSAL build (primary; one font for WT + shaping terminals + editors) - 0.0.2
+# UNIVERSAL build (primary; one font for WT + shaping terminals + editors) - 0.0.3
 $PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/work-uni.unhinted.ttf --cell 1536 --ink-cap 0.97 --prebase-shift
-$PY tools/gen_cv_ligatures.py legacy/base-1.070ship.ttf build/work-uni.unhinted.ttf build/SiyamRupaliMono.ttf --cv-cell 1536 --ink-cap 0.97 --layout faithful --family "Siyam Rupali Mono" --version 0.0.2
+$PY tools/gen_cv_ligatures.py legacy/base-1.070ship.ttf build/work-uni.unhinted.ttf build/SiyamRupaliMono.ttf --cv-cell 1536 --ink-cap 0.97 --layout faithful --family "Siyam Rupali Mono" --version 0.0.3
 # Terminal build WITHOUT prebase-shift (Wide; shaping terminals only) - 0.0.1
 $PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/work1536.unhinted.ttf --cell 1536 --ink-cap 0.97
 $PY tools/gen_cv_ligatures.py legacy/base-1.070ship.ttf build/work1536.unhinted.ttf build/SiyamRupaliMono-Wide.ttf --cv-cell 1536 --ink-cap 0.97 --family "Siyam Rupali Mono Wide" --version 0.0.1
@@ -94,7 +97,7 @@ Gates (must pass; never weaken to make them pass):
 $PY ../agentic-font-dev/scripts/qa.py build/SiyamRupaliMono.ttf tests/conjuncts.txt --script beng --language ben                      # 11/11
 $PY tools/shape_check.py build/SiyamRupaliMono.ttf --cell 1536 --matrix --context                                                     # 0 failures
 $PY tools/shape_check.py build/SiyamRupaliMono-Edit.ttf --cell 1536 --max-cells 3 --matrix                                            # 0 failures; NO --context (no ligatures by design)
-$PY build/probe_restore.py                                                                                                            # k_ssa_i -> bn_ikaar_shaped proves the restore fires
+$PY build/probe_restore.py                                                                                                            # 5/5: ligatures fire; leftovers KEEP shifted defaults (restore is OFF by default -- WT applies pres WITHOUT reorder, WORKLOG late 9)
 ```
 
 Visual gates (unshaped render = WT's model; shaped render = kitty/editors):

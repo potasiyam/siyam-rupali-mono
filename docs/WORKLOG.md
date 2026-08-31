@@ -438,3 +438,55 @@ PLACE for author testing; delete or edit to revert). Cursor probe
 
 Probe windows left open in wezterm for the author (title
 C:\Windows\system32\cmd.EXE with the Bengali lines is the live one).
+
+## 2026-08-31 (late 9) — BUG + model correction: WT DOES shape (pres) without reorder; 0.0.3
+
+Author bug report: "in Windows Terminal ি is too far left of ক" (with
+Universal 0.0.2). Pixel forensics on WT 1.24 at size 30
+(tools/win_capture.py = PrintWindow capture; crop + cell grid):
+
+- কি rendered as [ক][ি centered in OWN cell] — the RESTORE lookup had
+  fired (bn_ikaar_shaped art), not the shifted default. ং likewise:
+  restored art (centered, raw low height) in its own cell.
+- But the LIGATURE never fired and there was NO reordering (সি stayed
+  স-then-ি).
+
+**CORRECTED WT MODEL (supersedes "WT does no shaping", late 5):**
+Windows Terminal 1.24 DOES apply DWrite GSUB feature lookups from
+'pres' — our appended SingleSubst restore demonstrably executed — but
+AtlasEngine does NOT do the Bengali shaper-side reorder, and draws
+per-codepoint cells. Consequences:
+- Ligature rules keyed on the REORDERED stream (bn_ikaar first) can
+  never match in WT: the stream stays [base][matra], the ligature's
+  Coverage misses, components don't align.
+- The restore lookup therefore misfired in WT: it swapped the shifted
+  art (meant for exactly this unreordered case) back to centered art,
+  leaving the matra detached in its own cell — the reported bug.
+
+**FIX (0.0.3):** the restore lookup is now OFF by default
+(gen_cv_ligatures --restore-shifted, opt-in). Universal build = shifted
+defaults + pres ligatures only. WT deterministically renders the
+shifted art (curl over the base cell = the unshaped render model,
+verified render_probe). Shaping renderers ligate in pres (unchanged —
+HB/WezTerm/VS Code merge কি into 1 cell). Only cost: non-ligated
+leftovers (conjunct+matra — already degraded, open work 2) keep
+shifted art in shaping renderers instead of centered.
+
+Gates on build/SiyamRupaliMono.ttf 0.0.3 (hinted): qa 11/11; matrix
+0 failures; probe_restore updated to assert NO restore (bn_ikaar stays
+bn_ikaar for ক্ষি). Installed under NEW filename
+SiyamRupaliMono-003.ttf (same-name overwrite would serve stale glyphs
+from DWrite's cache — the late-5 lesson generalized). Orphaned 0.0.2
+file removed. WT settings left at face "Siyam Rupali Mono", size 14.
+NOTE: the author's open WT window keeps rendering 0.0.2 glyphs until
+WT is fully restarted (DWrite caches loaded font files per process).
+
+Method notes: broker screenshot/typing was unreliable this session
+(stale frames, frontmost detection dead: "0 active apps") — window
+capture via PrintWindow (tools/win_capture.py) + cell-grid overlays
+carried the diagnosis; typing replaced by clipboard+SendKeys
+(build/paste_test.ps1, needs UTF-8 BOM for PS 5.1 + Bengali literals).
+The paste-based GUI probe stayed inconclusive; the 0.0.3 WT behavior
+was not re-verified on pixels — it follows deterministically from the
+measured WT lookup behavior (restore was the only glyph-altering
+lookup in the chain; it is gone).
