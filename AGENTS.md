@@ -22,29 +22,55 @@ project-specific decisions. Session history + evidence: `docs/WORKLOG.md`.
   refuses, 606 vs 607). The vtp name drift vs 1.070 binaries (80/474) is
   moot while layout is never recompiled. `sources/` + `legacy/ref.ttf`
   are kept for provenance and a future redesign only.
-- **Version line:** `1.100` (Term series fork; version history in the font
-  binaries runs 1.002–1.070).
+- **Version line:** `1.100`-`1.105` (Term series fork; version history in
+  the font binaries runs 1.002–1.070). Wide/Edit current = 1.105.
 - **Naming:** `bn_` snake_case, inherited from the base binary; generated
-  CV ligatures follow `bn_<base>_<matra>`.
+  CV ligatures follow `bn_<base>_<matra>`; standard (non-init) matra
+  variants get `_std` suffix (e.g. `bn_ka_ekaar_std`).
 - **fsType = 0** on output (we are the original author; ttfautohint also
   refuses the inherited restricted bit).
 - **Source of truth:** `legacy/base-1.070ship.ttf` (read-only input) +
   `tools/mono_convert.py` + `tools/gen_cv_ligatures.py` (all mutations).
   Never hand-edit the built TTF; regenerate.
+- **Cell width variants (final state 2026-08-31):** CV clusters carry
+  ~1.7x a letter's ink, so at 1024 they squeeze to ~0.32 (unreadable —
+  author verdict). Terminal grant per cluster = sum of wcwidth; bare কি
+  = 1 cell forever. Two strict-mono deliverables:
+  **Wide v1.105** `--cell 1536 --ink-cap 0.97` + `--layout faithful`
+  (terminal; CV clusters 0.68 median squeeze; rules cover BOTH matra art
+  variants — GSUB `init` swaps bn_ekaar→bn_initekaar word-initially, so
+  mid-word ে/ৈ need the `_std` rules too) and **Edit v1.105**
+  (mono_convert only — no CV ligatures; matras keep their own full
+  cell, everything unsqueezed below the cap; for gridless editors where
+  font advances rule). Faithful layout = parts at original pen offsets,
+  preserving designed matra/base interlocks (bbox packing double-counted
+  those zones: 0.52 vs 0.68). **Kar glyphs are never squeezed**
+  (is_kar: native ink centered, advance = cell, symmetric overflow).
+  Tested-and-withdrawn: Fullwidth 2048 (dead bearings around Latin),
+  2-cell "WideCV" (no terminal supports per-codepoint width), NBSP
+  2-cell system (designed, deferred — open work #6).
 
-## Build (reproducible; no GNU make on this machine — drive directly)
+## Build (reproducible; drive the scripts directly — no GNU make here)
+
+System env used for v1.104/v1.105: Python 3.12 + fontTools 4.63 +
+uharfbuzz + vharfbuzz + wcwidth (brain venv absent on the Windows box).
+`PY=<python>` below.
 
 ```
-PY=I:/projects/agentic-font-dev/.venv/Scripts/python.exe   # brain venv
-$PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/work.unhinted.ttf
-$PY tools/gen_cv_ligatures.py legacy/base-1.070ship.ttf build/work.unhinted.ttf build/SiyamRupaliMono-Regular.ttf
-$PY ../agentic-font-dev/scripts/hint.py build/SiyamRupaliMono-Regular.ttf
+# Terminal build (cv ligatures, 1-cell clusters) - v1.105
+$PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/work1536.unhinted.ttf --cell 1536 --ink-cap 0.97
+$PY tools/gen_cv_ligatures.py legacy/base-1.070ship.ttf build/work1536.unhinted.ttf build/SiyamRupaliMono-Wide.ttf --cv-cell 1536 --ink-cap 0.97 --family "Siyam Rupali Mono Wide" --version 1.105
+# Editor build (no cv ligatures; matras keep their own cell) - v1.105
+$PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/SiyamRupaliMono-Edit.ttf --cell 1536 --ink-cap 0.97 --family "Siyam Rupali Mono Edit" --version 1.105
+# Optional Regular 1024 variant: same as terminal build but --cell default (1024), version 1.100
+# Hinting (brain venv only): $PY ../agentic-font-dev/scripts/hint.py build/<ttf>
 ```
 
-Gates (both must pass; never weaken to make them pass):
+Gates (must pass; never weaken to make them pass):
 ```
-$PY ../agentic-font-dev/scripts/qa.py build/SiyamRupaliMono-Regular.ttf tests/conjuncts.txt --script beng --language ben
-$PY tools/shape_check.py build/SiyamRupaliMono-Regular.ttf --matrix   # 0 overflow expected
+$PY ../agentic-font-dev/scripts/qa.py build/SiyamRupaliMono-Wide.ttf tests/conjuncts.txt --script beng --language ben
+$PY tools/shape_check.py build/SiyamRupaliMono-Wide.ttf --cell 1536 --matrix --context   # 0 failures
+$PY tools/shape_check.py build/SiyamRupaliMono-Edit.ttf --cell 1536 --max-cells 3 --matrix   # 0 failures; NO --context (no ligatures by design)
 ```
 
 The Makefile mirrors these for GNU-make environments; on this Windows
@@ -64,10 +90,18 @@ box `make` is Embarcadero's and cannot parse it.
 
 ## Open work (priority order)
 
-1. Visual review at 12–16px (hb-view or FreeType render sheet) —
-   condensation median 0.62 needs eyeballing; worst triple conjuncts 0.30.
-2. Conjunct + spacing matra (র্কি class) still 2 cells — v2: contextual
-   base alternates + matra-as-mark.
-3. GPOS above-marks (anusvara/visarga) for কং -class clusters.
+1. Visual review of Wide 1536 + Edit at 12-16px (hb-view or FreeType
+   render sheet) - cluster squeeze 0.68 median is the accepted ceiling;
+   eyeball before wide release.
+2. Conjunct + spacing matra (ক্ষি class) renders as two full cells in
+   the terminal build (conjuncts outside the 36-base ligature scope) -
+   v2: extend CV ligature coverage to conjunct outputs (automatable,
+   ~2600 glyphs) or accept.
+3. GPOS above-marks (anusvara/visarga) for কং-class clusters - they are
+   GDEF class 1 (bases) in the VOLT font, so কং = 2 cells vs a 1-cell
+   grant (overlap); needs abvs anchors + zero-advance marks.
 4. `ss01` hasanta-explicit fallback feature (plan Phase 3).
 5. WOFF2 deliverable (needs brotli in a venv).
+6. NBSP-escape 2-cell system (font GSUB + Avro terminal-mode) -
+   designed, deferred; only path to unsqueezed bare CV clusters in a
+   strict terminal grid.

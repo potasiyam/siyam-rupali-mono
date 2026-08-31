@@ -4,16 +4,15 @@
 Model: every advance-bearing glyph occupies exactly ONE cell of `cell`
 units (default: upem/2 = 1024). Outlines are x-condensed (y untouched) to
 fit inside `ink_cap * cell`, then recentered in the cell. Marks (GDEF
-class 3 or advance < mark_floor) keep their near-zero advances. GPOS
-MarkToBase anchors move with each base glyph's transform. Legacy tables
-that encode the OLD advances/bitmaps/hints are dropped.
+class 3 or advance < mark_floor) keep their near-zero advances. Kar
+(vowel-sign) glyphs are exempt from squeezing (is_kar). GPOS MarkToBase
+anchors move with each base glyph's transform. Legacy tables that encode
+the OLD advances/bitmaps/hints are dropped.
 
-Why strict mono (not the 600/1200 hybrid from PLAN.md as written): real
-terminals measure cell count from Unicode width (wcwidth), not from font
-advances — Bengali clusters are always 1 cell — so a font whose Bengali
-advance is 2 cells desyncs the grid everywhere. A hybrid variant can be
-built later with --cell-beng 2048 as an experiment; it needs terminal-side
-width overrides and is not the default deliverable.
+This script is step 1 of the pipeline for BOTH deliverables:
+  - terminal build: step 2 = gen_cv_ligatures.py (CV ligatures, 1 cell)
+  - editor build:   no step 2 (matras keep their own full cell)
+See AGENTS.md / docs/TERMINAL.md.
 
 Usage:
   mono_convert.py IN.ttf OUT.ttf [--cell N] [--ink-cap 0.92]
@@ -24,8 +23,7 @@ import sys
 
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.pens.transformPen import TransformPen
-from fontTools.ttLib import TTFont, newTable
-from fontTools.ttLib.tables._g_l_y_f import Glyph
+from fontTools.ttLib import TTFont
 
 
 def draw_decomposed(glyph, table, pen):
@@ -42,6 +40,15 @@ def draw_decomposed(glyph, table, pen):
         glyph.draw(pen, glyfTable=table)
 
 MARK_ADV_FLOOR = 300  # advances below this are treated as mark-ish, untouched
+
+# Kar (vowel-sign) glyphs are NEVER x-squeezed: author directive
+# 2026-08-31 — keep native ink, center it in the cell (advance = cell),
+# letting it overflow symmetrically into neighboring bearings instead of
+# distorting the sign. Excluded: bn_okaar/bn_aukaar are independent
+# VOWELS (base letters), not matras — those squeeze normally.
+def is_kar(name):
+    return (name.endswith("kaar")
+            and not name.endswith(("okaar", "aukaar"))) or name == "bn_aumark"
 
 
 class RoundingPen:
@@ -143,7 +150,11 @@ def main():
             continue
         x0, _, x1, _ = bb
         bw = x1 - x0
-        sx = min(1.0, ink_max / bw)
+        if is_kar(name):
+            # kars: never squeeze — native ink, centered (author directive)
+            sx = 1.0
+        else:
+            sx = min(1.0, ink_max / bw)
         # recenter ink in the cell
         dx = (cell - sx * bw) / 2 - sx * x0
         factors[name] = (sx, dx)
@@ -182,7 +193,12 @@ def main():
                 sx, dx = fct
                 rec = st.BaseArray.BaseRecord[i]
                 for anchor in rec.BaseAnchor:
-                    if anchor is not None and sx != 1.0:
+                    # move on EVERY transformed base: sx condenses, but dx
+                    # recenters even identity (sx=1) glyphs — skipping dx
+                    # left marks at the original x while ink re-centered
+                    # (exposed at cell 1536/2048 where most glyphs are
+                    # identity; কু drifted -788 units off-base).
+                    if anchor is not None:
                         anchor.XCoordinate = round(sx * anchor.XCoordinate + dx)
                         moved += 1
     print(f"GPOS base anchors moved: {moved}")

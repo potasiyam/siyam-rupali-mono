@@ -4,19 +4,28 @@
 Problem: the seven spacing matras (ি ী ে ৈ ো ৌ া) each carry their own
 advance, so কি = 2 cells and কো = 3 cells while a terminal grants every
 Bengali cluster exactly 1 cell (wcwidth). This tool composes base+matra
-art (from the ORIGINAL proportional font) into single 1024-unit ligature
-glyphs and adds GSUB ligature rules that consume the reordered stream
+art (from the ORIGINAL proportional font) into single ligature glyphs
+and adds GSUB ligature rules that consume the reordered stream
 (e.g. কি shapes to [bn_ikaar, bn_ka] -> sub bn_ikaar bn_ka by bn_ka_ikaar).
 
-Layout inside the cell (ink budget 942 = 0.92 * 1024):
-  2-part, post matra (B+া, B+ী): base [0..565], matra [602..942]
-  2-part, pre matra  (ি+B, ে+B, ৈ+B): matra [0..340], base [377..942]
-  3-part (ো, ৌ): pre [0..230], base [267..675], post [712..942]
-
-v1 scope: bare consonant bases only. Conjunct + matra (e.g. র্কি) keeps
-the 2-cell overflow and is the documented v2 work item.
+v1 scope: bare consonant bases only. Conjunct + matra (e.g. ক্ষি) keeps
+the multi-cell overflow and is the documented v2 work item.
 
 Usage: gen_cv_ligatures.py ORIGINAL.ttf CONVERTED.ttf OUT.ttf [--smoke]
+       [--cv-cell N] [--layout faithful|pack] [--ink-cap F] [--gap N]
+       [--family NAME] [--version X.Y]
+
+--cv-cell 1024 (default): legacy strict build — fixed sub-regions inside a
+  single 1024-unit cell (kept for reproducibility of the v1.100 build).
+Wider --cv-cell (e.g. 1536): parts laid out at a UNIFORM scale centered
+  in the frame. Two layouts:
+  faithful (default): parts keep their ORIGINAL pen offsets — the
+    designed matra/base interlocks (matra inks legitimately overlap the
+    base; bn_iikaar's ink is ~3x its advance) are preserved exactly.
+  pack: bbox side-by-side with --gap air between parts (legacy).
+Pre-base matras have TWO art variants (GSUB 'init' feature swaps
+bn_ekaar->bn_initekaar word-initially); rules are emitted for BOTH, the
+standard form getting a separate ligature glyph suffixed _std.
 """
 import argparse
 import sys
@@ -28,8 +37,6 @@ from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables import otTables
 
 from mono_convert import RoundingPen, draw_decomposed, glyph_bbox
-
-CELL = 1024
 
 # matra stream patterns: (suffix, pre glyph, post glyph)
 PATTERNS = [
@@ -57,6 +64,74 @@ CONSONANT_GLYPHS = [
     "bn_sha", "bn_ssa", "bn_sa", "bn_ha", "bn_half_ta", "bn_rra",
     "bn_rha", "bn_yya",
 ]
+
+
+# Pre-base matras have TWO art variants in this font: the standard form and
+# the word-initial form substituted by the GSUB 'init' feature (verified in
+# the binary: init maps bn_ekaar->bn_initekaar, bn_aikaar->bn_initaikaar).
+# Ligature rules must cover BOTH, otherwise mid-word ে/ৈ clusters (init
+# not applied) fall back to two full cells — the ইউকে vs কে bug of
+# 2026-08-31. The variants carry different outlines, so each gets its own
+# ligature glyph, suffixed _std for the standard (non-init) form.
+PRE_VARIANTS = {
+    "bn_initekaar": ("bn_ekaar", "_std"),
+    "bn_initaikaar": ("bn_aikaar", "_std"),
+}
+
+# glyphs that can appear as the pre-base matra part of a stream
+PRE_GLYPHS = {"bn_ikaar", "bn_initekaar", "bn_ekaar",
+              "bn_initaikaar", "bn_aikaar"}
+
+
+def layout_proportional(orig, names, bbox_cache, frame, gap=30):
+    """Lay parts left-to-right at ONE uniform scale, centered in `frame`.
+
+    Uniform scale keeps stroke weight identical between base and matra
+    (the per-part squeeze in the legacy regions made thin/thick mismatches
+    inside a single ligature — the 'too thin' review of 2026-08-31).
+    """
+    boxes = [glyph_bbox(orig, n, bbox_cache) for n in names]
+    widths = [b[2] - b[0] for b in boxes]
+    avail = frame - gap * (len(names) - 1)
+    s = min(1.0, avail / sum(widths))
+    x = (frame - (s * sum(widths) + gap * (len(names) - 1))) / 2
+    parts = []
+    for name, box, w in zip(names, boxes, widths):
+        parts.append((name, (s, x - s * box[0])))
+        x += s * w + gap
+    return parts, s
+
+
+def layout_faithful(ofont, names, bbox_cache, frame):
+    """Place parts at their ORIGINAL pen offsets, scale the assembly.
+
+    The original advance-based layout already encodes the designed
+    interlock between base and matra (e.g. bn_iikaar's ink is ~3x its
+    advance because the curl sweeps across the base's x-range; matra
+    strokes JOIN the base — that is the script's design, not collision).
+    Bbox side-by-side packing double-counts those overlap zones and
+    severs the connections; this layout preserves them exactly.
+
+    Scale = frame / advance-span; the scaled ink block is centered. If
+    the ink block (curls can overshoot the span) exceeds the frame, it
+    is shrunk to fit.
+    """
+    hmtx = ofont["hmtx"]
+    pens = []
+    pen = 0.0
+    for n in names:
+        pens.append(pen)
+        pen += hmtx[n][0]
+    span = pen
+    boxes = [glyph_bbox(ofont["glyf"], n, bbox_cache) for n in names]
+    x0s = [p + b[0] for p, b in zip(pens, boxes)]
+    x1s = [p + b[2] for p, b in zip(pens, boxes)]
+    ink_lo, ink_hi = min(x0s), max(x1s)
+    s = min(1.0, frame / span, frame / (ink_hi - ink_lo))
+    lo = ink_lo * s
+    dx = (frame - (ink_hi - ink_lo) * s) / 2 - lo
+    parts = [(n, (s, pens[i] * s + dx)) for i, n in enumerate(names)]
+    return parts, s
 
 
 def part_transform(glyf, name, region, bbox_cache):
@@ -89,6 +164,21 @@ def main():
     ap.add_argument("outfile")
     ap.add_argument("--smoke", action="store_true",
                     help="one ligature only (merge-behavior test)")
+    ap.add_argument("--cv-cell", type=int, default=1024,
+                    help="advance per ligature glyph: 1024 (strict, "
+                         "fixed regions) or wider (uniform scale)")
+    ap.add_argument("--ink-cap", type=float, default=0.92,
+                    help="fraction of cv-cell usable as ink (wide mode)")
+    ap.add_argument("--gap", type=int, default=30,
+                    help="units between parts in wide mode")
+    ap.add_argument("--layout", choices=("faithful", "pack"), default="faithful",
+                    help="wide-mode part layout: faithful = original pen "
+                         "offsets (preserves designed matra interlocks, "
+                         "default); pack = bbox side-by-side with --gap")
+    ap.add_argument("--family", default=None,
+                    help="rename family (e.g. 'Siyam Rupali Mono Wide')")
+    ap.add_argument("--version", default=None,
+                    help="version string, e.g. 1.101")
     args = ap.parse_args()
 
     orig = TTFont(args.original)
@@ -102,48 +192,91 @@ def main():
     bases = CONSONANT_GLYPHS[:1] if args.smoke else CONSONANT_GLYPHS
     rules = []
     made = 0
+    scales = []
+
+    def make_ligature(stream, out_name):
+        """Lay out, build, and register one CV ligature glyph + rule."""
+        nonlocal made
+        if args.cv_cell == 1024:
+            # legacy strict layout: fixed hand-tuned sub-regions
+            # (kept for reproducibility of the v1.100 build)
+            if len(stream) == 3:
+                regs = REGIONS[3]
+                parts = [
+                    (stream[0], part_transform(oglyf, stream[0], regs["pre"], bbox_cache)),
+                    (stream[1], part_transform(oglyf, stream[1], regs["base"], bbox_cache)),
+                    (stream[2], part_transform(oglyf, stream[2], regs["post"], bbox_cache)),
+                ]
+            elif stream[0] in PRE_GLYPHS:
+                regs = REGIONS[2]
+                parts = [
+                    (stream[0], part_transform(oglyf, stream[0], regs["pre"], bbox_cache)),
+                    (stream[1], part_transform(oglyf, stream[1], regs["base"], bbox_cache)),
+                ]
+            else:
+                regs = REGIONS[2]
+                parts = [
+                    (stream[0], part_transform(oglyf, stream[0], regs["post_base"],
+                                               bbox_cache)),
+                    (stream[1], part_transform(oglyf, stream[1], regs["post"],
+                                               bbox_cache)),
+                ]
+            s = 1.0
+        else:
+            # wide layout
+            if args.layout == "faithful":
+                parts, s = layout_faithful(orig, stream, bbox_cache,
+                                           int(args.ink_cap * args.cv_cell))
+            else:
+                parts, s = layout_proportional(
+                    oglyf, stream, bbox_cache,
+                    int(args.ink_cap * args.cv_cell), gap=args.gap)
+            scales.append(s)
+        glyph, lsb = build_ligature(oglyf, parts, bbox_cache)
+        glyf[out_name] = glyph  # auto-appends to glyphOrder (verified)
+        font["hmtx"].metrics[out_name] = (args.cv_cell, lsb)
+        existing.add(out_name)
+        rules.append((stream, out_name))
+        made += 1
+
     for base in bases:
         for suffix, pre, post in PATTERNS:
             new_name = f"{base}_{suffix}"
             if new_name in existing:
                 print(f"  skip {new_name} (exists)")
                 continue
-            if pre and post:
-                regs = REGIONS[3]
-                parts = [
-                    (pre, part_transform(oglyf, pre, regs["pre"], bbox_cache)),
-                    (base, part_transform(oglyf, base, regs["base"], bbox_cache)),
-                    (post, part_transform(oglyf, post, regs["post"], bbox_cache)),
-                ]
-                stream = [pre, base, post]
-            elif pre:
-                regs = REGIONS[2]
-                parts = [
-                    (pre, part_transform(oglyf, pre, regs["pre"], bbox_cache)),
-                    (base, part_transform(oglyf, base, regs["base"], bbox_cache)),
-                ]
-                stream = [pre, base]
-            else:
-                regs = REGIONS[2]
-                parts = [
-                    (base, part_transform(oglyf, base, regs["post_base"],
-                                          bbox_cache)),
-                    (post, part_transform(oglyf, post, regs["post"],
-                                          bbox_cache)),
-                ]
-                stream = [base, post]
-            glyph, lsb = build_ligature(oglyf, parts, bbox_cache)
-            glyf[new_name] = glyph  # auto-appends to glyphOrder (verified)
-            font["hmtx"].metrics[new_name] = (CELL, lsb)
-            existing.add(new_name)
-            rules.append((stream, new_name))
-            made += 1
+            stream = [p for p in (pre, base, post) if p]
+            make_ligature(stream, new_name)
+            if pre in PRE_VARIANTS:
+                alias, tag = PRE_VARIANTS[pre]
+                vstream = [alias if g == pre else g for g in stream]
+                vname = new_name + tag
+                if vname not in existing:
+                    make_ligature(vstream, vname)
 
     order = font.getGlyphOrder()
     assert len(order) == len(set(order)) == len(glyf.glyphs), (
         f"glyph order desync: {len(order)} names / {len(glyf.glyphs)} glyphs")
     print(f"generated {made} CV ligature glyphs "
-          f"({len(order)} glyphs total)")
+          f"({len(order)} glyphs total, advance {args.cv_cell})")
+    if scales:
+        scales.sort()
+        print(f"uniform scale: min={scales[0]:.3f} "
+              f"median={scales[len(scales)//2]:.3f} max={scales[-1]:.3f}")
+
+    if args.family or args.version:
+        fam = args.family or "Siyam Rupali Mono"
+        sub = "Regular"
+        ps = fam.replace(" ", "") + "-" + sub
+        full = f"{fam} {sub}"
+        ver = f"Version {args.version or '1.100'}"
+        name = font["name"]
+        for nid, val in ((1, fam), (2, sub), (3, f"{ps};{ver};mono-term"),
+                         (4, full), (5, ver), (6, ps), (16, fam), (17, sub)):
+            name.setName(val, nid, 3, 1, 0x409)
+            name.setName(val, nid, 1, 0, 0)
+        major, minor = (args.version or "1.100").split(".")[:2]
+        font["head"].fontRevision = float(f"{major}.{minor}")
 
     fea_lines = ["# rules compiled into the existing GSUB by gen_cv_ligatures.py",
                  "# (addOpenTypeFeatures REPLACES GSUB — QA-proven on 2026-08-30;",

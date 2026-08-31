@@ -22,6 +22,18 @@ CLUSTERS = [
     "ং", "ঃ", "ঁ",
 ]
 
+# Context regression: mid-word ে/ৈ (init feature NOT applied) must still
+# ligate via the _std rules. 2026-08-31 bug: only bn_initekaar/bn_initaikaar
+# were covered, so ইউকে rendered as two cells while কে was one.
+CONTEXT_RULES = [
+    ("ইউকে", "bn_ka_ekaar_std"),
+    ("ইউকি", "bn_ka_ikaar"),
+    ("ইউকো", "bn_ka_okaar_std"),
+    ("ইউকৌ", "bn_ka_aukaar_std"),
+    ("কে", "bn_ka_ekaar"),
+    ("কো", "bn_ka_okaar"),
+]
+
 
 def matrix_clusters():
     """All consonant x spacing-matra combos, as unicode cluster strings."""
@@ -39,6 +51,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("font")
     ap.add_argument("--cell", type=int, default=None)
+    ap.add_argument("--max-cells", type=float, default=1.0,
+                    help="allowed cluster width in cells (2.0 for the "
+                         "WideCV build; strict gate stays 1.0)")
+    ap.add_argument("--context", action="store_true",
+                    help="also assert init-variant ligature coverage "
+                         "(terminal builds with CV ligatures only; the "
+                         "ligature-free Edit build must NOT pass this)")
     ap.add_argument("--matrix", action="store_true",
                     help="check all consonant x matra combos")
     args = ap.parse_args()
@@ -61,14 +80,22 @@ def main():
             total += pos.x_advance
         cells = total / cell
         flag = ""
-        if total > cell + 8:  # small tolerance
+        if total > cell * args.max_cells + 8:  # small tolerance
             flag = "  <-- OVERFLOW"
             bad += 1
         if not quiet or flag:
             print(f"{text!r:12} total={total:5} ({cells:.2f} cell) "
                   f"{' '.join(glyphs)}{flag}")
 
-    print(f"\n{bad} cluster(s) overflow 1 cell")
+    for text, want in (CONTEXT_RULES if args.context else []):
+        buf = vhb.shape(text, feats)
+        names = [vhb.hbfont.glyph_to_string(i.codepoint)
+                 for i in buf.glyph_infos]
+        if want not in names:
+            bad += 1
+            print(f"CONTEXT FAIL {text!r}: want {want} in {names}")
+
+    print(f"\n{bad} failure(s)")
     return 1 if bad else 0
 
 

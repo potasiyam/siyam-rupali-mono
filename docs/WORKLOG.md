@@ -119,3 +119,137 @@ $PY tools/shape_check.py       build/SiyamRupaliMono-Regular.ttf --matrix
 - **Hybrid 2048-cell experiment** (plan's original model): parked with
   rationale above; revisit only if terminal-side width overrides become
   real.
+
+## 2026-08-31 — readability review: cell-width variants + GPOS anchor fix
+
+**Evidence:** author review of v1 Regular: CV matra clusters (কা কি কী
+কে কৈ কো কৌ) "too thin almost unreadable". Measured root cause: median
+CV cluster native ink 2969 units vs single letter 1785 (ka) — the 1024
+cell (ink budget 942) forces clusters to ~0.32 uniform squeeze (letters
+0.62). Fixed-region per-part layout made it worse (base art alone at
+0.31–0.43 with mismatched stroke weights between parts).
+
+**Decisions (see AGENTS.md / docs/TERMINAL.md):**
+
+- Strict mono stands (1 cluster = 1 cell). The fix is widening the CELL,
+  not widening clusters: ships as three variants sharing one pipeline —
+  Regular 1024 (v1.100), Wide 1536 (v1.101, recommended), Fullwidth 2048
+  (v1.102). Measured squeeze table in docs/TERMINAL.md.
+- gen_cv_ligatures.py: new --cv-cell N wide mode — parts laid out
+  left-to-right at ONE uniform scale (consistent stroke weight inside a
+  cluster), centered in the frame; legacy 1024 keeps the fixed regions
+  for reproducibility. New --family/--version for variant naming.
+- 2-cell-cluster "WideCV" build (cv-cell 2048 with 1024 cells) was built
+  and then deleted: kitty modify_font verified (docs, 2026-08-31) to
+  support only underline/strikethrough/cell/baseline — no per-codepoint
+  width; WezTerm/Windows Terminal likewise. 2-cell clusters would
+  overlap the next column in every terminal.
+- **Bug found & fixed in mono_convert.py:** MarkToBase base anchors were
+  moved only when sx != 1.0, but identity glyphs (sx=1) are still
+  re-centered by dx — below-marks drifted (কু x_offset -788 vs correct
+  attachment) at cell 1536/2048 where most glyphs are identity. Anchors
+  now move on every transformed base (X = sx*X + dx always). The 1024
+  build was unaffected (all anchor-carrying bases were condensed there;
+  31 moves before and after the fix).
+
+**Environment note:** brain venv absent on this machine
+(I:/projects/... missing). Built with system Python 3.12.10 + fontTools
+4.63.0 + uharfbuzz 0.56.0 + vharfbuzz 0.3.1 (winget-installed). hint.py/
+qa.py NOT run here; rerun in the brain venv.
+
+**Gates:** shape_check --matrix 0 overflow on all three variants
+(Regular --cell default, Wide --cell 1536, Fullwidth --cell 2048).
+Logs: build/shape_matrix.log, build/fw_sample.log, build/orig_sample.log
+(original-font ground truth: কু attaches at x_offset -448 at adv 1708).
+
+### Verdict same day — Fullwidth adopted, Wide deleted
+
+Author verdict on the Wide (1536) build: adds cell width without fixing
+compression (clusters still 0.49x). **Fullwidth (2048) adopted as the
+recommended build** (clusters 0.66x, letters unsqueezed). Wide deleted.
+
+Key discovery while reviewing the author's observation that conjuncts
+show "two blocks" while bare CV is one cell: the terminal grant per
+cluster = SUM of wcwidth of codepoints. Bare ki = 1+0 = 1 cell (hard
+ceiling, font-side unfixable); conjunct+matra = 1+0+1+0 = 2 cells. The
+font already matches both grants; the asymmetry is Unicode/terminal
+geometry, not a bug.
+
+NBSP-escape system designed and deferred (AGENTS.md open work #6):
+base + NBSP + matra = 1+1+0 = 2-cell grant; font ligates [base NBSP
+matra] into a 2048-unit glyph of unsqueezed art; contextual rule
+zeroes standalone NBSP; requires an Avro terminal-mode to emit NBSP.
+Cost: text carries NBSP (search/copy implications). Only viable path
+to unsqueezed bare CV clusters.
+
+Deliverables now: SiyamRupaliMono-Regular.ttf (v1.100),
+SiyamRupaliMono-Fullwidth.ttf (v1.102). docs/TERMINAL.md rewritten
+around the two-variant story + grant table.
+
+## 2026-08-31 (late) - faithful ligature layout; Wide 1536 rebuilt
+
+Author insight: matra signs JOIN the base by design (the script's akshar
+system) - touching/overlap between base and matra parts is intended, not
+collision. Measured proof in the base font: bn_ikaar ink 660 vs advance
+541; bn_iikaar ink 1636 vs advance 533 (the curl sweeps across the base
+x-range); bn_ka ink 1785 vs advance 1708.
+
+Consequence: the bbox side-by-side packing (layout_proportional) double-
+counted the designed interlock zones AND inserted gaps that severed the
+akshar. New layout_faithful(): parts placed at original pen offsets
+(sum of original advances), whole assembly scaled to the frame, ink
+block centered, safety shrink if curls overshoot the span.
+
+Numbers at cell 1536, ink-cap 0.97: CV cluster scale median 0.523 ->
+0.677 (+29pct less squeeze), min 0.416, max 0.945. Letters unchanged
+(median 0.85, mono_convert --ink-cap 0.97). Gates: matrix 0 overflow,
+all clusters exactly 1 cell, below-marks attach at sane offsets.
+
+Deliverable: build/SiyamRupaliMono-Wide.ttf v1.103 (family 'Siyam
+Rupali Mono Wide'). gen_cv_ligatures gained --layout {faithful,pack}
+(faithful default), --ink-cap, --gap. mono_convert run with
+--cell 1536 --ink-cap 0.97.
+
+## 2026-08-31 (late 2) - init-variant coverage bug (user-reported)
+
+Bug: mid-word ে/ৈ clusters did NOT ligate (e.g. kUke rendered 2 cells
+while ke was 1). Root cause (verified in binary GSUB): init feature maps
+bn_ekaar->bn_initekaar, bn_aikaar->bn_initaikaar at word starts; CV
+ligature rules only covered the init forms. HarfBuzz applies init after
+word boundaries so all our golden tests passed; the author's renderer
+applies init differently, exposing it. Also explains the earlier
+'line widths do not match' report (renderer-dependent init -> some
+clusters ligated, others not).
+
+Fix: PRE_VARIANTS in gen_cv_ligatures - standard forms get their own
+ligature glyphs (bn_ka_ekaar_std etc, 144 new glyphs; outlines verified
+DIFFERENT from init forms, so aliasing was not an option) and rules
+keyed on both bn_initekaar and bn_ekaar (initaikaar/bn_aikaar).
+make_ligature() refactor (strict/wide paths unified).
+
+Gate: shape_check gained CONTEXT_RULES (kUke must produce
+bn_ka_ekaar_std etc). All pass; user strings verified: kUke/kUko/kUkau
+now 3 cells (ligated), both test lines identical widths in spaced AND
+unspaced variants. Deliverable: build/SiyamRupaliMono-Wide-v1104.ttf
+v1.104, 1185 glyphs (396 CV ligature rules). Old Wide ttf was file-
+locked (installed font); new build written under -v1104 name.
+
+## 2026-08-31 (late 3) - two-surface deliverable + kar no-squeeze rule
+
+Author decision: font must serve BOTH surfaces. Deliverables now:
+- build/SiyamRupaliMono-Wide-v1105.ttf - TERMINAL build (cv ligatures,
+  init+std coverage, 1-cell clusters). family 'Siyam Rupali Mono Wide'.
+- build/SiyamRupaliMono-Edit.ttf - EDITOR build (mono_convert only, NO
+  cv ligatures): matras keep their own full cell, everything unsqueezed
+  below the 0.97 cap. family 'Siyam Rupali Mono Edit'. In gridless
+  editors font advances rule, so 2-cell ka-kaar / 3-cell ko/au is
+  correct and maximally readable. Gate: --max-cells 3, 0 failures
+  (context rules are terminal-only, now behind --context flag).
+
+Kar no-squeeze rule (author directive): vowel-sign glyphs are never
+x-condensed - native ink centered in the cell, advance = cell,
+symmetric overflow into neighboring bearings instead of distortion
+(mono_convert is_kar(): *kaar except okaar/aukaar independent vowels,
+plus bn_aumark). Caught bn_ikaar native ink 1541 > 1490 cap being
+silently squeezed; now renders native with lsb=rsb=-2. Condensed count
+drops 325 -> 258.
