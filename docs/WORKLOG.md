@@ -410,3 +410,31 @@ installed for comparison; expect them to be retired on author verdict.
 Trade-off recorded: in the universal font, editors ALSO see 1-cell
 ligatures (not Edit's unsqueezed 2-cell layout) — that is what makes it
 universal; Edit survives as the maximal-readability alternative.
+
+## 2026-08-31 (late 8) — WezTerm (Windows) test of Universal 0.0.2
+
+Author has WezTerm 20240203 (bundled conpty.dll + OpenConsole). Temp
+config ~/.wezterm.lua (font = 'Siyam Rupali Mono', size 14 — LEFT IN
+PLACE for author testing; delete or edit to revert). Cursor probe
+(build/probe_wt2.ps1 via cmd /k) + screenshot:
+
+- Render: SHAPED — merged CV ligature art (pres fires under wezterm's
+  harfbuzz; ি curls over the base, all seven test clusters correct).
+  First Windows terminal besides raw DWrite to apply our lookups.
+- Cursor/grid: SAME per-codepoint model as WT (clusters8=14, spaced7=20,
+  each CV cluster = 2 columns) because on Windows wezterm inherits
+  ConPTY's buffer model. Result: ligature ink fills 1 column + a
+  phantom empty column per cluster — art correct, cursor aligned,
+  rhythm airy.
+- Difference vs WT numbers: name=15 here vs WT 14 — wezterm's bundled
+  conpty charges the nukta in য় 1 column while WT's newer OpenConsole
+  gives it 0. ConPTY width tables differ by version; the font cannot
+  control this.
+- Takeaway: Universal degrades gracefully across column models —
+  merged art + phantom gap on 2-col hosts (WT-style grids), exact
+  1-cell fit on 1-col hosts (kitty/VTE/wezterm-on-Unix). The split-art
+  design (WT font) would fill wezterm-Windows' extra column but would
+  OVERLAP on 1-col hosts — universal stays the right default.
+
+Probe windows left open in wezterm for the author (title
+C:\Windows\system32\cmd.EXE with the Bengali lines is the live one).
