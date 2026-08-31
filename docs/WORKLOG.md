@@ -284,3 +284,55 @@ lazy table decompile after pruning glyphOrder IndexErrors (hmtx reads
 the order at decompile — force-decompile everything first); the
 fragment must keep a post 2.0 table or TTFont synthesizes glyphNN
 names and the bn_* names are lost.
+
+## 2026-08-31 (late 5) — WT alpha diagnosis: font-cache fallback + WT grid semantics
+
+Author report: "mono wide spacing is not correct" in Windows Terminal
+(WT 1.24) with `আমার নাম সিয়াম` / `কা কি কী কে কৈ কো কৌ`. Two stacked
+root causes found; neither is the font binary.
+
+**Cause 1 — WT could not find the Wide font (stale DirectWrite font
+cache).** Setting the WT face to "Siyam Rupali Mono Wide" popped
+"Unable to find the following fonts: Siyam Rupali Mono Wide". The
+registry entry and file were correct (hashes matched build/), but the
+Wide install had history: the v1.104-era install was file-locked when
+replaced, and the cache never refreshed. Edit (clean install) resolved
+fine — which is why the author's Edit screenshot was our font but the
+Wide screenshot was a FALLBACK font (proportional matras crammed into
+per-codepoint cells — the "wrong spacing" look). Fix: re-registered
+under a new filename (SiyamRupaliMono-Wide-Alpha.ttf) + WM_FONTCHANGE
+broadcast (build/fix_wide_install.ps1). Warning gone. Rule 5 lesson:
+the WT dialog was ground truth; two vision passes on the screenshot
+both misread it.
+
+**Cause 2 — WT grants columns by per-codepoint sum, not clusters, not
+advances.** Measured via cursor-position probe (build/probe_wt2.ps1,
+probe_wt3.ps1; PS prints string, reads RawUI cursor X in cells, writes
+result file — no vision involved): কা/কি/কী/কে/কৈ/কো/কৌ = 2 cells
+each, ক্ষ/ক্ত = 2, কু/ড়/ক্ = 1, কং = 2. That is exactly
+sum(per-codepoint width) with Mn=0, Mc=1 — WT ignores the font's
+1-cell ligature advances for its grid. Cross-checks: HarfBuzz ligates
+all of them (shape_check); WPF/DirectWrite also applies our appended
+pres lookup (build/probe_dwrite.ps1: width(কা)=width(ক)=36px, কো=36px
+vs Edit 72/108px) — so the font and DWrite are correct; WT's grid
+layer is the odd one out. v1.104's "3 cells (ligated)" observation was
+this same behavior (ink joins, grid still charges per matra).
+
+Consequences:
+- In WT today, **Edit is the grid-perfect build** (its per-glyph
+  advances equal WT's grant exactly). Wide renders joined ligature ink
+  + trailing slack per cluster.
+- The strict-mono premise "terminals: Bengali cluster = 1 cell" is
+  wrong for WT (right for pango/VTE-family). AGENTS.md decision block
+  annotated; open work 1a added: accept Edit-in-WT, or a WT-matched
+  variant with ligature advance = granted cells (plan hybrid
+  resurrected), or wait for upstream (terminal PR #16916, #17810,
+  #18167).
+
+Ops notes: WT settings.json was backed up, flipped to Wide for
+testing, and restored byte-identical (face back to Edit). Probe tabs
+may be left open in WT. New tools: tools/render_probe.py (HB+freetype
+render with cell grid), tools/ink_fill_report.py (ligature ink fill:
+396 glyphs all 0.93-0.97 of cell — between-cluster raggedness ruled
+out), build/probe_dwrite.ps1 (WPF/DWrite shaping probe),
+build/probe_wt2/3.ps1 (WT cursor-column probes).

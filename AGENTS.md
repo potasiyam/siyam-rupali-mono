@@ -13,6 +13,15 @@ project-specific decisions. Session history + evidence: `docs/WORKLOG.md`.
   clusters = 1 cell always), so 2-cell advances desync the grid. Monotty
   (the plan's reference model) is deprecated by its own maintainers.
   Full rationale: WORKLOG 2026-08-30.
+  **CHALLENGED 2026-08-31 (evidence, WT 1.24 cursor probe):** Windows
+  Terminal does NOT use wcwidth grapheme clusters and does NOT use font
+  advances — it grants columns as the SUM of per-codepoint widths
+  (nonspacing mark 0, spacing matra 1): কি=2, কো=3, কং=2, কু=1, measured
+  directly (WORKLOG 2026-08-31 late 5). Under that grid, 2-cell ligature
+  advances MATCH WT and 1-cell ligatures leave trailing slack per
+  cluster. Terminal ecosystems are split: WT-family (codepoint-sum
+  grant) vs pango/VTE-family (font-advance shaping). Decision on a
+  WT-matched variant is the author's — see open work #1a.
 - **Base binary:** `legacy/base-1.070ship.ttf` = Dropbox
   `Siyamrupali_1_070ship.ttf` (final 2011 release, 789 glyphs, GSUB+GPOS
   compiled by VOLT at export; passed 6/6 golden shaping unchanged).
@@ -93,17 +102,29 @@ box `make` is Embarcadero's and cannot parse it.
 ## Open work (priority order)
 
 0. **Alpha 0.0.1 author testing** (Wide in terminals, Edit in editors;
-   findings flow through the fixes layer, docs/FIXES.md).
+   findings flow through the fixes layer, docs/FIXES.md). NOTE 2026-08-31:
+   in Windows Terminal specifically, use **Edit** — it is the only
+   grid-perfect build there (see 1a).
+1a. **WT-matched variant decision (author).** WT 1.24 grants কি=2, কো=3
+   columns regardless of font advances, so Wide's 1-cell ligatures leave
+   trailing slack in WT. Options: (a) WT users use Edit; (b) build a
+   WT-specific variant whose ligature advances = granted cells (2/3
+   cells — the plan's hybrid resurrected by evidence; ink at ~0.9x
+   instead of the 0.68 squeeze; needs conjunct + কং coverage too);
+   (c) wait for WT (grapheme-cluster work is active upstream:
+   terminal PR #16916, issues #17810/#18167).
 1. Visual review of Wide 1536 + Edit at 12-16px (hb-view or FreeType
    render sheet) - cluster squeeze 0.68 median is the accepted ceiling;
-   eyeball before wide release.
+   eyeball before wide release. tools/render_probe.py renders test
+   strings with a cell grid (HB shaping + freetype).
 2. Conjunct + spacing matra (ক্ষি class) renders as two full cells in
    the terminal build (conjuncts outside the 36-base ligature scope) -
    v2: extend CV ligature coverage to conjunct outputs (automatable,
    ~2600 glyphs) or accept.
 3. GPOS above-marks (anusvara/visarga) for কং-class clusters - they are
    GDEF class 1 (bases) in the VOLT font, so কং = 2 cells vs a 1-cell
-   grant (overlap); needs abvs anchors + zero-advance marks.
+   grant (overlap); needs abvs anchors + zero-advance marks. (WT grants
+   কং=2 columns anyway — see 1a.)
 4. `ss01` hasanta-explicit fallback feature (plan Phase 3).
 5. WOFF2 deliverable (needs brotli in a venv).
 6. NBSP-escape 2-cell system (font GSUB + Avro terminal-mode) -
