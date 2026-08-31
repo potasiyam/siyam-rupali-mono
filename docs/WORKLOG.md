@@ -371,3 +371,42 @@ editors). Known WT-platform limit the font cannot fix: conjuncts render
 letter-by-letter with visible hasanta (ক্ষ = ক+ষ; no shaping in WT
 until upstream lands it — PR #16916, #17810, #18167). AGENTS.md updated
 (goal challenge note + variants + build/gates + open work 1a).
+
+## 2026-08-31 (late 7) — UNIVERSAL "Siyam Rupali Mono" 0.0.2: one font, renderer-adaptive
+
+Author verdict: "I want a universal mono font" — not three specialists.
+Built. Mechanism (renderer-adaptive art):
+- mono_convert --prebase-shift now ships the six pre-base/above-mark
+  glyphs (ikaar ekaar aikaar okaar aukaar anusvara) WITH SHIFTED art
+  under their ORIGINAL names (WT renders them unshaped, codepoint
+  order) and stores centered art in new <name>_shaped copies.
+  Verified first: NO VOLT lookup covers these six glyphs (coverage scan
+  empty) — they are pure cmap entry points; hb does reordering/splitting
+  at codepoint level, so in-place art shifting is invisible to shaping.
+- gen_cv_ligatures appends pres lookups in a LOAD-BEARING order:
+  LigatureSubst (14) first — keyed on the original names, fires before
+  anything renames them — then a SingleSubst restore (15)
+  {bn_X -> bn_X_shaped} for non-ligated leftovers (conjunct+matra,
+  stray anusvara) so shaping renderers draw centered art on the correct
+  side. In WT no GSUB runs: shifted art + cell advances = correct look
+  at WT's own grant (2 cols/cluster).
+
+fontTools traps (both named for the next session):
+1. SingleSubst in fontTools 4.63 is FormatSwitching — construct with
+   .mapping = {cov: sub} dict. Manual Format/Coverage/substitute attrs
+   are silently ignored and the compiled lookup comes out EMPTY
+   (restore dead; caught by probe_restore.py asserting bn_ikaar_shaped).
+2. f.getGlyphOrder() returns the LIVE list: glyf[name]=glyph inside the
+   conversion loop appends mid-iteration (KeyError on the new name).
+   Snapshot with list(...) — mono_convert does now.
+
+Gates on build/SiyamRupaliMono.ttf 0.0.2 (hinted): qa 11/11; shape_check
+--matrix --context 0 failures; probe_restore ligatures+restore all
+correct (k_ssa_i -> bn_ikaar_shaped bn_k_ssa; ka_ng -> bn_ka
+bn_anusvara_shaped); render_probe shaped = merged 1-cell clusters,
+unshaped = split-cell correct-side curls. Installed for the author as
+"Siyam Rupali Mono" (build/install_universal.ps1). Wide/WT/Edit remain
+installed for comparison; expect them to be retired on author verdict.
+Trade-off recorded: in the universal font, editors ALSO see 1-cell
+ligatures (not Edit's unsqueezed 2-cell layout) — that is what makes it
+universal; Edit survives as the maximal-readability alternative.

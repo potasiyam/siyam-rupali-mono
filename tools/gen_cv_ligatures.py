@@ -36,7 +36,7 @@ from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables import otTables
 
-from mono_convert import RoundingPen, draw_decomposed, glyph_bbox
+from mono_convert import PREBASE_SHIFT, RoundingPen, draw_decomposed, glyph_bbox
 
 # matra stream patterns: (suffix, pre glyph, post glyph)
 PATTERNS = [
@@ -314,20 +314,59 @@ def main():
     lookup.SubTable = [sub]
 
     gs = font["GSUB"].table
-    gs.LookupList.Lookup.append(lookup)
-    gs.LookupList.LookupCount = len(gs.LookupList.Lookup)
-    new_idx = gs.LookupList.LookupCount - 1
+
+    # Universal-build restore: with mono_convert --prebase-shift, the six
+    # pre-base/above-mark glyphs carry SHIFTED art under their original
+    # names (for Windows Terminal's unshaped renderer). The ligature
+    # lookup must run FIRST (it keys on those same names — art is
+    # irrelevant to matching); afterwards this single-substitution hands
+    # non-ligated leftovers their centered art back so shaping renderers
+    # draw matras on the correct side. No VOLT lookup covers these six
+    # glyphs (verified 2026-08-31), so ordering after VOLT's pres lookups
+    # is safe.
+    new_lookups = [lookup]
+    known = set(font.getGlyphOrder())
+    shaped_pairs = []
+    for base_name in sorted(PREBASE_SHIFT):
+        shaped = base_name + "_shaped"
+        if shaped in known and base_name in known:
+            # (coverage glyph, substitute): the cmap/default glyph carries
+            # shifted art; shaping renderers get the centered copy back
+            # after the ligature lookup has had its pass.
+            shaped_pairs.append((base_name, shaped))
+    if shaped_pairs:
+        # fontTools 4.x SingleSubst is format-switching: give it a
+        # {coverage_glyph: substitute} mapping and it picks the binary
+        # format itself (manual Format/Coverage/substitute attrs are
+        # silently ignored — found the hard way 2026-08-31).
+        ss = otTables.SingleSubst()
+        ss.mapping = {p[0]: p[1] for p in shaped_pairs}
+        ss_lookup = otTables.Lookup()
+        ss_lookup.LookupType = 1  # Single Substitution
+        ss_lookup.LookupFlag = 0
+        ss_lookup.SubTable = [ss]
+        new_lookups.append(ss_lookup)
+
+    for lk in new_lookups:
+        gs.LookupList.Lookup.append(lk)
+    first_idx = gs.LookupList.LookupCount
+    new_indices = list(range(first_idx, first_idx + len(new_lookups)))
+    gs.LookupList.LookupCount = first_idx + len(new_lookups)
+    for i, lk in enumerate(new_lookups):
+        print(f"GSUB: lookup {first_idx + i} appended "
+              f"({lk.SubTable[0].__class__.__name__})")
 
     touched = 0
     for fr in gs.FeatureList.FeatureRecord:
         if fr.FeatureTag != "pres":
             continue
         idxs = list(fr.Feature.LookupListIndex)
-        idxs.append(new_idx)
+        idxs.extend(new_indices)
         fr.Feature.LookupListIndex = idxs
         fr.Feature.LookupCount = len(idxs)
         touched += 1
-    print(f"GSUB: lookup {new_idx} appended to {touched} 'pres' feature(s)")
+    print(f"GSUB: lookups {new_indices} appended to {touched} 'pres' "
+          f"feature(s)")
     if not touched:
         sys.exit("no 'pres' feature found — refusing to create one blind")
 

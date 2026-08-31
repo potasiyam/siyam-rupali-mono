@@ -41,31 +41,31 @@ project-specific decisions. Session history + evidence: `docs/WORKLOG.md`.
 - **Source of truth:** `legacy/base-1.070ship.ttf` (read-only input) +
   `tools/mono_convert.py` + `tools/gen_cv_ligatures.py` (all mutations).
   Never hand-edit the built TTF; regenerate.
-- **Cell width variants (final state 2026-08-31):** CV clusters carry
-  ~1.7x a letter's ink, so at 1024 they squeeze to ~0.32 (unreadable —
-  author verdict). Terminal grant per cluster = sum of wcwidth; bare কি
-  = 1 cell forever. **REVISED same day (WT evidence):** Windows Terminal
-  grants columns per CODEPOINT (font-advance sum, no shaping, no
-  clusters) — see the challenge note under Goal and WORKLOG late 5/6.
-  Three deliverables:
-  **Wide v1.105/0.0.1** `--cell 1536 --ink-cap 0.97` + `--layout faithful`
-  (pango/VTE-family terminals + shaping-aware grids; CV ligatures 1
-  cell/cluster; rules cover BOTH matra art variants — GSUB `init` swaps
-  bn_ekaar→bn_initekaar word-initially, so mid-word ে/ৈ need the `_std`
-  rules too), **WT 0.0.1** `--prebase-shift` (Windows Terminal-native:
-  no ligatures; pre-base matra + anusvara ink shifted one cell left so
-  codepoint-order rendering puts the curl over the base — verified in
-  unshaped render; grid = WT's own grant, self-consistent), and
-  **Edit 0.0.1** (mono_convert only — no CV ligatures; matras keep
-  their own full cell, everything unsqueezed below the cap; for
-  gridless editors where font advances rule). Faithful layout = parts
-  at original pen offsets, preserving designed matra/base interlocks
-  (bbox packing double-counted those zones: 0.52 vs 0.68). **Kar glyphs
-  are never squeezed** (is_kar: native ink centered, advance = cell,
-  symmetric overflow). Tested-and-withdrawn: Fullwidth 2048 (dead
-  bearings around Latin), 2-cell "WideCV" (no terminal supports
-  per-codepoint width), NBSP 2-cell system (designed, deferred — open
-  work #6).
+- **Cell width variants (state 2026-08-31, universal era):** CV clusters
+  carry ~1.7x a letter's ink, so at 1024 they squeeze to ~0.32
+  (unreadable — author verdict). **PRIMARY DELIVERABLE = Universal
+  `Siyam Rupali Mono` 0.0.2** (`--prebase-shift` + ligatures): one font
+  that adapts to the renderer — the six pre-base/above-mark glyphs
+  (ikaar ekaar aikaar okaar aukaar anusvara) carry SHIFTED art under
+  their original names (Windows Terminal renders them codepoint-order,
+  unshaped), `_shaped` copies hold centered art, and an appended pres
+  restore lookup (LigatureSubst, then SingleSubst via `mapping` dict)
+  swaps shifted→centered for shaping renderers AFTER ligatures have
+  matched (order is load-bearing: restore renames the glyph). Result:
+  WT = correct split-cell look at WT's own per-codepoint grant; shaping
+  terminals (kitty/VTE) = 1-cell ligatures; editors = ligatures +
+  centered leftovers. Rules cover BOTH matra art variants (GSUB `init`
+  swaps bn_ekaar→bn_initekaar word-initially; mid-word ে/ৈ need `_std`
+  rules). Faithful ligature layout = original pen offsets (bbox packing
+  double-counted interlocks: 0.52 vs 0.68). **Kar glyphs are never
+  squeezed** (is_kar: native ink centered, advance = cell, symmetric
+  overflow). Specialist variants (kept in build/, installed for the
+  author's comparison): **Wide** (no prebase-shift; shaping terminals
+  that grant 1 cell/cluster), **WT** (no ligatures; WT only), **Edit**
+  (mono_convert only; matras keep own cell; gridless-editor maximalism).
+  Tested-and-withdrawn: Fullwidth 2048 (dead bearings around Latin),
+  2-cell "WideCV" (no terminal supports per-codepoint width), NBSP
+  2-cell system (designed, deferred — open work #6).
 
 ## Build (reproducible; drive the scripts directly — no GNU make here)
 
@@ -74,30 +74,33 @@ uharfbuzz + vharfbuzz + wcwidth (brain venv absent on the Windows box).
 `PY=<python>` below.
 
 ```
-# Terminal build (cv ligatures, 1-cell clusters) - v1.105
+# UNIVERSAL build (primary; one font for WT + shaping terminals + editors) - 0.0.2
+$PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/work-uni.unhinted.ttf --cell 1536 --ink-cap 0.97 --prebase-shift
+$PY tools/gen_cv_ligatures.py legacy/base-1.070ship.ttf build/work-uni.unhinted.ttf build/SiyamRupaliMono.ttf --cv-cell 1536 --ink-cap 0.97 --layout faithful --family "Siyam Rupali Mono" --version 0.0.2
+# Terminal build WITHOUT prebase-shift (Wide; shaping terminals only) - 0.0.1
 $PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/work1536.unhinted.ttf --cell 1536 --ink-cap 0.97
-$PY tools/gen_cv_ligatures.py legacy/base-1.070ship.ttf build/work1536.unhinted.ttf build/SiyamRupaliMono-Wide.ttf --cv-cell 1536 --ink-cap 0.97 --family "Siyam Rupali Mono Wide" --version 1.105
-# Editor build (no cv ligatures; matras keep their own cell) - v1.105
-$PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/SiyamRupaliMono-Edit.ttf --cell 1536 --ink-cap 0.97 --family "Siyam Rupali Mono Edit" --version 1.105
-# Windows Terminal build (pre-base matras shifted 1 cell left; no ligatures) - 0.0.1
+$PY tools/gen_cv_ligatures.py legacy/base-1.070ship.ttf build/work1536.unhinted.ttf build/SiyamRupaliMono-Wide.ttf --cv-cell 1536 --ink-cap 0.97 --family "Siyam Rupali Mono Wide" --version 0.0.1
+# Editor build (no cv ligatures, no shifts) - 0.0.1
+$PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/SiyamRupaliMono-Edit.ttf --cell 1536 --ink-cap 0.97 --family "Siyam Rupali Mono Edit" --version 0.0.1
+# WT-only build (prebase-shift, NO ligature step) - 0.0.1
 $PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/SiyamRupaliMono-WT.ttf --cell 1536 --ink-cap 0.97 --family "Siyam Rupali Mono WT" --version 0.0.1 --prebase-shift
-# Optional Regular 1024 variant: same as terminal build but --cell default (1024), version 1.100
 # Optional hand-designed glyph fixes (author redraws; see docs/FIXES.md):
-#   $PY tools/apply_fixes.py build/SiyamRupaliMono-Wide.ttf fixes/<frag>.ttf   # BEFORE hinting
+#   $PY tools/apply_fixes.py build/SiyamRupaliMono.ttf fixes/<frag>.ttf   # BEFORE hinting
 # Hinting (brain venv only): $PY ../agentic-font-dev/scripts/hint.py build/<ttf>
 ```
 
 Gates (must pass; never weaken to make them pass):
 ```
-$PY ../agentic-font-dev/scripts/qa.py build/SiyamRupaliMono-Wide.ttf tests/conjuncts.txt --script beng --language ben
-$PY tools/shape_check.py build/SiyamRupaliMono-Wide.ttf --cell 1536 --matrix --context   # 0 failures
-$PY tools/shape_check.py build/SiyamRupaliMono-Edit.ttf --cell 1536 --max-cells 3 --matrix   # 0 failures; NO --context (no ligatures by design)
-$PY tools/shape_check.py build/SiyamRupaliMono-WT.ttf --cell 1536 --max-cells 3 --matrix     # 0 failures; NO --context, NO qa.py (goldens expect ligatures; WT font has none BY DESIGN - WT does not shape)
+$PY ../agentic-font-dev/scripts/qa.py build/SiyamRupaliMono.ttf tests/conjuncts.txt --script beng --language ben                      # 11/11
+$PY tools/shape_check.py build/SiyamRupaliMono.ttf --cell 1536 --matrix --context                                                     # 0 failures
+$PY tools/shape_check.py build/SiyamRupaliMono-Edit.ttf --cell 1536 --max-cells 3 --matrix                                            # 0 failures; NO --context (no ligatures by design)
+$PY build/probe_restore.py                                                                                                            # k_ssa_i -> bn_ikaar_shaped proves the restore fires
 ```
 
-Visual gates for the WT variant (unshaped render = WT's model):
+Visual gates (unshaped render = WT's model; shaped render = kitty/editors):
 ```
-$PY tools/render_probe.py build/SiyamRupaliMono-WT.ttf --cell 1536 --tag WT --unshaped   # eyeball build/probe/WT_unshaped_*.png: matra curls must sit OVER their base
+$PY tools/render_probe.py build/SiyamRupaliMono.ttf --cell 1536 --tag UNI --unshaped   # eyeball build/probe/UNI_unshaped_*.png: matra curls sit OVER their base
+$PY tools/render_probe.py build/SiyamRupaliMono.ttf --cell 1536 --tag UNI              # eyeball UNI_shaped_*.png: merged 1-cell clusters
 ```
 
 The Makefile mirrors these for GNU-make environments; on this Windows
@@ -121,16 +124,13 @@ box `make` is Embarcadero's and cannot parse it.
    findings flow through the fixes layer, docs/FIXES.md). NOTE 2026-08-31:
    in Windows Terminal specifically, use **Edit** — it is the only
    grid-perfect build there (see 1a).
-1a. **WT-matched variant — BUILT 0.0.1 (`--prebase-shift`), awaiting
-   author verdict.** WT 1.24 does NO cross-codepoint shaping for Bengali:
-   columns = sum of per-codepoint font advances, glyphs drawn in
-   codepoint order (measured + screen-verified, WORKLOG late 5/6). The
-   WT build shifts pre-base matra/anusvara ink one cell left so
-   codepoint-order rendering reads correctly; grid = WT's own grant.
-   Remaining: conjuncts render letter-by-letter in WT (hasanta visible,
-   ক্ষ = ক+ষ) — platform limitation, upstream is working on shaping
-   (terminal PR #16916, issues #17810, #18167). Wide stays for
-   pango/VTE-family terminals; Edit for editors.
+1a. **RESOLVED by the Universal build (0.0.2), pending author verdict.**
+   One font adapts to the renderer via shifted-default art + a pres
+   restore lookup (see Cell width variants). Remaining WT-platform
+   limit the font cannot fix: conjuncts render letter-by-letter in WT
+   (hasanta visible, ক্ষ = ক+ষ; needs upstream shaping — terminal
+   PR #16916, issues #17810, #18167). In shaping terminals conjunct+matra
+   (ক্ষি) stays 2 cells (open work 2).
 1. Visual review of Wide 1536 + Edit at 12-16px (hb-view or FreeType
    render sheet) - cluster squeeze 0.68 median is the accepted ceiling;
    eyeball before wide release. tools/render_probe.py renders test

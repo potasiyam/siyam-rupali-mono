@@ -6,19 +6,18 @@ like in FontLab, and the pipeline absorbs your drawings permanently via a
 
 ## 1. Install the alphas and test
 
-Three fonts, three jobs (all `Version 0.0.1`):
+**`build/SiyamRupaliMono.ttf` — "Siyam Rupali Mono" (0.0.2) — is the
+primary font and works everywhere**: Windows Terminal (shifted
+pre-base matra art, codepoint-order safe), shaping terminals like
+kitty/WezTerm (1-cell ligatures), and editors like VS Code/Word. Try
+this one first. The three specialists below remain installed only for
+comparison:
 
-| File | Family name | Test in |
+| File | Family name | Niche |
 |---|---|---|
-| `build/SiyamRupaliMono-WT.ttf` | Siyam Rupali Mono WT | **Windows Terminal** (unshaped platform — pre-base matra ink is pre-shifted onto the base cell) |
-| `build/SiyamRupaliMono-Wide.ttf` | Siyam Rupali Mono Wide | **Shaping terminals** (kitty, WezTerm, foot, pango/VTE family…) |
-| `build/SiyamRupaliMono-Edit.ttf` | Siyam Rupali Mono Edit | **Gridless editors** (VS Code, Notepad++, Word…) |
-
-Install: right-click the TTF → *Install for me* (or copy into
-`%LOCALAPPDATA%\Microsoft\Windows\Fonts`). Pick the family from the
-terminal/editor font list. Windows Terminal note: it shapes nothing for
-Bengali and grants columns per codepoint — use the **WT** family there,
-not Wide.
+| `build/SiyamRupaliMono-WT.ttf` | Siyam Rupali Mono WT | Windows Terminal only (no ligatures) |
+| `build/SiyamRupaliMono-Wide.ttf` | Siyam Rupali Mono Wide | shaping terminals only (no WT-shifted art) |
+| `build/SiyamRupaliMono-Edit.ttf` | Siyam Rupali Mono Edit | editors, unsqueezed 2-cell matras (maximal readability) |
 
 What to look for while testing:
 
@@ -50,9 +49,9 @@ your original naming.
 ## 3. Draw the fix (FontLab)
 
 1. Copy the build you're fixing:
-   `build/SiyamRupaliMono-Wide.ttf` → `handfix/Wide-work.ttf`
-   (Edit → `handfix/Edit-work.ttf`; keep the two surfaces in separate
-   files — their cells/scales differ, so fixes are **per-surface**).
+   `build/SiyamRupaliMono.ttf` → `handfix/Uni-work.ttf`
+   (or a specialist build → `handfix/Wide-work.ttf`; keep each in its
+   own file — fixes are **per-surface**).
 2. Open it in FontLab. Edit ONLY the outlines of the glyphs you dislike.
    Rules of the road:
    - **Don't rename, add, or delete glyphs** (the fixes layer matches by
@@ -61,6 +60,13 @@ your original naming.
      at the end; your edits dropping old hints is expected.
    - **Advance widths are re-pinned automatically** to the cell (1536)
      when applied. Design inside the cell; the lsb you draw is kept.
+   - **Special case — the six shifted matras** (`bn_ikaar`, `bn_ekaar`,
+     `bn_aikaar`, `bn_okaar`, `bn_aukaar`, `bn_anusvara`): in the
+     universal build their ink is intentionally shifted one cell LEFT
+     (for Windows Terminal), with a centered twin named `..._shaped`
+     alongside. If you redraw one of these six, redraw or expect the
+     agent to regenerate the `_shaped` twin too — easiest is to just
+     tell the agent which glyph you fixed (section 5).
 3. Save as TrueType (`File → Save As…`, format TTF) over the same
    `handfix/Wide-work.ttf`. You can also keep testing this file directly
    (install it after removing the alpha, since both claim the same

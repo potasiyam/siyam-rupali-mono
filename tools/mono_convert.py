@@ -116,12 +116,12 @@ def glyph_bbox(glyf, name, cache):
     return bbox
 
 
-def transform_glyph(glyf, orig, name, sx, dx):
+def transform_glyph(glyf, orig, name, sx, dx, target=None):
     """Rebuild glyph as a simple (decomposed) glyph under (sx, dx) x-map."""
     pen = TTGlyphPen(None)
     tpen = TransformPen(RoundingPen(pen), (sx, 0, 0, 1, dx, 0))
     draw_decomposed(orig[name], orig, tpen)
-    glyf[name] = pen.glyph()
+    glyf[target or name] = pen.glyph()
 
 
 def main():
@@ -146,7 +146,9 @@ def main():
     ink_max = args.ink_cap * cell
 
     glyf = f["glyf"]
-    names = f.getGlyphOrder()
+    # snapshot: glyf[name] = glyph appends to the LIVE order list; adding
+    # the _shaped copies mid-loop would otherwise grow the iteration
+    names = list(f.getGlyphOrder())
     # Freeze original glyph objects so composite decomposition never sees a
     # already-condensed component (would double-scale).
     orig = {n: glyf[n] for n in names}
@@ -179,9 +181,22 @@ def main():
         else:
             sx = min(1.0, ink_max / bw)
         # recenter ink in the cell
-        dx = (cell - sx * bw) / 2 - sx * x0
+        dx0 = (cell - sx * bw) / 2 - sx * x0
+        dx = dx0
         if args.prebase_shift and name in PREBASE_SHIFT:
-            dx -= cell  # ink now centered over the PRECEDING cell
+            # UNIversal build: the cmap glyph keeps SHIFTED art (Windows
+            # Terminal renders it codepoint-order, unshaped), and an extra
+            # <name>_shaped copy keeps the centered art. Step 2 appends a
+            # pres restore lookup (shifted -> _shaped) so shaping
+            # renderers see normal art. VOLT lookups never key on these
+            # six glyphs (verified 2026-08-31), so in-place shifting is
+            # invisible to shaping.
+            shaped = name + "_shaped"
+            transform_glyph(glyf, orig, name, sx, dx0, target=shaped)
+            f["hmtx"][shaped] = (cell, round(sx * x0 + dx0))
+            stats["prebase_shaped_copies"] = stats.get(
+                "prebase_shaped_copies", 0) + 1
+            dx = dx0 - cell  # ink centered over the PRECEDING cell
         factors[name] = (sx, dx)
         if sx < 1.0:
             stats["condensed"] += 1
@@ -230,7 +245,7 @@ def main():
 
     # --- metrics & flags ---
     f["hhea"].advanceWidthMax = cell
-    f["hhea"].numberOfHMetrics = len(names)
+    f["hhea"].numberOfHMetrics = len(f.getGlyphOrder())
     f["OS/2"].xAvgCharWidth = cell
     f["OS/2"].fsType = 0  # our own font; clears the inherited restricted bit
     f["OS/2"].panose.bProportion = 9  # monospaced
