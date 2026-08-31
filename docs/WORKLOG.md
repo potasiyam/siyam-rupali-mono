@@ -336,3 +336,38 @@ render with cell grid), tools/ink_fill_report.py (ligature ink fill:
 396 glyphs all 0.93-0.97 of cell — between-cluster raggedness ruled
 out), build/probe_dwrite.ps1 (WPF/DWrite shaping probe),
 build/probe_wt2/3.ps1 (WT cursor-column probes).
+
+## 2026-08-31 (late 6) — author retest confirms unshaped rendering; WT-native variant 0.0.1
+
+Author retested both fonts in WT (screenshots). Wide now actually loads
+(cache fix worked — condensed letterforms visible) and both surfaces
+show the SAME structural behavior: matra ink drawn AFTER the base in
+its own cell, i.e. **WT draws cmap glyphs in codepoint order with NO
+cross-codepoint shaping**. Combined with the late-5 column probes, WT's
+full model: columns = sum of per-codepoint font advances (GDEF-3 marks
+~0, spacing signs 1 cell), rendering unshaped. GDEF spot-check matches
+every probe: bn_ikaar GDEF1 adv541->cell => কি=2; bn_ukaar GDEF3 adv0
+=> কু=1; bn_anusvara GDEF1 adv810 => কং=2. Font data IS the WT grid.
+
+**WT-native variant built** (`--prebase-shift` in mono_convert.py):
+PREBASE_SHIFT = {ikaar, ekaar, aikaar, okaar, aukaar, anusvara} — these
+carry pre-base/above art but land AFTER the base in codepoint order, so
+their ink shifts LEFT one cell (dx -= cell after centering) and the
+curl sits over the base cell; the matra's own cell is (near-)empty —
+correct look across the columns WT already grants. No ligatures (WT
+cannot fire them). build/SiyamRupaliMono-WT.ttf 0.0.1: letters median
+0.851 condense (same as Wide), okaar/aukaar 0.58 (independent-vowel
+squeeze path), hinted, shape_check --max-cells 3 --matrix = 0 failures.
+qa.py intentionally NOT run: goldens expect ligature glyph names; WT
+font has none BY DESIGN. render_probe.py gained --unshaped (cmap order
++ font advances = WT's model): WT_unshaped_0/1/2.png eyeballed — আমার
+নাম সিয়াম and কা কি কী কে কৈ কো কৌ (spaced + unspaced) all read
+correctly with grid-aligned ink. Installed for the author
+(build/install_wt.ps1, fresh filename, per-user).
+
+Deliverable reality is now THREE surfaces: Wide (pango/VTE terminals,
+shaped), WT (Windows Terminal, unshaped-by-design), Edit (gridless
+editors). Known WT-platform limit the font cannot fix: conjuncts render
+letter-by-letter with visible hasanta (ক্ষ = ক+ষ; no shaping in WT
+until upstream lands it — PR #16916, #17810, #18167). AGENTS.md updated
+(goal challenge note + variants + build/gates + open work 1a).

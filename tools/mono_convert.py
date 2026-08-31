@@ -41,6 +41,25 @@ def draw_decomposed(glyph, table, pen):
 
 MARK_ADV_FLOOR = 300  # advances below this are treated as mark-ish, untouched
 
+# Glyphs whose ART belongs BEFORE (or above) the preceding cluster but that
+# Windows Terminal draws AFTER it: WT does no cross-codepoint shaping
+# (measured 2026-08-31: it allocates columns = sum of per-codepoint font
+# advances and draws cmap glyphs in codepoint order). With --prebase-shift
+# these glyphs' ink moves LEFT by one cell, so in cell order the curl sits
+# over the base cell and the matra's own cell is (near-)empty ink-wise --
+# exactly how the cluster should look across its granted columns.
+# Above-marks (anusvara) get the same treatment; candrabindu and below-marks
+# already ride the pen at ~0 advance. Post-base signs (া ী ঃ) stay put --
+# their cell order is already correct.
+PREBASE_SHIFT = {
+    "bn_ikaar",     # ি
+    "bn_ekaar",     # ে
+    "bn_aikaar",    # ৈ
+    "bn_okaar",     # ো (ে-part lands over the base, া-part in own cell)
+    "bn_aukaar",    # ৌ
+    "bn_anusvara",  # ং
+}
+
 # Kar (vowel-sign) glyphs are NEVER x-squeezed: author directive
 # 2026-08-31 — keep native ink, center it in the cell (advance = cell),
 # letting it overflow symmetrically into neighboring bearings instead of
@@ -115,6 +134,10 @@ def main():
     ap.add_argument("--family", default="Siyam Rupali Mono")
     ap.add_argument("--subfamily", default="Regular")
     ap.add_argument("--version", default="1.100")
+    ap.add_argument("--prebase-shift", action="store_true",
+                    help="shift pre-base matra/above-mark ink one cell left "
+                         "(Windows Terminal-native variant: WT draws "
+                         "codepoint-order with no shaping)")
     args = ap.parse_args()
 
     f = TTFont(args.infile)
@@ -157,6 +180,8 @@ def main():
             sx = min(1.0, ink_max / bw)
         # recenter ink in the cell
         dx = (cell - sx * bw) / 2 - sx * x0
+        if args.prebase_shift and name in PREBASE_SHIFT:
+            dx -= cell  # ink now centered over the PRECEDING cell
         factors[name] = (sx, dx)
         if sx < 1.0:
             stats["condensed"] += 1

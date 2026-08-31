@@ -6,16 +6,19 @@ like in FontLab, and the pipeline absorbs your drawings permanently via a
 
 ## 1. Install the alphas and test
 
-Two fonts, two jobs (both `Version 0.0.1`):
+Three fonts, three jobs (all `Version 0.0.1`):
 
 | File | Family name | Test in |
 |---|---|---|
-| `build/SiyamRupaliMono-Wide.ttf` | Siyam Rupali Mono Wide | **Terminal** (Windows Terminal, kitty, WezTerm, foot…) |
+| `build/SiyamRupaliMono-WT.ttf` | Siyam Rupali Mono WT | **Windows Terminal** (unshaped platform — pre-base matra ink is pre-shifted onto the base cell) |
+| `build/SiyamRupaliMono-Wide.ttf` | Siyam Rupali Mono Wide | **Shaping terminals** (kitty, WezTerm, foot, pango/VTE family…) |
 | `build/SiyamRupaliMono-Edit.ttf` | Siyam Rupali Mono Edit | **Gridless editors** (VS Code, Notepad++, Word…) |
 
 Install: right-click the TTF → *Install for me* (or copy into
 `%LOCALAPPDATA%\Microsoft\Windows\Fonts`). Pick the family from the
-terminal/editor font list.
+terminal/editor font list. Windows Terminal note: it shapes nothing for
+Bengali and grants columns per codepoint — use the **WT** family there,
+not Wide.
 
 What to look for while testing:
 
