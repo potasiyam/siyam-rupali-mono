@@ -63,6 +63,8 @@ $PY tools/gen_cv_ligatures.py legacy/base-1.070ship.ttf build/work1536.unhinted.
 # Editor build (no cv ligatures; matras keep their own cell) - v1.105
 $PY tools/mono_convert.py     legacy/base-1.070ship.ttf build/SiyamRupaliMono-Edit.ttf --cell 1536 --ink-cap 0.97 --family "Siyam Rupali Mono Edit" --version 1.105
 # Optional Regular 1024 variant: same as terminal build but --cell default (1024), version 1.100
+# Optional hand-designed glyph fixes (author redraws; see docs/FIXES.md):
+#   $PY tools/apply_fixes.py build/SiyamRupaliMono-Wide.ttf fixes/<frag>.ttf   # BEFORE hinting
 # Hinting (brain venv only): $PY ../agentic-font-dev/scripts/hint.py build/<ttf>
 ```
 
@@ -90,6 +92,8 @@ box `make` is Embarcadero's and cannot parse it.
 
 ## Open work (priority order)
 
+0. **Alpha 0.0.1 author testing** (Wide in terminals, Edit in editors;
+   findings flow through the fixes layer, docs/FIXES.md).
 1. Visual review of Wide 1536 + Edit at 12-16px (hb-view or FreeType
    render sheet) - cluster squeeze 0.68 median is the accepted ceiling;
    eyeball before wide release.

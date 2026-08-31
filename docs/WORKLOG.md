@@ -253,3 +253,34 @@ symmetric overflow into neighboring bearings instead of distortion
 plus bn_aumark). Caught bn_ikaar native ink 1541 > 1490 cap being
 silently squeezed; now renders native with lsb=rsb=-2. Condensed count
 drops 325 -> 258.
+
+## 2026-08-31 (late 4) — alpha 0.0.1 + hand-fixes layer
+
+Author wants to test the two surfaces personally and hand-design
+character fixes. Version line moved to **0.0.1** (alpha series;
+1.10x numbers were pre-release engineering builds).
+
+Built in the brain venv (this machine) — closing the gap noted in
+"readability review" (v1.10x was built on system Python with hint/qa
+skipped): both surfaces rebuilt, hinted, and gated here:
+- build/SiyamRupaliMono-Wide.ttf 0.0.1 (1185 glyphs): qa 11/11,
+  shape_check --cell 1536 --matrix --context = 0 failures.
+- build/SiyamRupaliMono-Edit.ttf 0.0.1 (789 glyphs): shape_check
+  --cell 1536 --max-cells 3 --matrix = 0 failures.
+Measured: Wide letters median 0.851 condense, worst 0.54 (triple
+conjuncts); CV ligature uniform scale median 0.647.
+
+**Fixes layer (new):** author redraws survive rebuilds via
+tools/extract_fixes.py + tools/apply_fixes.py + fixes/*.ttf fragments.
+Round-trip tested with a synthetic 2-glyph edit: extract diffs geometry
+(RecordingPen signature, composites decomposed — hint bytecode ignored
+since we re-autohint), apply merges and re-pins advances to the cell.
+Full designer workflow: docs/FIXES.md (FontLab-centric: edit a copy of
+the build, outlines only, no rename/add/delete; fragments are
+per-surface and committed as the permanent record).
+
+fontTools gotchas hit while building the fragment (both fixed in code):
+lazy table decompile after pruning glyphOrder IndexErrors (hmtx reads
+the order at decompile — force-decompile everything first); the
+fragment must keep a post 2.0 table or TTFont synthesizes glyphNN
+names and the bn_* names are lost.
