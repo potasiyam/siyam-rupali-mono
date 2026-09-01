@@ -23,6 +23,7 @@ Usage:
       [--family "Siyam Rupali Mono"] [--version 1.100]
 """
 import argparse
+import statistics
 import sys
 
 from fontTools.pens.ttGlyphPen import TTGlyphPen
@@ -152,7 +153,8 @@ def main():
     ap.add_argument("infile")
     ap.add_argument("outfile")
     ap.add_argument("--cell", type=int, default=None,
-                    help="cell width in units (default: upem/2)")
+                    help="cell width in units (default: auto = median "
+                         "advance of the font's own glyphs)")
     ap.add_argument("--ink-cap", type=float, default=0.92)
     ap.add_argument("--family", default="Siyam Rupali Mono")
     ap.add_argument("--subfamily", default="Regular")
@@ -165,7 +167,18 @@ def main():
 
     f = TTFont(args.infile)
     upm = f["head"].unitsPerEm
-    cell = args.cell or upm // 2
+    if args.cell is None:
+        # auto width: the median advance of the font's own advance-bearing
+        # glyphs — the most neutral mono cell for THIS design (half the
+        # glyphs pad, half trim, squeeze spread evenly). Pass --cell to
+        # override (e.g. 1024 = classic 0.5em, 1536 = 0.75em airy).
+        cls0 = f["GDEF"].table.GlyphClassDef.classDefs
+        cand = sorted(f["hmtx"][g][0] for g in f.getGlyphOrder()
+                      if cls0.get(g) != 3 and f["hmtx"][g][0] >= MARK_ADV_FLOOR)
+        args.cell = int(statistics.median(cand)) if cand else upm // 2
+        print(f"cell auto = median advance {args.cell} "
+              f"({args.cell/upm:.2f} em)")
+    cell = args.cell
     ink_max = args.ink_cap * cell
 
     glyf = f["glyf"]
