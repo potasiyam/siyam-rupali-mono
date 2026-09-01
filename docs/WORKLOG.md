@@ -490,3 +490,49 @@ The paste-based GUI probe stayed inconclusive; the 0.0.3 WT behavior
 was not re-verified on pixels — it follows deterministically from the
 measured WT lookup behavior (restore was the only glyph-altering
 lookup in the chain; it is gone).
+
+## 2026-09-01 — WT DOES shape (author-verified); WT8 ligature-free variant
+
+Author report on 0.0.8 in WT (family loaded correctly, finally):
+"কি takes 2 columns but renders as a single composited squeezed
+character, 2nd column empty." A merged cluster implies the pres
+LigatureSubst FIRED — which requires the reordered stream. Therefore:
+
+**FINAL WT MODEL (3rd revision): Windows Terminal 1.24 runs FULL
+DirectWrite Bengali shaping (reorder + GSUB) for glyph rendering, and
+charges columns per codepoint from the Unicode GCB table for the
+grid.** Merged 1-glyph art lands in the first granted column; the
+remaining granted column(s) are empty.
+
+This rewrites two earlier "verified" claims — and the lesson is
+recorded: the late-5/late-9 captures ("no reorder", "pres fires") were
+taken while WT was rendering the FALLBACK font (the family-name cache
+poisoning below), so those pixels were never our font. Rule 5
+(verify the artifact) extends to: verify WHICH font the artifact
+rendered. The review session's "no reorder VERIFIED" capture is
+suspect for the same reason on its machine.
+
+**Font-cache poisoning incident (this machine):** family
+"Siyam Rupali Mono" was re-pointed across 4 files in one day (0.0.2
+.ttf -> 003 -> 008) including a live deletion; WT/DWrite then served a
+dead mapping and fell back silently while GDI and fresh WPF/DWrite
+processes resolved the family fine (WPF probe: ka=32.91px = our
+1404-unit cell exactly; Nirmala=42.16). A byte-identical copy under a
+fresh family ("Siyam Rupali Mono Two") rendered immediately in WT.
+Fix pattern: never re-point a family at a new file on this box —
+register new family names (WT8, Two), or restart the FontCache service
+(admin). UAC was requested; service reads Running (approval
+ambiguous).
+
+**WT8 build (what the author asked for):** the Edit-like look — কি =
+two glyphs filling both granted columns. mono_convert only on the
+review branch (verbatim matras + auto cell 1404 + advance-ratio
+scaling, NO ligature step): build/SiyamRupaliMono-WT8.ttf 0.0.8,
+family "Siyam Rupali Mono WT8", shape_check --max-cells 3 --matrix =
+0 failures. Installed; WT face set to it; probe008.cmd lines loaded.
+In WT (shaping on), কি renders [bn_ikaar][bn_ka] with original VOLT
+art interlocks — the original font's design at cell advances.
+
+Current install map: WT8 (WT, 2-col filled) / Two == universal 0.0.8
+with ligatures (shaping terminals + editors; "Siyam Rupali Mono" name
+cache-poisoned locally) / Edit 0.0.1 (older, centered art).
