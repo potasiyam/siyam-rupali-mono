@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Generate CV ligatures so spacing-matra syllables fit ONE terminal cell.
+"""Generate CV ligatures so spacing-matra syllables merge on shaping terminals.
 
-Problem: the seven spacing matras (ি ী ে ৈ ো ৌ া) each carry their own
-advance, so কি = 2 cells and কো = 3 cells while a terminal grants every
-Bengali cluster exactly 1 cell (wcwidth). This tool composes base+matra
-art (from the ORIGINAL proportional font) into single ligature glyphs
-and adds GSUB ligature rules that consume the reordered stream
-(e.g. কি shapes to [bn_ikaar, bn_ka] -> sub bn_ikaar bn_ka by bn_ka_ikaar).
+Context: terminals differ in how they grant columns and whether they
+shape. Windows Terminal 1.24 charges per codepoint (Unicode GCB table:
+SpacingMark = 1 column, Extend = 0), draws in codepoint order and does
+no Bengali reordering — the original matra art was designed for exactly
+that, so it renders acceptably there as-is. Shaping terminals (kitty,
+VTE, foot, wezterm) grant per cluster: কি would occupy 2 glyph-cells
+there, so this tool composes base+matra art (from the ORIGINAL
+proportional font) into single ligature glyphs and adds GSUB ligature
+rules that consume the reordered stream (e.g. কি shapes to
+[bn_ikaar, bn_ka] -> sub bn_ikaar bn_ka by bn_ka_ikaar), merging each
+cluster back to one cell.
 
 v1 scope: bare consonant bases only. Conjunct + matra (e.g. ক্ষি) keeps
 the multi-cell overflow and is the documented v2 work item.
@@ -179,12 +184,14 @@ def main():
                     help="rename family (e.g. 'Siyam Rupali Mono Wide')")
     ap.add_argument("--version", default=None,
                     help="version string, e.g. 1.101")
-    ap.add_argument("--restore-shifted", action="store_true",
-                    help="append a pres restore lookup swapping shifted "
-                         "pre-base art to the _shaped copies for non-"
-                         "ligated leftovers. OFF by default: Windows "
-                         "Terminal applies pres WITHOUT reordering, so "
-                         "the restore misfires there (WORKLOG late 9)")
+    ap.add_argument("--no-restore", action="store_true",
+                    help="0.0.4 flip: the restore (centered -> _shifted) "
+                         "is ON by default - Windows Terminal applies pres "
+                         "WITHOUT reordering (0.0.2 forensics + review "
+                         "re-verification), so the restore gives WT the "
+                         "shifted art while alacritty/editors keep "
+                         "centered defaults. --no-restore exits to the "
+                         "0.0.3 behavior (shifted defaults).")
     args = ap.parse_args()
 
     orig = TTFont(args.original)
@@ -321,33 +328,35 @@ def main():
 
     gs = font["GSUB"].table
 
-    # Optional restore (--restore-shifted): swaps shifted pre-base art back
-    # to centered copies for non-ligated leftovers. OFF BY DEFAULT — pixel-
-    # forensics 2026-08-31 (WORKLOG late 9) proved Windows Terminal 1.24
-    # applies pres GSUB WITHOUT the Bengali reorder: the restore misfired
-    # there, pulling the centered matra into the wrong cell (the author's
-    # "ি too far from ক" bug). With the restore omitted, WT renders the
-    # shifted art as designed (curl over the base cell); shaping renderers
-    # ligate in pres anyway, and the only cost is non-ligated leftovers
-    # (conjunct+matra — already a degraded case) keep shifted art.
+    # 0.0.4 FLIPPED restore (default ON): the cmap glyph carries CENTERED
+    # art (alacritty-class renderers merge zero-width matras into the base
+    # cell; shaping leftovers and editors sit centered in reordered
+    # position); the restore swaps centered -> shifted for Windows
+    # Terminal, which applies pres WITHOUT the Bengali reorder (verified
+    # twice: origin 0.0.2 forensics + review-session re-test). The
+    # ligature lookup is appended FIRST, so shaping renderers ligate bare
+    # CV before the restore is ever reached. Includes the init forms so
+    # word-initial ে/ৈ are covered in WT regardless of whether WT applies
+    # init. --no-restore exits to 0.0.3 behavior.
     new_lookups = [lookup]
-    if args.restore_shifted:
+    if not args.no_restore:
+        from mono_convert import PREBASE_SHIFT_ALL
         known = set(font.getGlyphOrder())
-        shaped_pairs = []
-        for base_name in sorted(PREBASE_SHIFT):
-            shaped = base_name + "_shaped"
-            if shaped in known and base_name in known:
+        shifted_pairs = []
+        for base_name in sorted(PREBASE_SHIFT_ALL):
+            shifted = base_name + "_shifted"
+            if shifted in known and base_name in known:
                 # (coverage glyph, substitute): the cmap/default glyph
-                # carries shifted art; shaping renderers get the centered
-                # copy back after the ligature lookup has had its pass.
-                shaped_pairs.append((base_name, shaped))
-        if shaped_pairs:
+                # carries centered art; WT's pres pass swaps it to the
+                # shifted copy so the curl lands over the base cell.
+                shifted_pairs.append((base_name, shifted))
+        if shifted_pairs:
             # fontTools 4.x SingleSubst is format-switching: give it a
             # {coverage_glyph: substitute} mapping and it picks the binary
             # format itself (manual Format/Coverage/substitute attrs are
             # silently ignored — found the hard way 2026-08-31).
             ss = otTables.SingleSubst()
-            ss.mapping = {p[0]: p[1] for p in shaped_pairs}
+            ss.mapping = {p[0]: p[1] for p in shifted_pairs}
             ss_lookup = otTables.Lookup()
             ss_lookup.LookupType = 1  # Single Substitution
             ss_lookup.LookupFlag = 0

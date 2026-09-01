@@ -4,13 +4,17 @@
 Model: every advance-bearing glyph occupies exactly ONE cell of `cell`
 units (default: upem/2 = 1024). Outlines are x-condensed (y untouched) to
 fit inside `ink_cap * cell`, then recentered in the cell. Marks (GDEF
-class 3 or advance < mark_floor) keep their near-zero advances. Kar
-(vowel-sign) glyphs are exempt from squeezing (is_kar). GPOS MarkToBase
-anchors move with each base glyph's transform. Legacy tables that encode
-the OLD advances/bitmaps/hints are dropped.
+class 3 or advance < mark_floor) keep their near-zero advances. Matra/
+kar glyphs (is_kar / PREBASE_SHIFT_ALL) keep their ORIGINAL art
+verbatim — the VOLT-era design positions their ink for codepoint-order
+drawing, and recentering it destroyed that (the root cause of the
+detached-matra bugs). Only the advance becomes the cell. GPOS
+MarkToBase anchors move with each base glyph's transform. Legacy tables
+that encode the OLD advances/bitmaps/hints are dropped.
 
 This script is step 1 of the pipeline for BOTH deliverables:
-  - terminal build: step 2 = gen_cv_ligatures.py (CV ligatures, 1 cell)
+  - terminal build: step 2 = gen_cv_ligatures.py (CV ligatures for
+    shaping terminals)
   - editor build:   no step 2 (matras keep their own full cell)
 See AGENTS.md / docs/TERMINAL.md.
 
@@ -41,16 +45,23 @@ def draw_decomposed(glyph, table, pen):
 
 MARK_ADV_FLOOR = 300  # advances below this are treated as mark-ish, untouched
 
-# Glyphs whose ART belongs BEFORE (or above) the preceding cluster but that
-# Windows Terminal draws AFTER it: WT does no cross-codepoint shaping
-# (measured 2026-08-31: it allocates columns = sum of per-codepoint font
-# advances and draws cmap glyphs in codepoint order). With --prebase-shift
-# these glyphs' ink moves LEFT by one cell, so in cell order the curl sits
-# over the base cell and the matra's own cell is (near-)empty ink-wise --
-# exactly how the cluster should look across its granted columns.
-# Above-marks (anusvara) get the same treatment; candrabindu and below-marks
-# already ride the pen at ~0 advance. Post-base signs (া ী ঃ) stay put --
-# their cell order is already correct.
+# Pre-base/above matras (drawn BEFORE the base in correct text, but typed
+# and stored AFTER it). Terminal-land is split in two, measured
+# 2026-08-31 (review session):
+#   - Windows Terminal 1.24: NO Bengali shaping/reorder; columns charged
+#     per codepoint from the Unicode GraphemeBreakProperty table
+#     (SpacingMark = 1 column, Extend = 0), glyphs drawn in codepoint
+#     order. The VOLT-era art was designed for exactly this: each matra's
+#     ink already sits at its final visual position relative to the pen
+#     (negative bearings, overlay bars), so codepoint-order drawing
+#     interlocks correctly.
+#   - kitty / VTE / foot / wezterm: HarfBuzz shaping; columns follow
+#     clusters; CV ligatures from gen_cv_ligatures.py merge clusters.
+# Since 0.0.6 the matras keep their ORIGINAL art verbatim (is_kar /
+# PREBASE_SHIFT_ALL branch below), which serves both families without
+# any shifting machinery. This set now only drives the restore-lookup
+# coverage for legacy --prebase-shift builds and names the verbatim
+# set for the 0.0.6 rule.
 PREBASE_SHIFT = {
     "bn_ikaar",     # ?
     "bn_ekaar",     # ?

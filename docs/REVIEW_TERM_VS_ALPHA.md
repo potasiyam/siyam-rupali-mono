@@ -78,3 +78,22 @@ shifted art in shaping renderers (cosmetic), WT conjunct letter-by-letter
 is upstream-blocked, and the `--restore-shifted` opt-in should stay OFF
 (verified logic: restore keyed on original names fires in WT's pres
 without reorder â€” origin's own probe_restore caught this; consistent).
+
+## Addendum: Alacritty retest (correct font) + comment corrections
+
+The first Alacritty capture rendered a FALLBACK font: the harness passed
+the family via -o with quoting that got mangled, so the family never
+applied. With a proper config file (APPDATA/alacritty/alacritty.toml),
+alacritty -vv logs 'Loading Siyam Rupali Mono font' and the render shows
+the correct letterforms. Harness tools fixed (run_alacritty_cfg.ps1).
+
+Alacritty 0.0.6 verdict (correct font): original-art matras overlay
+their base acceptably at codepoint order (ki/ke/kaa ok); ko/kau show
+dotted circles (09CB/09CC cannot split without shaping); kssi jammed.
+All three are alacritty's lack of shaping - no font can fix.
+
+Comment corrections (author directive): obsolete mechanism notes removed
+- 'columns = per-codepoint font advances' (refuted by zero-advance probe
+font: the table is Unicode GCB) and wcwidth-cluster framing in docstrings
+replaced by the two-family model; VOLT-era matra design acknowledged as
+intentional (codepoint-order rendering), not a defect.
