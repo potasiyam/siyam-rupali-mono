@@ -52,13 +52,25 @@ MARK_ADV_FLOOR = 300  # advances below this are treated as mark-ish, untouched
 # already ride the pen at ~0 advance. Post-base signs (া ী ঃ) stay put --
 # their cell order is already correct.
 PREBASE_SHIFT = {
-    "bn_ikaar",     # ি
-    "bn_ekaar",     # ে
-    "bn_aikaar",    # ৈ
-    "bn_okaar",     # ো (ে-part lands over the base, া-part in own cell)
-    "bn_aukaar",    # ৌ
-    "bn_anusvara",  # ং
+    "bn_ikaar",     # ?
+    "bn_ekaar",     # ?
+    "bn_aikaar",    # ?
+    "bn_okaar",     # (?-part lands over the base, ?-part in own cell)
+    "bn_aukaar",    # ?
+    "bn_anusvara",  # ?
 }
+
+# 0.0.4 FLIP (review session): the cmap/default glyph carries CENTERED art
+# (alacritty-class renderers merge zero-width matras into the base cell;
+# shaping-terminal leftovers and editors want centered art in reordered
+# position), and a <name>_shifted copy carries the one-cell-left art. Step
+# 2 appends a pres restore (centered -> shifted) that fires in Windows
+# Terminal (proven by the 0.0.2 forensics: WT applies pres WITHOUT
+# reorder, so a SingleSubst on these names executes there) but is reached
+# only after the ligature lookup in shaping renderers. The init forms are
+# included so word-initial ে/ৈ (init swaps bn_ekaar->bn_initekaar) are
+# covered by the restore in WT regardless of whether WT applies init.
+PREBASE_SHIFT_ALL = PREBASE_SHIFT | {"bn_initekaar", "bn_initaikaar"}
 
 # Kar (vowel-sign) glyphs are NEVER x-squeezed: author directive
 # 2026-08-31 — keep native ink, center it in the cell (advance = cell),
@@ -175,28 +187,21 @@ def main():
             continue
         x0, _, x1, _ = bb
         bw = x1 - x0
-        if is_kar(name):
-            # kars: never squeeze — native ink, centered (author directive)
-            sx = 1.0
-        else:
-            sx = min(1.0, ink_max / bw)
+        if is_kar(name) or name in PREBASE_SHIFT_ALL:
+            # 0.0.6 (author directive): matras keep the ORIGINAL ART
+            # VERBATIM - no scale, no move. Compare with original Siyam
+            # Rupali: the VOLT-era design already positions the ink
+            # (negative bearings, overlay bars) for codepoint-order
+            # drawing. Only the advance becomes the cell. Overflow cases
+            # (o-kar/au-kar ink 2577/2565 > cell) are accepted as-is.
+            factors[name] = None  # matras are not MarkToBase bases
+            orig_lsb = f["hmtx"][name][1]
+            f["hmtx"][name] = (cell, orig_lsb)
+            stats["kar_verbatim"] = stats.get("kar_verbatim", 0) + 1
+            continue
+        sx = min(1.0, ink_max / bw)
         # recenter ink in the cell
-        dx0 = (cell - sx * bw) / 2 - sx * x0
-        dx = dx0
-        if args.prebase_shift and name in PREBASE_SHIFT:
-            # UNIversal build: the cmap glyph keeps SHIFTED art (Windows
-            # Terminal renders it codepoint-order, unshaped), and an extra
-            # <name>_shaped copy keeps the centered art. Step 2 appends a
-            # pres restore lookup (shifted -> _shaped) so shaping
-            # renderers see normal art. VOLT lookups never key on these
-            # six glyphs (verified 2026-08-31), so in-place shifting is
-            # invisible to shaping.
-            shaped = name + "_shaped"
-            transform_glyph(glyf, orig, name, sx, dx0, target=shaped)
-            f["hmtx"][shaped] = (cell, round(sx * x0 + dx0))
-            stats["prebase_shaped_copies"] = stats.get(
-                "prebase_shaped_copies", 0) + 1
-            dx = dx0 - cell  # ink centered over the PRECEDING cell
+        dx = (cell - sx * bw) / 2 - sx * x0
         factors[name] = (sx, dx)
         if sx < 1.0:
             stats["condensed"] += 1
