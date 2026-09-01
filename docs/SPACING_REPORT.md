@@ -1,0 +1,102 @@
+# Spacing report — `কিংকর্তব্যবিমুঢ় বি বি` in Windows Terminal 1.24
+
+Author report: this string "shows the spacing bug in WT". Measured with
+all fonts, visually and programmatically. Companion to
+`docs/REVIEW_TERM_VS_ALPHA.md` (independent verification ledger) — this
+report extends the review's column model with a correction found by
+bisecting this exact string.
+
+## The two width notions
+
+- **Shaped advance** (cells): what the shaper (HarfBuzz in
+  kitty/WezTerm/editors; DWrite in WT) produces — sum of glyph
+  advances ÷ cell width. This is the INK width a renderer draws.
+- **Grid columns**: what WT's cursor/selection reserves per line.
+  Measured in WT via cursor-position probes (`build/probe_spacing*.ps1`).
+
+## Refined column model (correction to the review ledger)
+
+The review's model — "SpacingMark = 1 column, Extend = 0" — fits its
+probes but fails on this string: it predicts 18 columns; WT charges 17.
+Bisecting per word (face = WT8):
+
+| probe | columns | simple model | measured |
+|---|---|---|---|
+| কি | 2 | 2 ✓ | 2 |
+| কং | 2 | 2 ✓ | 2 |
+| **কিং** | **2** | 3 ✗ | **2** |
+| কর্ত | 3 | 3 ✓ | 3 |
+| কর্তব্য | 5 | 5 ✓ | 5 |
+| বিমুঢ় | 4 | 4 ✓ | 4 |
+| full string | — | 18 ✗ | **17** |
+
+Refined rule that fits all 7 probes and the full string:
+**Extend = 0 always; a combining mark charges 1 column only when it
+follows a non-mark — runs of trailing marks collapse (mark-after-mark
+= 0).** I.e. কি = 1+1, কং = 1+1, but কিং = 1+1+0. Equivalently: a
+SpacingMark continues the previous mark's cell. (Likely conhost's
+legacy wcwidth behaving as Mn=0 with a "combining run" quirk; the
+review machine's WT may predate/postdate this — its simpler table fit
+its own probes.)
+
+## Programmatic widths — all fonts (shaped advance ÷ cell)
+
+Test string: কিংকর্তব্যবিমুঢ় বি বি → grid = **17** (refined model).
+
+| font | cell | shaped cells | grid | delta | note |
+|---|---|---|---|---|---|
+| **WT8** (no ligatures) | 1404 | **17.00** | 17 | **0** | grid-perfect on this string |
+| Two (universal 0.0.8, ligatures) | 1404 | 13.00 | 17 | +4 | each কি-type ligature merges 2 glyphs → 1 cell while grid charges 2 |
+| Edit 0.0.1 (no ligatures) | 1536 | 17.00 | 17 | 0 | same as WT8 |
+| Wide 0.0.1 (ligatures) | 1536 | 13.00 | 17 | +4 | same as Two |
+| original 1.070 | — | 5.91 em | 17 | — | proportional; not grid-comparable |
+
+Decomposition of the deltas (why the numbers are what they are):
+- **Reph** (কর্তব্য): the shaped reph glyph (`bn_half_ra`) has ZERO
+  advance while the grid charges the র codepoint 1 column → +1 empty
+  column, present in EVERY font including WT8/Edit.
+- **CV ligatures** (কিং's কি, বিমুঢ়'s বি, বি, বি): ligature fonts
+  merge base+matra into 1 cell while the grid charges 2 → +1 per
+  cluster. 4 clusters here → +4. This is the big Two/Wide desync.
+- **anusvara-after-matra** (কিং): the grid collapses ং to 0 while the
+  shaped stream still advances it a full cell → −1 local overflow (ink
+  spills into the NEXT cluster's first column).
+
+## Live WT measurement (face = WT8)
+
+Cursor after the full string: **17 columns** (matches refined model;
+probe: `build/probe_spacing.ps1`, results
+`build/probe/spacing_result*.txt`). Ink extent (PrintWindow capture,
+`tools/win_capture.py`): ruler 18 X = 196 px ⇒ 10.89 px/column;
+Bengali ink = 176 px ⇒ **16.2 columns of ink vs 17 charged** — the
+residual gap is the reph's empty column, partly filled by কিং's ং
+overflow. Visual: `build/probe/wt_spacing_zoom.png` — the line renders
+fully shaped (ি over ব, reph over ত, ু under ম, real ঢ়): with WT8 the
+text READS correctly and ends ~1 column short of the cursor; with
+Two/Wide it would read correctly but end ~4 columns short (phantom
+gaps mid-line).
+
+## Verdicts
+
+1. **WT8 / Edit are the grid-truest fonts in WT** (delta 0 on this
+   string; +1 only for reph words). The author's preferred 2-glyph look
+   and grid alignment coincide here.
+2. **Two/Wide (ligature fonts) desync by design in WT** (+4 here, grows
+   with cluster count). They are for shaping terminals that charge per
+   cluster — the same file is correct in kitty/VTE/WezTerm-on-Unix.
+3. **No font can charge exactly what it draws in WT for all text**:
+   reph (grid 1 / glyph 0) and mark-run collapse (grid 0 / glyph 1)
+   are terminal-side rules. WT8 minimizes the residual; the residuals
+   are single columns adjacent to the features that cause them (reph
+   words, ি+ং sequences).
+4. The review's SpacingMark model needs this report's mark-run
+   refinement; its font-independence conclusion stands (zero-advance
+   probe font).
+
+## How measured
+
+- Programmatic: `tools/spacing_report.py` (vharfbuzz shaping + GCB
+  table) — `python tools/spacing_report.py -v` dumps glyph streams.
+- Grid: cursor-position probes inside WT (`build/probe_spacing*.ps1`,
+  PS RawUI CursorPosition = conhost buffer model).
+- Ink: PrintWindow capture (`tools/win_capture.py`) + PIL extents.
