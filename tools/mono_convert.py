@@ -211,8 +211,17 @@ def main():
             stats["kar_verbatim"] = stats.get("kar_verbatim", 0) + 1
             continue
         sx = min(1.0, ink_max / bw)
-        # recenter ink in the cell
-        dx = (cell - sx * bw) / 2 - sx * x0
+        # 0.0.7 (author directive): scale by the ADVANCE ratio about the
+        # glyph's own center — never re-center the ink. Old advance 800 ->
+        # cell 1000 adds (1000-800)/2 = 100 to each bearing; 1200 -> 1000
+        # removes 100 from each; ink that still cannot fit compresses
+        # further, but the glyph's center stays exactly at the cell center.
+        # Preserving the advance-box center keeps the original font's
+        # rhythm (each glyph shrinks by its own advance ratio) and keeps
+        # designed asymmetries (f/j/comma lean) intact.
+        A = adv
+        sx = min(1.0, cell / A, ink_max / bw)
+        dx = cell / 2.0 - sx * (A / 2.0)
         factors[name] = (sx, dx)
         if sx < 1.0:
             stats["condensed"] += 1
