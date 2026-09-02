@@ -131,3 +131,18 @@ font-side choice is only which ART fills column 1 (compact shaped
 cluster). The residual is intrinsic until WT charges shaped cluster
 widths (upstream: PR #16916 direction). In shaping terminals
 (kitty/VTE/WezTerm-Unix) the same fonts align 1 cluster = 1 column.
+
+## MODEL UPDATE (2026-09-03, author directive): ং charges 1
+
+The mark-run-collapse rule above is rejected as the REFERENCE model
+for anusvara/visarga: they carry a full advance in the font, so the
+model charges them 1 always (কিং = 3, full string = 18). WT 1.24's
+measured collapse-to-0 (কিং = 2) stands as a terminal-side
+undercharge — the mirror image of the reph's overcharge (+1), and
+equally intrinsic. Collapse itself is kept for SpacingMark runs (কো =
+ে+া granting 1 is still measured). `tools/spacing_report.py`
+implements this model (EXTEND = 0, SpacingMark collapse, FULL_MARKS =
+1 always) and now writes UTF-8 regardless of console codepage. The
+original-font row divides by upem (8.61 em for this string), not
+advanceWidthMax. Note: the WT8/Two/Wide-Alpha rows require the other
+session's machine — those files are not on this box.

@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-"""Spacing report: shaped-advance width vs GCB grid width per font.
+"""Spacing report: shaped-advance width vs reference grid width per font.
 
 Two width notions collide in Windows Terminal:
   - shaped advance (HarfBuzz, what a shaping renderer draws/reserves)
-  - GCB columns (what WT's grid charges: SpacingMark=1, Extend=0,
-    Other=1, charged per codepoint, font-independent)
-Delta = GCB columns - shaped advance cells = empty grid columns when
+  - grid columns (what a terminal reserves for the line)
+Reference grid model (author directive 2026-09-03): Extend = 0; a
+spacing mark charges 1 after a non-mark and collapses to 0 inside a
+mark run (measured: ko = e+aa grants 1, probe table in
+docs/SPACING_REPORT.md); anusvara/visarga charge 1 ALWAYS (author:
+"ং should be 1" — they carry a full advance in the font; WT 1.24's
+measured collapse-to-0 for ং is a terminal-side undercharge).
+Delta = grid - shaped advance cells = empty grid columns when
 positive (the "merged glyph + empty column" effect). Pass -v to dump
 glyph streams.
 """
@@ -19,21 +24,31 @@ from fontTools.ttLib import TTFont
 EXTEND = {0x0981, 0x09BC, 0x09C1, 0x09C2, 0x09C3, 0x09C4, 0x09CD}
 SPACING = {0x09BE, 0x09BF, 0x09C0, 0x09C7, 0x09C8, 0x09CB, 0x09CC,
            0x09D7}
+FULL_MARKS = {0x0982, 0x0983}  # anusvara/visarga: charge 1 always
 
 
 def gcb_columns(text):
     n = 0
+    prev_mark = False
     for ch in text:
         cp = ord(ch)
         if cp in EXTEND:
+            prev_mark = True
             continue
-        n += 1  # SpacingMark and Other both charge 1 in WT
+        if cp in FULL_MARKS:
+            n += 1  # author directive: full advance -> full column
+        elif cp in SPACING:
+            if not prev_mark:  # mark runs collapse to one column
+                n += 1
+        else:
+            n += 1  # bases and everything else
+        prev_mark = cp in EXTEND or cp in FULL_MARKS or cp in SPACING
     return n
 
 
-def analyze(font_path, text):
+def analyze(font_path, text, declared_cell=None):
     tt = TTFont(font_path)
-    cell = tt["hhea"].advanceWidthMax
+    cell = declared_cell or tt["head"].unitsPerEm
     vhb = Vharfbuzz(font_path)
     buf = vhb.shape(text, {"script": "beng", "language": "ben"})
     names = [vhb.hbfont.glyph_to_string(i.codepoint) for i in buf.glyph_infos]
@@ -45,6 +60,8 @@ def analyze(font_path, text):
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     here = Path(__file__).parent.parent
     lf = Path("C:/Users/Siyam/AppData/Local/Microsoft/Windows/Fonts")
     fonts = [
@@ -58,15 +75,15 @@ def main():
             "\u09ac\u09bf\u09ae\u09c1\u09a2\u09bc \u09ac\u09bf "
             "\u09ac\u09bf")
     print(f"string: {text!r}")
-    print(f"GCB grid columns (WT charges, font-independent): "
-          f"{gcb_columns(text)}")
+    print(f"reference grid columns (author model; WT quirks measured "
+          f"in docs/SPACING_REPORT.md): {gcb_columns(text)}")
     print()
     print(f"{'font':24} {'cell':>6} {'shaped':>7} {'grid':>5} {'delta':>6}")
-    for label, path, _ in fonts:
+    for label, path, declared in fonts:
         if not path.exists():
             print(f"{label:24} MISSING: {path}")
             continue
-        shaped, grid, glyphs, cell = analyze(str(path), text)
+        shaped, grid, glyphs, cell = analyze(str(path), text, declared)
         print(f"{label:24} {cell:>6} {shaped:>7.2f} {grid:>5} "
               f"{grid - shaped:>+6.2f}")
         if "-v" in sys.argv:
