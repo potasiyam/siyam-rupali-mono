@@ -100,3 +100,34 @@ gaps mid-line).
 - Grid: cursor-position probes inside WT (`build/probe_spacing*.ps1`,
   PS RawUI CursorPosition = conhost buffer model).
 - Ink: PrintWindow capture (`tools/win_capture.py`) + PIL extents.
+
+## ADDENDUM (same session, author-verified captures)
+
+Author corrected two things about the first measurement pass:
+
+1. **The proof grid was mis-scaled** — the capture had been taken with a
+   stale window rect, so the drawn grid was wider than the real text
+   grid. Recalibrated against the window's own ASCII prompt (pitch
+   10.93 px at size 14). Corrected proof: `build/probe/console_grid.png`.
+2. **Gaps after র্ত and after বি/কি/নি persist with the no-ligature
+   build too.** With the grid calibrated, the clusters render COMPACT
+   (matra drawn at/over the base — full shaping) and the second charged
+   column of each CV cluster is EMPTY. So:
+
+**FINAL WT rendering model (4th revision, author-confirmed):**
+Windows Terminal 1.24 runs full Bengali shaping (reorder + GSUB, marks
+positioned) but draws each shaped cluster compact at its FIRST charged
+column, and charges columns per codepoint with the mark-run-collapse
+rule. Therefore the second column of every CV cluster and the reph's
+column are charged-but-empty FOR ANY FONT — ligature fonts (merged
+glyph in col 1) and no-ligature fonts (matra+base compact in col 1)
+produce the same empty-column signature. The earlier "WT8 is
+grid-perfect (delta 0)" statement was a TOTAL-width coincidence: totals
+can match while every cluster boundary still carries a one-column
+residual.
+
+Consequence: no font can eliminate the empty columns in WT 1.24; the
+font-side choice is only which ART fills column 1 (compact shaped
+cluster). The residual is intrinsic until WT charges shaped cluster
+widths (upstream: PR #16916 direction). In shaping terminals
+(kitty/VTE/WezTerm-Unix) the same fonts align 1 cluster = 1 column.
