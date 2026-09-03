@@ -135,9 +135,9 @@ def main():
     print(f"reph/ya-phala ligatures: {made} glyphs (advance {2 * cell}, "
           f"natural offset)")
 
-    # --- 2. mark tuck copies ------------------------------------------
+    # --- 2. mark + aakaar tuck copies ---------------------------------
     tuck_map = {}
-    for m in MARKS:
+    for m in MARKS + ["bn_aakaar"]:
         if m not in known:
             continue
         tuck = f"{m}_tuck"
@@ -191,8 +191,11 @@ def main():
 
     def cov(names):
         c = otTables.Coverage()
-        # Coverage format 1 MUST be sorted by glyph id (binary search)
-        present = [n for n in names if n in known]
+        # Coverage format 1 MUST be sorted by glyph id (binary search).
+        # Filter against the CURRENT order - ligature glyphs composed
+        # above are not in the load-time `known` set (2026-09-03: rule C
+        # silently got an empty coverage because of the stale set).
+        present = [n for n in names if n in set(font.getGlyphOrder())]
         present.sort(key=font.getGlyphID)
         c.glyphs = present
         return c
@@ -221,6 +224,31 @@ def main():
     rec_b.SequenceIndex = 1
     rec_b.LookupListIndex = 0  # patched after indices known
     st_b.SubLookupRecord = [rec_b]
+
+    # rule C: aakaar after a reph2/yaph2 ligature tucks. Measured
+    # 2026-09-03: WT collapses া to 0 columns after any multi-glyph
+    # cluster (dyaa=2, byaa=2, korta=3, bidya=4) while the composed
+    # ligature art spans both columns -> 1-column overhang. The tuck
+    # draws the া one cell left, over the ligature's second column
+    # (correct position: right of the base).
+    # NOTE: coverage against the CURRENT glyph order - the ligature
+    # glyphs were composed above and are not in the load-time `known`.
+    order_now = set(font.getGlyphOrder())
+    lig_glyphs = [f"{c}_{s}" for c in CONSONANT_GLYPHS
+                  for s in ("reph2", "yaph2") if f"{c}_{s}" in order_now]
+    if not lig_glyphs:
+        raise SystemExit("rule C: no ligature glyphs found")
+    st_c = otTables.ChainContextSubst()
+    st_c.Format = 3
+    st_c.BacktrackCoverage = [cov(lig_glyphs)]
+    st_c.InputCoverage = [cov(["bn_aakaar"])]
+    st_c.LookAheadCoverage = []
+    st_c.SubstCount = 1
+    rec_c = otTables.SubstLookupRecord()
+    rec_c.SequenceIndex = 0
+    rec_c.LookupListIndex = 0  # patched after indices known
+    st_c.SubLookupRecord = [rec_c]
+    st_c.SubstLookupRecord = [rec_c]  # both names (see duality note below)
     # fontTools duality: fresh tables expose the record list as
     # 'SubLookupRecord' (getConverters) but the compiler/decompiler use
     # 'SubstLookupRecord' (2026-09-03: records silently dropped on save
@@ -231,7 +259,7 @@ def main():
     lk_ctx = otTables.Lookup()
     lk_ctx.LookupType = 6  # Chain Context Substitution
     lk_ctx.LookupFlag = 0
-    lk_ctx.SubTable = [st_a, st_b]
+    lk_ctx.SubTable = [st_a, st_b, st_c]
 
     # NOTE: the single-subst lookup must NOT be referenced by any feature —
     # standalone it would tuck EVERY anusvara/visarga (the kang bug of
