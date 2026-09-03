@@ -28,7 +28,7 @@ from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables import otTables
 
-from gen_cv_ligatures import build_ligature, layout_faithful
+from gen_cv_ligatures import build_ligature
 from mono_convert import RoundingPen, draw_decomposed, glyph_bbox
 
 CONSONANT_GLYPHS = [
@@ -78,20 +78,47 @@ def main():
     known = set(font.getGlyphOrder())
     rules = []
 
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("fontfile", help="mono-converted TTF, modified in place")
+    ap.add_argument("--original", default="legacy/base-1.070ship.ttf",
+                    help="original font: source of NATURAL advances for "
+                         "ligature composition (the converted font gives "
+                         "bn_yaphala a full 1404 advance, which Detaches "
+                         "the stroke a full cell right - 2026-09-03 bug)")
+    ap.add_argument("--cell", type=int, default=1404)
+    ap.add_argument("--family", default=None)
+    ap.add_argument("--version", default=None)
+    args = ap.parse_args()
+
+    font = TTFont(args.fontfile)
+    orig = TTFont(args.original)
+    glyf = font["glyf"]
+    cell = args.cell
+    known = set(font.getGlyphOrder())
+    rules = []
+    frame = int(0.97 * 2 * cell)
+
+    def compose_pair(first, second, out_name):
+        """first+second at NATURAL relative offset (first at pen 0, second
+        at pen = ORIGINAL advance of first), ink block centered in 2*cell.
+        layout_faithful on the converted font would use the converted
+        advance (yaphala = 1404) and detach the stroke a full cell."""
+        op = orig["hmtx"]
+        pen2 = float(op[first][0])
+        cache = {}
+        bx0, _, bx1, _ = glyph_bbox(glyf, first, cache)
+        sx0, _, sx1, _ = glyph_bbox(glyf, second, cache)
+        lo = min(bx0, pen2 + sx0)
+        hi = max(bx1, pen2 + sx1)
+        dx = (frame - (hi - lo)) / 2 - lo
+        glyph, lsb = build_ligature(glyf, [(first, (1.0, dx)),
+                                           (second, (1.0, pen2 + dx))], {})
+        glyf[out_name] = glyph  # auto-appends to glyphOrder
+        font["hmtx"].metrics[out_name] = (2 * cell, lsb)
+
     # --- 1. reph + ya-phala 2-cell ligatures --------------------------
     assert "bn_half_ra" in known, "no bn_half_ra (reph) glyph"
-    # Compose base+form at NATURAL relative offsets and center the whole
-    # ink block in the 2-cell advance - the layout_faithful recipe from
-    # gen_cv_ligatures. Both charged columns carry ink and the pair
-    # READS as one letter.
-    #   [C][bn_half_ra]  -> C_reph2  (reph: hook column was near-empty)
-    #   [C][bn_yaphala]  -> C_yaph2  (ya-phala carries a full 1404
-    #     advance for a small below-base stroke -> the sparse second
-    #     column of ব্য-class clusters; author report 2026-09-03)
-    # (v1 centered the hook in col 1 = detached floating tick; v2 used
-    # natural offset against a full-cell shift = same detachment.
-    # 2026-09-03 gorto review, third iteration.)
-    frame = int(0.97 * 2 * cell)
     made = 0
     for c in CONSONANT_GLYPHS:
         if c not in known:
@@ -102,13 +129,11 @@ def main():
             out = f"{c}_{suffix}"
             if out in known:
                 continue
-            parts, _ = layout_faithful(font, [form, c], {}, frame)
-            glyph, lsb = build_ligature(glyf, parts, {})
-            glyf[out] = glyph  # auto-appends to glyphOrder
-            font["hmtx"].metrics[out] = (2 * cell, lsb)
+            compose_pair(c, form, out)
             rules.append(f"sub {c} {form} by {out};")
             made += 1
-    print(f"reph/ya-phala ligatures: {made} glyphs (advance {2 * cell}, faithful)")
+    print(f"reph/ya-phala ligatures: {made} glyphs (advance {2 * cell}, "
+          f"natural offset)")
 
     # --- 2. mark tuck copies ------------------------------------------
     tuck_map = {}
