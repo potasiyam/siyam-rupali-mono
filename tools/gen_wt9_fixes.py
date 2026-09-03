@@ -28,6 +28,7 @@ from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.tables import otTables
 
+from gen_cv_ligatures import build_ligature, layout_faithful
 from mono_convert import RoundingPen, draw_decomposed, glyph_bbox
 
 CONSONANT_GLYPHS = [
@@ -79,8 +80,15 @@ def main():
 
     # --- 1. reph 2-cell ligatures ------------------------------------
     assert "bn_half_ra" in known, "no bn_half_ra (reph) glyph"
-    hb_x0, _, hb_x1, _ = glyph_bbox(glyf, "bn_half_ra", {})
-    reph_dx = cell / 2 - (hb_x0 + hb_x1) / 2   # hook centered over col 1
+    # Compose [half_ra][C] at NATURAL relative offsets (hook overlapping
+    # the consonant's left edge, exactly as shaped) and center the whole
+    # ink block in the 2-cell advance - the layout_faithful recipe from
+    # gen_cv_ligatures. Both charged columns carry ink: the hook's spread
+    # fills column 1, the consonant fills column 2, and the pair READS
+    # as one letter. (v1 centered the hook in col 1 = detached floating
+    # tick; v2 used natural offset against a full-cell shift = same
+    # detachment. 2026-09-03 gorto review, third iteration.)
+    frame = int(0.97 * 2 * cell)
     made = 0
     for c in CONSONANT_GLYPHS:
         if c not in known:
@@ -88,11 +96,13 @@ def main():
         out = f"{c}_reph2"
         if out in known:
             continue
-        compose(font, out, [(c, (1.0, float(cell))),
-                            ("bn_half_ra", (1.0, reph_dx))], 2 * cell)
+        parts, _ = layout_faithful(font, ["bn_half_ra", c], {}, frame)
+        glyph, lsb = build_ligature(glyf, parts, {})
+        glyf[out] = glyph  # auto-appends to glyphOrder
+        font["hmtx"].metrics[out] = (2 * cell, lsb)
         rules.append(f"sub {c} bn_half_ra by {out};")
         made += 1
-    print(f"reph ligatures: {made} glyphs (advance {2 * cell})")
+    print(f"reph ligatures: {made} glyphs (advance {2 * cell}, faithful)")
 
     # --- 2. mark tuck copies ------------------------------------------
     tuck_map = {}
@@ -211,18 +221,26 @@ def main():
     if not touched:
         raise SystemExit("no 'pres' feature found - refusing to continue")
 
-    if args.family or args.version:
-        fam = args.family or "Siyam Rupali Mono"
+    # 2026-09-03 incident: this block ran on --version alone and clobbered
+    # mono_convert's family ("Siyam Rupali Mono WT9") back to the default
+    # "Siyam Rupali Mono" -> internal-name collision with the 008 install
+    # -> font-cache poisoning. Rewrite names ONLY when --family is given;
+    # --version alone touches ID5 + fontRevision.
+    if args.family:
+        fam = args.family
         subname = "Regular"
         ps = fam.replace(" ", "") + "-" + subname
-        ver = f"Version {args.version or '1.100'}"
+        full = f"{fam} {subname}"
         name = font["name"]
-        for nid, val in ((1, fam), (2, subname), (3, f"{ps};{ver};mono-term"),
-                         (4, f"{fam} {subname}"), (5, ver), (6, ps),
-                         (16, fam), (17, subname)):
+        for nid, val in ((1, fam), (2, subname), (3, f"{ps};mono-term"),
+                         (4, full), (6, ps), (16, fam), (17, subname)):
             name.setName(val, nid, 3, 1, 0x409)
             name.setName(val, nid, 1, 0, 0)
-        major, minor = (args.version or "1.100").split(".")[:2]
+    if args.version:
+        ver = f"Version {args.version}"
+        font["name"].setName(ver, 5, 3, 1, 0x409)
+        font["name"].setName(ver, 5, 1, 0, 0)
+        major, minor = args.version.split(".")[:2]
         font["head"].fontRevision = float(f"{major}.{minor}")
 
     listing = Path(args.fontfile).with_suffix(".wt9.fea")
