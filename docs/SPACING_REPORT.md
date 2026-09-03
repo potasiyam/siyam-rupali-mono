@@ -146,3 +146,34 @@ implements this model (EXTEND = 0, SpacingMark collapse, FULL_MARKS =
 original-font row divides by upem (8.61 em for this string), not
 advanceWidthMax. Note: the WT8/Two/Wide-Alpha rows require the other
 session's machine — those files are not on this box.
+
+## Complex-word validation — WT10 build (2026-09-03, this box)
+
+Font: review-branch wt14 state (`mono_convert` verbatim-matra + auto
+cell 1404 + `gen_wt9_fixes.py`: reph2/yaph2 2-cell ligatures +
+contextual anusvara/visarga tuck), family
+"Siyam Rupali Mono WT10" 0.0.10, installed and live in WT.
+
+Cursor-measured (WT grid) vs shaped vs refined-model charge:
+
+| word | shaped | WT grid | verdict |
+|---|---|---|---|
+| কর্তব্য | 5 | 5 | ✓ reph2 + yaph2 fill their columns |
+| গর্ত | 3 | 3 | ✓ reph hook per author verdict |
+| দীর্ঘ | 4 | 4 | ✓ |
+| কিংকর্তব্য | 7 | 7 | ✓ ং tucked, reph2, yaph2 |
+| বিজ্ঞান | 5 | 5 | ✓ |
+| স্বাধীনতা | 7 | 7 | ✓ |
+| দ্বিতীয় | 5 | 5 | ✓ |
+| যন্ত্র | 2 | 3 | +1 residual (ন্ত্র merges 3 cps → 1 cell) |
+| সংস্কৃত | 4 | 5 | +1 residual (স্ক merge) |
+| আত্মহত্যা | 5 | 6 | +1 residual (ত্ম+ত্য merges) |
+
+6/9 words grid-perfect including every reph/yaphala/anusvara case (the
+wt9–wt14 directives did exactly what they claim). The residual class =
+multi-consonant CONJUNCTS: the original font's precomposed conjunct
+glyphs occupy 1 cell while conhost charges per consonant (partially
+self-collapsing — e.g. দ্বিতীয়/বিজ্ঞান/স্বাধীনতা measure = shaped
+because conhost collapses those clusters too). Closing this = the
+documented v2 item (2-cell variants for wide conjuncts, the reph2
+pattern generalized, ~2600 glyphs) or accept as the WT residual.
