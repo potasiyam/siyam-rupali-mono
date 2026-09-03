@@ -216,15 +216,14 @@ def main():
             # VERBATIM - no scale, no move. Compare with original Siyam
             # Rupali: the VOLT-era design already positions the ink
             # (negative bearings, overlay bars) for codepoint-order
-            # drawing. Advance: NATURAL when smaller than the cell
-            # (author 2026-09-03: column-filling is only for REDUCTION,
-            # never extension — padding a small matra to the full cell
-            # pushed the base a cell away and opened the seam after ি);
-            # only wider-than-cell glyphs reduce to the cell. Overflow
-            # cases (o-kar/au-kar ink 2577/2565 > cell) are accepted as-is.
+            # drawing. Advance = the CELL (author 2026-09-03: give i-kaar
+            # & co a full 1-col advance so a shaped CV pair fills both
+            # charged columns exactly — natural small advances leave a
+            # snap gap after every cluster). Overflow cases (o-kar/
+            # au-kar ink 2577/2565 > cell) are accepted as-is.
             factors[name] = None  # matras are not MarkToBase bases
             orig_lsb = f["hmtx"][name][1]
-            f["hmtx"][name] = (min(adv, cell), orig_lsb)
+            f["hmtx"][name] = (cell, orig_lsb)
             stats["kar_verbatim"] = stats.get("kar_verbatim", 0) + 1
             continue
         sx = min(1.0, ink_max / bw)

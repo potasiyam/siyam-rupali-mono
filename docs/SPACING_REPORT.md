@@ -177,3 +177,18 @@ self-collapsing — e.g. দ্বিতীয়/বিজ্ঞান/স্�
 because conhost collapses those clusters too). Closing this = the
 documented v2 item (2-cell variants for wide conjuncts, the reph2
 pattern generalized, ~2600 glyphs) or accept as the WT residual.
+
+## WT17 (2026-09-03) — author fix adopted: i-kar & co. carry a full 1-col advance
+
+Author directive: "give i-kaar a 1 col." The natural-matra-advance
+experiment (min(adv, cell)) re-opened the snap gap: a কি pair shaped to
+1.385 cells against 2 charged columns, and Atlas snaps each cluster to
+its column start -> visible gap after every cluster. Reverted: ALL
+spacing matras (is_kar + PREBASE_SHIFT_ALL verbatim-art set) carry the
+full cell advance again.
+
+Verification (WT, family "Siyam Rupali Mono WT17" 0.0.17): ka=1,
+ki=2, kiki=4 (additive, no phantom), bikikini=8, king=2 (tuck) —
+grid == shaped on every row; capture shows কিকি as 4 fully-occupied
+columns with a continuous headline. The natural-advance idea is
+withdrawn; the "min(adv, cell)" rule is reverted to advance = cell.
