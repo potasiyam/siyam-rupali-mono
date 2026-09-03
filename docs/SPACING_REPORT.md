@@ -192,3 +192,15 @@ ki=2, kiki=4 (additive, no phantom), bikikini=8, king=2 (tuck) —
 grid == shaped on every row; capture shows কিকি as 4 fully-occupied
 columns with a continuous headline. The natural-advance idea is
 withdrawn; the "min(adv, cell)" rule is reverted to advance = cell.
+
+## Hasanta check (author hypothesis: "hasanta counts as a col")
+
+Measured on this box, face WT17 (`build/probe_hasanta.ps1`):
+ka=1, **ka_hasanta(ক্)=1** (hasanta=0 ✓), kaka_hasanta=2 (trailing
+hasanta=0 ✓), kssa=2, kta=2, k_ukaar=1. **Hasanta charges 0 columns —
+same as u-kar; font advance is 3 units (≈0).** The hypothesis is
+disproved for the grid; the visible hasanta inside conjunct words (যন্ত্র,
+সংস্কৃত, আত্মহত্যা — each measured +1) is where the conjunct-merge
+residual lands (conjunct glyph = 1 cell vs per-consonant charge), which
+visually reads as "the hasanta took a column" but is the documented
+conjunct residual, not the mark.
