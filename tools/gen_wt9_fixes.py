@@ -100,53 +100,30 @@ def main():
     frame = int(0.97 * 2 * cell)
 
     def compose_pair(first, second, out_name):
-        """Column-filling composition (2026-09-03, author: 'it's the ্ -
-        position and glyph width'). Natural-offset composition left the
-        strokes (873/784 units, ~60% of a cell) floating in mostly-empty
-        columns. Now: the base fills its column, the ্-form stroke is
-        SCALED to ~90% column width and placed touching the base:
-          reph2: hook fills col A right-aligned (touches ত's top-left),
-                 base centered in col B.
-          yaph2: base natural in col A, ্য scaled and left-aligned into
-                 col B (tucks 100 units under the base's right edge).
-        """
+        """Author directive 2026-09-03: NATURAL SIZE, center maintained.
+        first at pen 0, second at pen = ORIGINAL advance of first, both at
+        scale 1.0 (no stretching); the combined ink block is centered in
+        the 2-cell frame. wt14's column-filling stretch (0.9x on the ্-
+        stroke) was rejected — extending a glyph's width area must keep
+        the glyph's ink size and center, never rescale the art."""
+        op = orig["hmtx"]
+        pen2 = float(op[first][0])
+        cache = {}
+        bx0, _, bx1, _ = glyph_bbox(glyf, first, cache)
+        sx0, _, sx1, _ = glyph_bbox(glyf, second, cache)
+        lo = min(bx0, pen2 + sx0)
+        hi = max(bx1, pen2 + sx1)
+        dx = (frame - (hi - lo)) / 2 - lo
         pen = TTGlyphPen(None)
-
-        def draw(gname, sx, dx):
-            tpen = TransformPen(RoundingPen(pen), (sx, 0, 0, 1, dx, 0))
+        for gname, (gx, gdx) in ((first, (1.0, dx)),
+                                 (second, (1.0, pen2 + dx))):
+            tpen = TransformPen(RoundingPen(pen), (gx, 0, 0, 1, gdx, 0))
             draw_decomposed(glyf[gname], glyf, tpen)
-
-        def ink(gname):
-            x0, _, x1, _ = glyph_bbox(glyf, gname, {})
-            return x0, x1
-
-        if second == "bn_half_ra":
-            # hook: scale to 0.9 cell, right edge at cell+60 (col A end,
-            # overlapping onto the base's top-left)
-            fx0, fx1 = ink(second)
-            s = 0.9 * cell / (fx1 - fx0)
-            hook_x0 = cell + 60 - s * (fx1 - fx0)
-            draw(second, s, cell + 60 - s * fx1)
-            # base: centered in col B
-            bx0, bx1 = ink(first)
-            base_x0 = cell + (cell - (bx1 - bx0)) / 2
-            draw(first, 1.0, base_x0 - bx0)
-            lsb = min(hook_x0, base_x0)
-        else:  # bn_yaphala
-            # base: natural in col A
-            draw(first, 1.0, 0.0)
-            # stroke: scale to 0.9 cell, left edge at cell-100 (tucks
-            # under the base's right edge, spans col B)
-            fx0, fx1 = ink(second)
-            s = 0.9 * cell / (fx1 - fx0)
-            stroke_x0 = cell - 100 - s * fx0
-            draw(second, s, cell - 100 - s * fx0)
-            bx0, _ = ink(first)
-            lsb = min(bx0, stroke_x0)
 
         glyph = pen.glyph()
         glyf[out_name] = glyph  # auto-appends to glyphOrder
-        font["hmtx"].metrics[out_name] = (2 * cell, int(round(lsb)))
+        lsb = int(round(bx0 + dx))
+        font["hmtx"].metrics[out_name] = (2 * cell, lsb)
 
     # --- 1. reph + ya-phala 2-cell ligatures --------------------------
     assert "bn_half_ra" in known, "no bn_half_ra (reph) glyph"
