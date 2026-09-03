@@ -5,8 +5,32 @@ is the readable map: what each version was, why the next one happened,
 and which fonts are on your machine right now.
 
 Everything regenerates from one source of truth:
-`legacy/base-1.070ship.ttf` + `tools/mono_convert.py` +
-`tools/gen_cv_ligatures.py` (build commands in AGENTS.md).
+`legacy/base-1.070ship.ttf` + `tools/mono_convert.py` (build commands in
+AGENTS.md; the two-font architecture in `docs/PLAN_DUO_MONO.md`).
+
+---
+
+## CURRENT — the two canonical fonts (2026-09-03, v0.1.0)
+
+The merged terminal/editor architecture ("Siyam Rupali Mono" +
+"Siyam Rupali Duo", `docs/PLAN_DUO_MONO.md`). Every specialist variant
+(Wide, WT, Edit, Console, Two, Proof, 008, WT8–WT17) is RETIRED —
+unregistered from the machine, regenerable from `build/` sources.
+
+| Family | File | Version | Use it for |
+|---|---|---|---|
+| **Siyam Rupali Mono** | `SiyamRupaliMono-0100.ttf` | 0.1.0 | **Terminals** (Windows Terminal, WezTerm, kitty/VTE). WT-native line: verbatim matra art at full-cell advance, 2-cell reph/ya-phala ligatures, contextual anusvara/visarga/aa tucks. Grid-exact on all reference words (ka=1, ki=2, kiki=4, king=2, korto=3). |
+| **Siyam Rupali Duo** | `SiyamRupaliDuo-0100.ttf` | 0.1.0 | **Editors** (VS Code etc.). Duospaced: Latin/danda 1 cell (1024), Bengali art+advance uniformly zoomed ×1.378 so the median letter = 2 cells with ALL native interlocks preserved. Unsqueezed conjuncts (~2.5 cells). |
+
+Known platform residuals (terminal-side, no font can fix; see
+SPACING_REPORT / PROOF): conjunct clusters leave charged-but-empty
+columns in WT (+1) and WezTerm-Windows (+2, raw-codepoint charging);
+ক্ charges 2 in WezTerm-Windows vs 1 drawn. Upstream fix direction:
+terminals charging shaped cluster widths.
+
+---
+
+## History (summary; full record in WORKLOG.md)
 
 ---
 
@@ -70,7 +94,7 @@ shaping renderers, and CV ligatures give shaping terminals exact
 Bengali reordering). The restore therefore misfired in WT, pulling the
 centered ি into its own cell — detached from the ক.
 
-### 0.0.3 — `Siyam Rupali Mono` (CURRENT)
+### 0.0.3 — `Siyam Rupali Mono` (superseded by the canonical 0.1.0 pair)
 
 Same universal architecture, **restore lookup removed** (now an
 opt-in flag). Result:
@@ -92,21 +116,18 @@ letter-by-letter (ক্ষ = ক+ষ) until WT itself ships Bengali shaping
 
 | Family (font picker name) | File | Version | Status |
 |---|---|---|---|
-| **Siyam Rupali Mono** | `%LOCALAPPDATA%\Microsoft\Windows\Fonts\SiyamRupaliMono-003.ttf` | 0.0.3 | **USE THIS** — universal, works everywhere |
-| Siyam Rupali Mono Edit | `…\SiyamRupaliMono-Edit.ttf` | 0.0.1 | Optional — unsqueezed 2-cell view for editors |
-| Siyam Rupali Mono Wide | `…\SiyamRupaliMono-Wide-Alpha.ttf` | 0.0.1 | Superseded by 0.0.3 — safe to uninstall |
-| Siyam Rupali Mono WT | `…\SiyamRupaliMono-WT.ttf` | 0.0.1 | Superseded by 0.0.3 — safe to uninstall |
+| **Siyam Rupali Mono** | `%LOCALAPPDATA%\Microsoft\Windows\Fonts\SiyamRupaliMono-0100.ttf` | 0.1.0 | **USE THIS in terminals** |
+| **Siyam Rupali Duo** | `…\SiyamRupaliDuo-0100.ttf` | 0.1.0 | **USE THIS in editors** |
 | Siyam Rupali | Avro's folder (system) | 1.070 | Original — managed by Avro, leave it |
 
-To uninstall the superseded ones yourself: Windows Settings →
-Personalization → Fonts → pick the family → Uninstall. Or just say the
-word and the agent removes Wide/WT/Edit in one step (they regenerate
-from `build/` any time).
+All `Siyam Rupali Mono <variant>` families (Edit/Wide/WT/WT8/WT10/
+WT15/WT16/WT17/Two/Console/008) were unregistered on 2026-09-03.
+If a long-running app still shows old glyphs, restart it (DWrite
+caches per process); if the family itself resolves stale, restart
+the FontCache service (admin) — the documented last resort.
 
 ## Which font to use where (TL;DR)
 
-- **Windows Terminal → `Siyam Rupali Mono`**
-- **WezTerm → `Siyam Rupali Mono`**
-- **VS Code / editors → `Siyam Rupali Mono`** (or `…Edit` if you prefer
-  the bigger unsqueezed matras while reading)
-- **Documents/Word → original `Siyam Rupali`** (or the Mono — your call)
+- **Windows Terminal / any terminal → `Siyam Rupali Mono`**
+- **VS Code / editors → `Siyam Rupali Duo`**
+- **Documents/Word → original `Siyam Rupali`** (or Duo — your call)

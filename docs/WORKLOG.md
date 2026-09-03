@@ -536,3 +536,91 @@ art interlocks — the original font's design at cell advances.
 Current install map: WT8 (WT, 2-col filled) / Two == universal 0.0.8
 with ligatures (shaping terminals + editors; "Siyam Rupali Mono" name
 cache-poisoned locally) / Edit 0.0.1 (older, centered art).
+
+## 2026-09-03 (late) — ক্/ক্ত empty-column report attributed: raw-codepoint ConPTY host (WezTerm), not WT
+
+Author report: "ক্ becomes 1 char, 2 col; ক্ত becomes 1 char, 3 col;
+empty space after them."
+
+- **Surface attribution:** these are exactly the WezTerm-on-Windows
+  numbers. Raw-codepoint charging was measured live today
+  (build/proof/wezterm.txt: kssa=3, korto=4 — every row = cp count),
+  so ক্ (2 cps) = 2 cols and ক্ত (3 cps) = 3 cols follow from the same
+  table. WT was probed clean the same afternoon
+  (build/probe_hasanta.ps1, face WT17: ka_hasanta(ক্)=1, kta=2).
+  ~/.wezterm.lua still points at family "Siyam Rupali Mono" (= the
+  installed 008 universal). Same signature applies to VS Code's
+  integrated terminal (ConPTY + Chromium shaping).
+- **Shaping identity (uharfbuzz, checked on installed 008 and WT17):**
+  ক্ -> bn_k_hasanta (1 glyph, 1 cell); ক্ত -> bn_k_ta (1 glyph,
+  1 cell). The host draws the shaped cluster compact at the FIRST
+  charged column; ConPTY reserves 2/3 columns for the raw codepoints
+  -> trailing empties. Font-independent — same class as the কি phantom
+  column and the WT conjunct residual.
+- **No font can fill these columns while shaping merges the cluster:**
+  the virama is consumed by GSUB yet still charged 1 column by
+  ConPTY. Filling would require visible-hasanta letter-by-letter
+  output (Alacritty's unshaped look; overflows WT-family hosts, which
+  charge ্ = 0).
+- **Levers on file:** open work 2 (2-cell wide conjuncts, the reph2
+  pattern generalized) closes WT's ক্ত-class residual and shrinks
+  WezTerm's gap to the virama column only; the complete fix stays
+  terminal-side (ConPTY charging shaped cluster widths, PR #16916
+  direction).
+
+## 2026-09-03 (late 2) — TWO CANONICAL FONTS: "Siyam Rupali Mono" + "Siyam Rupali Duo" 0.1.0
+
+Author directive: merge the fact-checked duospace research plan into this
+project as two fonts. Plan + spec: `docs/PLAN_DUO_MONO.md`.
+
+Research fact-check (inputs to the merge): Noto Sans Mono has NO Bengali
+(Latin/Greek/Cyrillic only); GNU Unifont = dual-width bitmap with NO
+shaping (one glyph per codepoint); MitraMono is real (Mukti lineage,
+xterm-era); the pasted doc's `pres` pipeline position was correct but it
+omitted `cjct`, used ILLEGAL many-to-many FEA (feaLib rejects: "Direct
+substitution of multiple glyphs by multiple glyphs is not supported"),
+misclassed i-kar as a GPOS anchor mark, and recommended duospacing FOR
+TERMINALS — contradicted by our measured charging models; scoped to
+editors it survives (advances rule there). FreeType doesn't shape.
+
+**MONO 0.1.0** (`build/SiyamRupaliMono-0100.ttf`, family "Siyam Rupali
+Mono"): the WT17 lineage byte-exact under the canonical name — glyphOrder
+862 == WT17, hmtx mismatches 0. Gates: shape_check --cell 1404
+--max-cells 3 --matrix = 0 failures; reference rows shaped==grid 9/9
+(ka=1 ki=2 kiki=4 kang=2 king=2 korto=3 kortobbo=5 garto=3 bidya=4).
+Hinted (ttfautohint).
+
+**DUO 0.1.0** (`build/SiyamRupaliDuo-0100.ttf`, family "Siyam Rupali
+Duo"): new `mono_convert --duo`. Design decision (measured): an exact
+uniform 2-cell advance severs the akshar (native letter ink 1785 vs
+2048 advance → ~260-unit headline gaps), so ALL bn_* art AND advances
+zoom by one global factor s=1.3782 (=2048/1486, pool = 442 Bengali
+letters+conjuncts), dx=0 — interlocks preserved exactly; Latin/danda/
+space → cell 1024; marks zoom art+anchors (GPOS MarkArray/MarkMark
+anchor loop added; bases were already handled), advance ~0 kept;
+vertical bounds extended to cover ink (ink -921..2493 vs declared
+2360/-731 → hhea/win 2542/-939; typo metrics untouched). Gates:
+--cell 1024 --max-cells 6 --matrix = 0 failures; GSUB intact (ক্ত→
+bn_k_ta 2.46 cells, ক্ষ→bn_k_ssa 2.47, জ্ঞ→bn_j_nya, বিদ্যা 5.64);
+A/space/danda exactly 1.000 cells; ka 2.30, ki 3.03. Hinted.
+
+**INSTALL/OPS** (`tools/install_canonical.ps1`): 11 variant families
+unregistered and their font files deleted (none locked); canonical
+Mono+Duo registered under fresh filenames (-0100); WM_FONTCHANGE
+broadcast; WT settings.json faces patched to "Siyam Rupali Mono"
+(backup settings.json.bak-canonical); .wezterm.lua untouched — it
+already targeted family "Siyam Rupali Mono", which now resolves to the
+canonical file.
+
+**VERIFY (Rule 5):** fresh-process WPF probe — Mono width(কি)/width(ক)
+= 2.00 (a stale 008-style ligature cache would read 1.0; new verbatim
+build confirmed); width(A) = 32.91px = 1404/2048 @48 exactly; Duo
+width(A) = 24.0px = 1024/2048, ক 2.30 cells, কি 3.03, ক্ত 2.46 —
+all exact. Live WT cursor probe (`build/probe_canonical.ps1` via
+`wt new-tab`): ka=1 ka_hasanta(ক্)=1 kssa=2 kta=2 ki=2 kiki=4 king=2
+korto=3 — exact on the canonical family. Probe tab may be left open.
+
+Caveat for the author: a WT process that was already running when the
+families changed keeps its per-process DWrite mapping — fully restart
+WT if any window still shows old glyphs (FontCache service restart =
+documented admin last resort).
