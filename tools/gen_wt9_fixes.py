@@ -78,31 +78,37 @@ def main():
     known = set(font.getGlyphOrder())
     rules = []
 
-    # --- 1. reph 2-cell ligatures ------------------------------------
+    # --- 1. reph + ya-phala 2-cell ligatures --------------------------
     assert "bn_half_ra" in known, "no bn_half_ra (reph) glyph"
-    # Compose [half_ra][C] at NATURAL relative offsets (hook overlapping
-    # the consonant's left edge, exactly as shaped) and center the whole
+    # Compose base+form at NATURAL relative offsets and center the whole
     # ink block in the 2-cell advance - the layout_faithful recipe from
-    # gen_cv_ligatures. Both charged columns carry ink: the hook's spread
-    # fills column 1, the consonant fills column 2, and the pair READS
-    # as one letter. (v1 centered the hook in col 1 = detached floating
-    # tick; v2 used natural offset against a full-cell shift = same
-    # detachment. 2026-09-03 gorto review, third iteration.)
+    # gen_cv_ligatures. Both charged columns carry ink and the pair
+    # READS as one letter.
+    #   [C][bn_half_ra]  -> C_reph2  (reph: hook column was near-empty)
+    #   [C][bn_yaphala]  -> C_yaph2  (ya-phala carries a full 1404
+    #     advance for a small below-base stroke -> the sparse second
+    #     column of ব্য-class clusters; author report 2026-09-03)
+    # (v1 centered the hook in col 1 = detached floating tick; v2 used
+    # natural offset against a full-cell shift = same detachment.
+    # 2026-09-03 gorto review, third iteration.)
     frame = int(0.97 * 2 * cell)
     made = 0
     for c in CONSONANT_GLYPHS:
         if c not in known:
             continue
-        out = f"{c}_reph2"
-        if out in known:
-            continue
-        parts, _ = layout_faithful(font, ["bn_half_ra", c], {}, frame)
-        glyph, lsb = build_ligature(glyf, parts, {})
-        glyf[out] = glyph  # auto-appends to glyphOrder
-        font["hmtx"].metrics[out] = (2 * cell, lsb)
-        rules.append(f"sub {c} bn_half_ra by {out};")
-        made += 1
-    print(f"reph ligatures: {made} glyphs (advance {2 * cell}, faithful)")
+        for form, suffix in (("bn_half_ra", "reph2"), ("bn_yaphala", "yaph2")):
+            if form not in known:
+                continue
+            out = f"{c}_{suffix}"
+            if out in known:
+                continue
+            parts, _ = layout_faithful(font, [form, c], {}, frame)
+            glyph, lsb = build_ligature(glyf, parts, {})
+            glyf[out] = glyph  # auto-appends to glyphOrder
+            font["hmtx"].metrics[out] = (2 * cell, lsb)
+            rules.append(f"sub {c} {form} by {out};")
+            made += 1
+    print(f"reph/ya-phala ligatures: {made} glyphs (advance {2 * cell}, faithful)")
 
     # --- 2. mark tuck copies ------------------------------------------
     tuck_map = {}
@@ -121,17 +127,25 @@ def main():
     # --- 3. GSUB lookups ------------------------------------------------
     gs = font["GSUB"].table
 
-    # L1: LigatureSubst [C][bn_half_ra] -> C_reph2, grouped by first glyph
+    # L1: LigatureSubst [C][form] -> C_reph2 / C_yaph2, grouped by first
+    # glyph. HarfBuzz takes the first matching ligature per covered glyph;
+    # each first glyph has at most one entry per component set here.
     by_first = {}
+    order_now = set(font.getGlyphOrder())
     for c in CONSONANT_GLYPHS:
-        out = f"{c}_reph2"
-        if out not in set(font.getGlyphOrder()):
+        if c not in order_now:
             continue
-        lig = otTables.Ligature()
-        lig.Component = ["bn_half_ra"]
-        lig.CompCount = 2
-        lig.LigGlyph = out
-        by_first.setdefault(c, []).append(lig)
+        for form, suffix in (("bn_half_ra", "reph2"), ("bn_yaphala", "yaph2")):
+            out = f"{c}_{suffix}"
+            if out not in order_now:
+                continue
+            lig = otTables.Ligature()
+            lig.Component = [form]
+            lig.CompCount = 2
+            lig.LigGlyph = out
+            by_first.setdefault(c, []).append(lig)
+    if not by_first:
+        raise SystemExit("no ligature glyphs found - nothing to wire")
     sub = otTables.LigatureSubst()
     sub.Format = 1
     sub.Coverage = otTables.Coverage()
