@@ -124,9 +124,11 @@ cursor probe (`build/probe_canonical.ps1` in a `wt new-tab`; result in
    fully-restarted WT resolves the canonical family (long-running
    processes cache the old mapping; documented restart = FontCache
    service, admin).
-1. WT conjunct residual (ক্ত-class +1 col): the open-work-2 lever from
-   the retired list — 2-cell wide conjunct glyphs, the reph2 pattern
-   generalized (~2600 glyphs, automatable) — would close most of it.
+1. WT conjunct residual (ক্ত-class +1 col): scoped 2026-09-03 — 247
+   reachable conjunct glyphs, 180/247 fit a 2-cell frame at natural
+   size (WORKLOG late 3). Shared-Mono wide conjuncts would OVERLAP the
+   next cluster on 1-cell-grant hosts (kitty/VTE/WezTerm-Unix);
+   specialist build vs shared change vs accept = author decision.
 2. `ss01` hasanta-explicit fallback feature.
 3. WOFF2 deliverable (needs brotli in a venv).
 4. NBSP-escape 2-cell system (font GSUB + Avro terminal-mode) —
