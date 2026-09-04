@@ -624,3 +624,29 @@ Caveat for the author: a WT process that was already running when the
 families changed keeps its per-process DWrite mapping — fully restart
 WT if any window still shows old glyphs (FontCache service restart =
 documented admin last resort).
+
+## 2026-09-03 (late 3) — canonical-pair testing round + conjunct-lever scoping
+
+- **Render sheets** (author eyeball kit): build/probe/MONO0100_shaped_*.png,
+  MONO0100_unshaped_*.png, DUO0100_shaped_*.png — render_probe.py gained a
+  conjunct-heavy line (যন্ত্র সংস্কৃত আত্মহত্যা বিদ্যালয়). Eyeballed:
+  Mono shaped = compact 1-cell clusters through all conjunct words;
+  Duo = proportional unsqueezed art, headline continuous, interlocks
+  intact.
+- **WezTerm-Windows live probe on canonical Mono**
+  (build/probe_canonical_wez.ps1, fresh process via --always-new-process):
+  ka=1, ক্=2, ক্ষ=3, ক্ত=3, ki=2, kiki=4, king=3, korto=4 — raw
+  codepoint charging confirmed on 0.1.0. Residual vs shaped: ক্ +1,
+  ক্ষ/ক্ত +2, king +1, korto +1 (WT on the same rows: 1/2/2/2/4/2/3).
+  Same ConPTY class as PROOF; font-independent.
+- **Conjunct-lever scoping (open work 1):** vharfbuzz enumeration over
+  36×36 C+্+C pairs plus 3-chain sampling finds **247 distinct conjunct
+  glyphs** the font can produce; native advances min 1177 / median 1542 /
+  max 2520; **180/247 fit a 2-cell (2808 u, 0.97 cap) frame at natural
+  size**. Wide variants would fill WT's 2 charged columns (kills the +1
+  residual) AND un-squeeze the worst art (ক্ষ-class at 0.47 today).
+  DECISION POINT (author): on shared Mono they would OVERLAP the next
+  cluster on 1-cell-grant hosts (kitty/VTE/WezTerm-Unix); no GSUB
+  mechanism can detect the host. Options: shared change (accept
+  kitty-class overlap), WT-specialist build (variant-zoo return), or
+  leave (upstream wait). Not built — author's call.
