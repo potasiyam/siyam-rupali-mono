@@ -7,18 +7,20 @@ project-specific decisions. Session history + evidence: `docs/WORKLOG.md`.
 
 ## Project decisions (settled — do not relitigate without new evidence)
 
-- **Architecture (2026-09-03, merged plan):** TWO canonical fonts from one
-  pipeline — `docs/PLAN_DUO_MONO.md` is the spec.
-  **`Siyam Rupali Mono` 0.1.0** (terminal: WT-native line, cell 1404,
-  verbatim matra art at full-cell advance, 2-cell reph/ya-phala ligatures,
-  contextual anusvara/visarga/aa tucks) and **`Siyam Rupali Duo` 0.1.0**
-  (editor: Latin/danda 1024, Bengali art+advance uniformly zoomed ×1.378
-  so the median letter = 2 cells with all native interlocks preserved).
-  All specialist variants (Wide/WT/Edit/Console/Two/Proof/008/WT8–WT17)
-  are RETIRED: unregistered on this box, regenerable, keep out of installs.
-  Family names are canonical and stable; **never re-point a family at a
-  file that was ever registered under another build** (cache-poisoning
-  incidents, WORKLOG late 5 + 2026-09-01) — fresh filename per build.
+- **Architecture (2026-09-03, merged plan; 0.1.1 same day):** TWO
+  canonical fonts from one pipeline — `docs/PLAN_DUO_MONO.md` is the spec.
+  **`Siyam Rupali Mono` 0.1.1** (terminal: WT-native line, cell 1404,
+  verbatim matra art at full-cell advance, 2-cell reph/ya-phala
+  ligatures, raised contextual anusvara/visarga/aa tucks, 2-cell wide
+  conjuncts for ALL conjunct clusters + prebase-matra cancellation) and
+  **`Siyam Rupali Duo` 0.1.1** (editor: literal duospace — every bn_*
+  glyph = exactly 2 cells (2048), Latin/danda/space = 1 cell (1024),
+  marks untouched). All specialist variants (Wide/WT/Edit/Console/Two/
+  Proof/008/WT8–WT17) are RETIRED: unregistered on this box,
+  regenerable, keep out of installs. Family names are canonical and
+  stable; **never re-point a family at a file that was ever registered
+  under another build** (cache-poisoning incidents, WORKLOG late 5 +
+  2026-09-01) — fresh filename per build.
 - **Terminal model (final, 4th revision, PROOF + SPACING_REPORT
   2026-09-03):** Windows Terminal 1.24 runs FULL DirectWrite Bengali
   shaping (reorder + GSUB) for glyph rendering but charges grid columns
@@ -39,8 +41,8 @@ project-specific decisions. Session history + evidence: `docs/WORKLOG.md`.
   divergent snapshots (different glyph sets/orders/names; bridge GID gate
   refuses, 606 vs 607). `sources/` + `legacy/ref.ttf` are kept for
   provenance and a future redesign only.
-- **Version line:** `0.1.0` = the canonical pair (alpha series 0.0.x
-  preceded it; engineering builds 1.100–1.105 before that).
+- **Version line:** `0.1.1` = the canonical pair (0.1.0 was the first
+  merged build; alpha 0.0.x and engineering 1.100–1.105 preceded).
 - **Naming:** `bn_` snake_case, inherited from the base binary; generated
   ligatures follow `bn_<base>_<form>` (`_reph2`, `_yaph2`, `_tuck` from
   gen_wt9_fixes.py). Non-bn names exist for danda (`danda`,
@@ -52,15 +54,22 @@ project-specific decisions. Session history + evidence: `docs/WORKLOG.md`.
   `tools/gen_wt9_fixes.py` (Mono step 2). `tools/gen_cv_ligatures.py`
   built the retired ligature line — keep for provenance. Never hand-edit
   the built TTFs; regenerate.
-- **Duo zoom rule (design decision):** an exact uniform 2-cell advance
-  for every Bengali glyph severs the akshar (native ink ~1785 vs 2048
-  advance → ~260-unit headline gaps). Bengali joins by design, so Duo
-  scales ALL Bengali art AND advances by ONE global factor
-  `s = beng_cell / median(native Bengali letters+conjuncts)` (≈1.378),
-  left-aligned dx=0 — interlocks survive exactly; median letter lands on
-  2 cells; widths stay proportional. Marks zoom art+anchors, keep ~0
-  advance. Vertical bounds extended to cover ink (plan Step 2); Mono's
-  vertical metrics deliberately untouched (author's WT line-height tune).
+- **Duo width rule (AUTHOR VERDICT 2026-09-03, supersedes the 0.1.0
+  uniform-zoom design):** the zoom ("expanded Siyam Rupali") was
+  rejected — Duo is the LITERAL duospace: fixed width classes. Every
+  bn_* glyph = 2 cells via the standard advance-ratio centering rule;
+  Latin/danda/space = 1 cell; marks untouched (~0 advance). Vertical
+  bounds extended to cover ink (plan Step 2); Mono's vertical metrics
+  deliberately untouched (author's WT line-height tune). Interlock note
+  (kept for the record): uniform 2-cell advances put ~260-unit headline
+  gaps between glyphs — accepted as the nature of duospace separation.
+- **WT conhost charge table (live cursor probes, probe_canonical2/
+  probe_ra 2026-09-03):** conjunct clusters charge 2 columns at ANY
+  consonant count (ন্ত্র=2, স্প্ল=2, ক্ষ্ম=2); a mark after a cluster
+  charges 0 (দ্বি=2, স্বা=2, ক্রোধ's ো=0); standalone hasanta = 1
+  (ক্=1); yaphala-য charges 1 (বিদ্যা=4). Mono's shaped stream matches
+  these exactly via: 2-cell wide conjuncts (name-derived k), aa-tuck +
+  prebase-matra cancellation chains, raised mark tucks.
 
 ## Build (reproducible; drive the scripts directly — no GNU make here)
 
@@ -70,12 +79,12 @@ vharfbuzz). `PY=<python>` below.
 
 ```
 # MONO (terminal, canonical) - 0.1.0
-$PY tools/mono_convert.py    legacy/base-1.070ship.ttf build/SiyamRupaliMono-0100.ttf --family "Siyam Rupali Mono" --version 0.1.0
-$PY tools/gen_wt9_fixes.py   build/SiyamRupaliMono-0100.ttf --cell 1404 --version 0.1.0    # in place; NO --family here
+$PY tools/mono_convert.py    legacy/base-1.070ship.ttf build/SiyamRupaliMono-0101.ttf --family "Siyam Rupali Mono" --version 0.1.1
+$PY tools/gen_wt9_fixes.py   build/SiyamRupaliMono-0101.ttf --cell 1404 --version 0.1.1    # in place; NO --family here
 # DUO (editor, canonical) - 0.1.0
-$PY tools/mono_convert.py    legacy/base-1.070ship.ttf build/SiyamRupaliDuo-0100.ttf --duo --ink-cap 0.97 --family "Siyam Rupali Duo" --version 0.1.0
+$PY tools/mono_convert.py    legacy/base-1.070ship.ttf build/SiyamRupaliDuo-0101.ttf --duo --ink-cap 0.97 --family "Siyam Rupali Duo" --version 0.1.1
 # Both: hint (brain venv), e.g.
-$PY ../agentic-font-dev/scripts/hint.py build/SiyamRupaliMono-0100.ttf
+$PY ../agentic-font-dev/scripts/hint.py build/SiyamRupaliMono-0101.ttf
 # Install/retire (poison-lesson discipline):
 powershell -ExecutionPolicy Bypass -File tools/install_canonical.ps1
 # Optional hand-designed glyph fixes (author redraws; docs/FIXES.md):
@@ -84,8 +93,8 @@ powershell -ExecutionPolicy Bypass -File tools/install_canonical.ps1
 
 Gates (must pass; never weaken to make them pass):
 ```
-$PY tools/shape_check.py build/SiyamRupaliMono-0100.ttf --cell 1404 --max-cells 3 --matrix   # 0 failures
-$PY tools/shape_check.py build/SiyamRupaliDuo-0100.ttf  --cell 1024 --max-cells 6 --matrix   # 0 failures (proportional sanity)
+$PY tools/shape_check.py build/SiyamRupaliMono-0101.ttf --cell 1404 --max-cells 3 --matrix   # 0 failures
+$PY tools/shape_check.py build/SiyamRupaliDuo-0101.ttf  --cell 1024 --max-cells 6 --matrix   # 0 failures (proportional sanity)
 # Mono reference grid rows (shaped cells == WT charge): ka=1 ki=2 kiki=4
 # kang=2 king=2 korto=3 kortobbo=5 gar-to=3 bidya=4  (vharfbuzz one-liner,
 # see WORKLOG 2026-09-03 two-fonts entry)

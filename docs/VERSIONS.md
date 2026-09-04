@@ -10,7 +10,7 @@ AGENTS.md; the two-font architecture in `docs/PLAN_DUO_MONO.md`).
 
 ---
 
-## CURRENT — the two canonical fonts (2026-09-03, v0.1.0)
+## CURRENT — the two canonical fonts (2026-09-03, v0.1.1)
 
 The merged terminal/editor architecture ("Siyam Rupali Mono" +
 "Siyam Rupali Duo", `docs/PLAN_DUO_MONO.md`). Every specialist variant
@@ -19,8 +19,8 @@ unregistered from the machine, regenerable from `build/` sources.
 
 | Family | File | Version | Use it for |
 |---|---|---|---|
-| **Siyam Rupali Mono** | `SiyamRupaliMono-0100.ttf` | 0.1.0 | **Terminals** (Windows Terminal, WezTerm, kitty/VTE). WT-native line: verbatim matra art at full-cell advance, 2-cell reph/ya-phala ligatures, contextual anusvara/visarga/aa tucks. Grid-exact on all reference words (ka=1, ki=2, kiki=4, king=2, korto=3). |
-| **Siyam Rupali Duo** | `SiyamRupaliDuo-0100.ttf` | 0.1.0 | **Editors** (VS Code etc.). Duospaced: Latin/danda 1 cell (1024), Bengali art+advance uniformly zoomed ×1.378 so the median letter = 2 cells with ALL native interlocks preserved. Unsqueezed conjuncts (~2.5 cells). |
+| **Siyam Rupali Mono** | `SiyamRupaliMono-0101.ttf` | 0.1.1 | **Terminals** (Windows Terminal, WezTerm, kitty/VTE). WT-native line: verbatim matra art at full-cell advance, 2-cell reph/ya-phala ligatures, raised contextual anusvara/visarga/aa tucks, 2-cell wide conjuncts + prebase-matra cancellation. Shaped == charged on all 31 measured rows. |
+| **Siyam Rupali Duo** | `SiyamRupaliDuo-0101.ttf` | 0.1.1 | **Editors** (VS Code etc.). Literal duospace: Latin/danda 1 cell (1024), every Bengali glyph exactly 2 cells (2048). Fixed width classes (author verdict — the proportional zoom was rejected). |
 
 Known platform residuals (terminal-side, no font can fix; see
 SPACING_REPORT / PROOF): conjunct clusters leave charged-but-empty

@@ -9,7 +9,7 @@ $root = 'I:\projects\siyam-rupali-mono\build'
 
 Write-Output '== uninstall: every Siyam Rupali Mono* variant value'
 $props = Get-ItemProperty -Path $reg
-$names = $props.PSObject.Properties.Name | Where-Object { $_ -like 'Siyam Rupali Mono*' }
+$names = $props.PSObject.Properties.Name | Where-Object { $_ -like 'Siyam Rupali Mono*' -or $_ -like 'Siyam Rupali Duo*' }
 foreach ($n in $names) {
     $file = $props.$n
     Remove-ItemProperty -Path $reg -Name $n
@@ -23,8 +23,8 @@ if (-not $names) { Write-Output '   (none found)' }
 
 Write-Output '== install: canonical families'
 $installs = @(
-    @{ family = 'Siyam Rupali Mono'; src = "$root\SiyamRupaliMono-0100.ttf" },
-    @{ family = 'Siyam Rupali Duo';  src = "$root\SiyamRupaliDuo-0100.ttf" }
+    @{ family = 'Siyam Rupali Mono'; src = "$root\SiyamRupaliMono-0101.ttf" },
+    @{ family = 'Siyam Rupali Duo';  src = "$root\SiyamRupaliDuo-0101.ttf" }
 )
 foreach ($i in $installs) {
     $dst = Join-Path $fdir (Split-Path $i.src -Leaf)

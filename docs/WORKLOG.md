@@ -650,3 +650,66 @@ documented admin last resort).
   mechanism can detect the host. Options: shared change (accept
   kitty-class overlap), WT-specialist build (variant-zoo return), or
   leave (upstream wait). Not built — author's call.
+
+## 2026-09-03 (late 4) — author defect reports → Mono 0.1.1 + Duo v2 0.1.1
+
+Author reports on 0.1.0 testing: (1) আত্/আত্ম draw 2 blocks against 3/4
+charged columns (empty space after); (2) কিং's tucked ং COLLIDES with ক;
+(3) Duo "is basically expanded Siyam Rupali — that makes no sense, that
+was not the plan". All three root-caused and fixed.
+
+- **Surface truth (live probes):** author tests WezTerm-Windows (raw
+  codepoint charging: আত্=3, আত্ম=4). WT charges those 2/3 (conhost:
+  Extend=0). Both surfaces now measured for every case below.
+- **Tuck collision (কিং):** the marks are STANDALONE-LETTER designs
+  (bn_anusvara ink y 2..1527 vs base tops ~1543) — the same-height -1cell
+  shift landed inside ক's ink. Fix: tuck art RAISED so its visual ink
+  mass (P5 of contour ys) clears base tops (target 1600, cap ascent
+  2300). কিং renders ং hovering above ক; verified on pixels.
+- **Wide conjuncts (the আত্/আত্ম class):** gen_wt9_fixes gained stage 4:
+  enumerate reachable conjunct outputs by shaping 36×36 C+্+C pairs plus
+  3-chain extensions (vharfbuzz on a temp save — the output file cannot
+  be rewritten while the hb blob holds it, Windows lock), compose a
+  k-cell copy from the ORIGINAL natural art (264 glyphs, all k=2 after
+  the rules below), GPOS BaseRecords copied to the wide copies (1
+  conjunct carries anchors), single-subst wired to pres LAST.
+  **WT charge rules discovered by live cursor probes
+  (probe_canonical2/probe_ra): every conjunct cluster charges 2 columns
+  — 3-consonant clusters collapse too (ন্ত্র=2, স্প্ল=2, ক্ষ্ম=2) — and
+  a mark after a cluster charges 0 (দ্বি=2, স্বা=2, ক্রোধ's ো=0).**
+  Hence: all conjuncts 2-cell; ra-final and khanda-ta never widened
+  (first cut wrongly widened bn_half_ta and probed-around ra forms —
+  k now derives from the glyph name's own segments).
+- **Mark-after-cluster cancellation (দ্বিতীয়/ক্রোধ class):** aa already
+  tucked after conjuncts (rule C backtrack extended to original conjunct
+  names — the chain runs BEFORE the wide-ss, so backtrack must carry the
+  pre-wide names). For PRE-base matras (ি/ে reorder to the LEFT of the
+  cluster): contextual chain [prebase-matra BACKTRACK][conjunct] ->
+  conjunct_n (composite alias, 1 cell) wired before the wide-ss so the
+  alias misses it. First wiring walked into the documented
+  unconditional-fire bug (narrow-ss in the feature index list) and the
+  wrong side (lookahead instead of backtrack — the matra reorders left).
+  Fixed: 0 mismatches across 31 live-measured rows.
+- **fontTools traps (both re-hit):** getGlyphID/reverse-map caches go
+  stale after glyf additions (sort by live order list; setGlyphOrder
+  invalidation before save); nested single-subst must never appear in a
+  feature index list.
+- **Gates:** shape_check --cell 1404 --max-cells 3 --matrix = 0
+  failures; 31/31 shaped==WT-charge rows (incl. ক্র=2 প্র=2 ত্র=2
+  ন্ত্র=2 স্প্ল=2 ক্ষ্ম=2 দ্বিতীয়=5 ক্রোধ=3 স্বাধীনতা=7 আত্মহত্যা=6);
+  WPF fresh-process: ki/ka=2.00 kta/ka=2.00 atma=3 cells; live WT
+  cursor probe 20/20; visual: কিং ং above ক, আত্ম wide conjunct fills
+  both columns, দ্বিতীয় 5/5.
+- **Duo v2 (author verdict):** the 0.1.0 uniform Bengali zoom was
+  REJECTED ("expanded Siyam Rupali, not the plan"). v2 = the literal
+  duospace spec: every bn_* glyph = exactly 2 cells (2048), Latin/
+  danda/space = 1 cell (1024), marks untouched, standard advance-ratio
+  centering per class. WPF: A=24px ক=48px কি=96px ক্ত=48px exactly.
+  Note: WPF/DWrite leaves ত্‌ম unmerged in Duo (আত্ম=6 cells) while
+  HarfBuzz merges (4 cells) — editors use HarfBuzz; DWrite quirk
+  recorded. Vertical bounds kept (2427/-939).
+- Installed: both families re-registered on the -0101 files; WT profile
+  faces unchanged (canonical). Known residual: WezTerm-Windows raw-cp
+  charging still gaps (virama columns) — terminal-side; and the kitty/
+  VTE caveat stands (wide conjuncts overlap on 1-cell-grant hosts —
+  author decision, shared Mono).

@@ -165,12 +165,11 @@ def main():
                          "codepoint-order with no shaping)")
     ap.add_argument("--duo", action="store_true",
                     help="duospaced EDITOR build (docs/PLAN_DUO_MONO.md): "
-                         "Latin/neutral glyphs convert to --latin-cell; "
-                         "every bn_* glyph's art AND advance scale by one "
-                         "global factor so the Bengali design keeps all "
-                         "native interlocks (median letter lands on "
-                         "--beng-cell). dx stays 0: the stream geometry is "
-                         "the original font's, enlarged.")
+                         "every bn_* glyph converts to --beng-cell "
+                         "(default 2x Latin), everything else to "
+                         "--latin-cell; marks untouched. v2 spec "
+                         "(author 2026-09-03): fixed width classes, "
+                         "not proportional zoom.")
     ap.add_argument("--latin-cell", type=int, default=None,
                     help="[duo] Latin/neutral cell (default upem//2)")
     ap.add_argument("--beng-cell", type=int, default=None,
@@ -207,18 +206,12 @@ def main():
 
     if args.duo:
         lat = args.latin_cell or upm // 2
-        beng_target = args.beng_cell or 2 * lat
-        bn_pool = [n for n in names if n.startswith("bn_")
-                   and gdef_classes.get(n) != 3
-                   and f["hmtx"][n][0] >= MARK_ADV_FLOOR
-                   and not is_kar(n) and n not in PREBASE_SHIFT_ALL]
-        med = int(statistics.median(sorted(f["hmtx"][n][0] for n in bn_pool)))
-        s = beng_target / med
-        print(f"duo: latin cell {lat}, bengali zoom s={s:.4f} "
-              f"(= {beng_target}/{med}), anchor pool n={len(bn_pool)}")
+        beng = args.beng_cell or 2 * lat
+        print(f"duo v2: latin cell {lat}, bengali cell {beng} "
+              f"(every bn_* glyph = 2 cells, author spec 2026-09-03)")
     else:
         lat = cell
-        s = 1.0
+        beng = cell
 
     bbox_cache = {}
     factors = {}  # name -> (sx, dx)
@@ -228,36 +221,14 @@ def main():
     for name in names:
         adv = f["hmtx"][name][0]
         if gdef_classes.get(name) == 3 or adv < MARK_ADV_FLOOR:
-            if args.duo:
-                # marks zoom with the Bengali design; ~0 advance kept,
-                # GPOS mark anchors scaled below via factors
-                if glyph_bbox(glyf, name, bbox_cache) is not None:
-                    transform_glyph(glyf, orig, name, s, 0)
-                    a0, l0 = f["hmtx"][name]
-                    f["hmtx"][name] = (a0, round(s * l0))
-                    factors[name] = (s, 0.0)
-                else:
-                    factors[name] = None
-                stats["mark_zoom"] = stats.get("mark_zoom", 0) + 1
-            else:
-                stats["untouched_mark"] += 1
-                factors[name] = None
+            stats["untouched_mark"] += 1
+            factors[name] = None
             continue
-        if args.duo and name.startswith("bn_"):
-            # uniform zoom: art and advance scale together, left-aligned
-            # (dx=0) so every designed interlock survives exactly.
-            if glyph_bbox(glyf, name, bbox_cache) is None:
-                f["hmtx"][name] = (lat, 0)
-                factors[name] = None
-                stats["identity"] += 1
-                continue
-            transform_glyph(glyf, orig, name, s, 0)
-            lsb0 = f["hmtx"][name][1]
-            f["hmtx"][name] = (round(adv * s), round(s * lsb0))
-            factors[name] = (s, 0.0)
-            stats["bengali_zoom"] = stats.get("bengali_zoom", 0) + 1
-            continue
-        tcell = lat if args.duo else cell
+        # duo v2: per-class cell — bn_* glyphs get the Bengali cell (2ch),
+        # everything else the Latin cell; art follows the standard
+        # advance-ratio centering rule below. (The 0.1.0 uniform-zoom
+        # design was rejected by the author: "expanded Siyam Rupali".)
+        tcell = beng if (args.duo and name.startswith("bn_")) else lat
         tink = tcell * args.ink_cap
         bb = glyph_bbox(glyf, name, bbox_cache)
         if bb is None:  # empty glyph (space & friends): just set the cell
@@ -267,7 +238,7 @@ def main():
             continue
         x0, _, x1, _ = bb
         bw = x1 - x0
-        if not args.duo and (is_kar(name) or name in PREBASE_SHIFT_ALL):
+        if is_kar(name) or name in PREBASE_SHIFT_ALL:
             # 0.0.6 (author directive): matras keep the ORIGINAL ART
             # VERBATIM - no scale, no move. Compare with original Siyam
             # Rupali: the VOLT-era design already positions the ink
@@ -338,15 +309,6 @@ def main():
                     if anchor is not None:
                         anchor.XCoordinate = round(sx * anchor.XCoordinate + dx)
                         moved += 1
-            if args.duo:
-                # duo zooms mark ART, so the mark-side anchors must zoom too
-                for i, gname in enumerate(st.MarkCoverage.glyphs):
-                    fct = factors.get(gname)
-                    if fct:
-                        anchor = st.MarkArray.MarkRecord[i].MarkAnchor
-                        if anchor is not None:
-                            anchor.XCoordinate = round(fct[0] * anchor.XCoordinate + fct[1])
-                            moved += 1
             continue
     print(f"GPOS base anchors moved: {moved}")
 

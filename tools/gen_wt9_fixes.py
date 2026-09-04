@@ -47,13 +47,15 @@ MARKS = ["bn_anusvara", "bn_visarga"]
 
 
 def compose(font, out_name, parts, advance):
-    """parts = [(glyph_name, (sx, dx)), ...] -> simple glyph + metrics."""
+    """parts = [(glyph_name, (sx, dx[, dy])), ...] -> simple glyph + metrics."""
     glyf = font["glyf"]
     cache = {}
     pen = TTGlyphPen(None)
     x_min = None
-    for name, (sx, dx) in parts:
-        tpen = TransformPen(RoundingPen(pen), (sx, 0, 0, 1, dx, 0))
+    for name, t in parts:
+        sx, dx = t[0], t[1]
+        dy = t[2] if len(t) > 2 else 0.0
+        tpen = TransformPen(RoundingPen(pen), (sx, 0, 0, 1, dx, dy))
         draw_decomposed(glyf[name], glyf, tpen)
         ox0 = glyph_bbox(glyf, name, cache)[0]
         nx = round(sx * ox0 + dx)
@@ -144,14 +146,51 @@ def main():
           f"natural offset)")
 
     # --- 2. mark + aakaar tuck copies ---------------------------------
+    # Author bug 2026-09-03: the tucked ং collided with ক in কিং — the
+    # marks are STANDALONE-LETTER designs (bn_anusvara ink spans y 2..1527
+    # while bases top out ~1543), so a same-height shift lands inside the
+    # base ink. Raise the tuck so its visual ink mass clears the tallest
+    # common base top (~1543) + pad, capped under the ascent.
+    from fontTools.pens.recordingPen import RecordingPen
+
+    def visual_bottom(gname, table):
+        """y below which only ~5% of contour points sit (cuts the
+        baseline-anchor tail of standalone mark designs)."""
+        rp = RecordingPen()
+        draw_decomposed(table[gname], table, rp)
+        ys = []
+        for op, pts in rp.value:
+            if op in ("moveTo", "lineTo", "qCurveTo", "curveTo"):
+                for pt in pts:
+                    if pt is not None and not isinstance(pt, str):
+                        ys.append(pt[1])
+        if not ys:
+            return 0
+        ys.sort()
+        return ys[max(0, int(len(ys) * 0.05) - 1)]
+
+    def ink_top(gname, table):
+        return glyph_bbox(table, gname, {})[3]
+
+    TARGET_BOTTOM = 1600   # above base-ink top (median 1543) + pad
+    ASCENT_CEIL = 2300     # stay under hhea ascent 2360
     tuck_map = {}
     for m in MARKS + ["bn_aakaar"]:
         if m not in known:
             continue
         tuck = f"{m}_tuck"
-        compose(font, tuck, [(m, (1.0, -float(cell)))], 0)
+        dy = 0.0
+        if m in MARKS:
+            vb = visual_bottom(m, glyf)
+            dy = max(0.0, TARGET_BOTTOM - vb)
+            if ink_top(m, glyf) + dy > ASCENT_CEIL:
+                dy = max(0.0, ASCENT_CEIL - ink_top(m, glyf))
+            print(f"  tuck raise {m}: visual bottom {vb} -> "
+                  f"{vb + dy:.0f} (dy {dy:.0f})")
+        compose(font, tuck, [(m, (1.0, -float(cell), dy))], 0)
         tuck_map[m] = tuck
-        rules.append(f"tuck: {m} -> {tuck} (0 adv, shifted -{cell})")
+        rules.append(f"tuck: {m} -> {tuck} (0 adv, shifted -{cell}, "
+                     f"raised {dy:.0f})")
     print(f"tuck copies: {len(tuck_map)} ({', '.join(tuck_map.values())})")
 
     order = font.getGlyphOrder()
@@ -295,6 +334,249 @@ def main():
     print(f"GSUB: lookups appended to {touched} 'pres' feature(s)")
     if not touched:
         raise SystemExit("no 'pres' feature found - refusing to continue")
+
+    # --- 4. wide conjuncts ---------------------------------------------
+    # Author bug 2026-09-03: আত্ম drew 1 cell of merged art against 3-4
+    # charged columns. WT charges k columns for k consonants (virama = 0),
+    # so every conjunct output of k consonants gets a k-cell wide copy
+    # composed from the ORIGINAL natural art; a pres single-subst wired
+    # AFTER all other lookups substitutes conjunct -> conjunct_w.
+    # Excludes reph2/yaph2 outputs (already multi-cell) and consonant/
+    # matra glyph names. Shared-Mono trade-off (author decision
+    # 2026-09-03): 1-cell-grant hosts (kitty/VTE) overlap instead of gap.
+    # Enumeration shapes the font WITH the reph2/tuck rules wired; write
+    # it to a temp file for vharfbuzz (saving the output and rewriting it
+    # later fails on Windows: the hb blob keeps the file locked).
+    import os
+    tmp_enum = args.fontfile + ".enum.ttf"
+    font.save(tmp_enum)
+    from vharfbuzz import Vharfbuzz
+    from copy import deepcopy
+    vhb = Vharfbuzz(tmp_enum)
+    feats = {"script": "beng", "language": "ben"}
+    rev = {}
+    for cp, gname in TTFont(args.original).getBestCmap().items():
+        rev.setdefault(gname, chr(cp))
+    H = "\u09CD"
+    cons_set = set(CONSONANT_GLYPHS)
+    cons_chars = [rev[c] for c in CONSONANT_GLYPHS if c in rev]
+    skip_suffix = ("kaar", "aumark", "reph2", "yaph2", "_tuck",
+                   "yaphala", "half_ra", "raphala", "half_ta")
+
+    def candidates(names):
+        out = []
+        for n in names:
+            if (n in cons_set or not n.startswith("bn_") or "_" not in n
+                    or n.endswith(skip_suffix) or n.startswith("bn_half_")):
+                continue
+            out.append(n)
+        return out
+
+    conj_k = {}
+    cache = {}
+    # WT live measurement 2026-09-03 (probe_canonical2): a RA-PHALA-final
+    # consonant (hasanta+র) charges 0 columns (ত্র=2, ন্ত্র=2), while
+    # yaphala-য charges 1 (বিদ্যা=4). So the wide frame k = consonant
+    # count minus a trailing hasanta+র; k_eff of 1 means: do not widen.
+    ra = rev.get("bn_ra")
+
+    def name_k(n):
+        """WT live truth (probe_canonical2 + probe_ra, 2026-09-03): every
+        conjunct cluster charges exactly 2 columns — 3-consonant clusters
+        collapse to 2 as well (ন্ত্র=2, স্প্ল=2, ক্ষ্ম=2 live-probed), and
+        standalone-hasanta forms stay 1-cell (ক্=1)."""
+        seg = n.split("_")[1:]
+        if not seg or any("hasanta" in x for x in seg):
+            return 1
+        return 2
+
+    def store(names):
+        for n in candidates(names):
+            k = name_k(n)
+            if k < 2:
+                continue
+            if n not in conj_k or k < conj_k[n]:
+                conj_k[n] = k
+
+    for a in cons_chars:
+        for b in cons_chars:
+            two = a + H + b
+            names = cache.get(two)
+            if names is None:
+                names = [vhb.hbfont.glyph_to_string(i.codepoint)
+                         for i in vhb.shape(two, feats).glyph_infos]
+                cache[two] = names
+            store(names)
+    merged_pairs = [t for t, names in cache.items()
+                    if len(names) == 1 and candidates(names)]
+    for two in merged_pairs:
+        for c in cons_chars:
+            three = two + H + c
+            names = [vhb.hbfont.glyph_to_string(i.codepoint)
+                     for i in vhb.shape(three, feats).glyph_infos]
+            store(names)
+    print(f"wide conjunct stage: {len(conj_k)} distinct conjunct glyphs "
+          f"(2-consonant: {sum(1 for k in conj_k.values() if k == 2)}, "
+          f"3-consonant: {sum(1 for k in conj_k.values() if k == 3)})")
+    del vhb  # release the blob before touching the output file again
+    try:
+        os.remove(tmp_enum)
+    except OSError:
+        pass
+
+    order_now = set(font.getGlyphOrder())
+    # fontTools trap: getGlyphID caches the reverse map at first call;
+    # wide glyphs added after that are invisible to it (same class as the
+    # stale-Coverage incident). Sort against the LIVE order list instead.
+    def gid(name):
+        return font.getGlyphOrder().index(name)
+    made_wide = {}
+    for g, k in sorted(conj_k.items()):
+        if g not in order_now or g not in orig["glyf"].keys():
+            continue
+        wide = g + "_w"
+        frame = k * cell
+        cap = 0.97 * frame
+        bcache = {}
+        bx0, _, bx1, _ = glyph_bbox(orig["glyf"], g, bcache)
+        bw = bx1 - bx0
+        s = min(1.0, cap / bw)
+        dx = (frame - s * bw) / 2.0 - s * bx0
+        pen = TTGlyphPen(None)
+        tpen = TransformPen(RoundingPen(pen), (s, 0, 0, 1, dx, 0))
+        draw_decomposed(orig["glyf"][g], orig["glyf"], tpen)
+        glyf[wide] = pen.glyph()  # auto-appends to glyphOrder
+        font["hmtx"].metrics[wide] = (frame, round(s * bx0))
+        made_wide[g] = (wide, s, dx)
+
+    # GPOS: marks attaching to a widened conjunct must attach to the wide
+    # copy too (base anchors transform with (s, dx)).
+    gpos_moved = 0
+    if made_wide:
+        gp = font["GPOS"].table
+        for lk in gp.LookupList.Lookup:
+            for st in lk.SubTable:
+                ext = getattr(st, "ExtSubTable", None)
+                if ext is not None:
+                    st = ext
+                if st.__class__.__name__ != "MarkBasePos":
+                    continue
+                for i, gname in enumerate(list(st.BaseCoverage.glyphs)):
+                    if gname not in made_wide:
+                        continue
+                    wide, s, dx = made_wide[gname]
+                    if wide in st.BaseCoverage.glyphs:
+                        continue
+                    st.BaseCoverage.glyphs.append(wide)
+                    st.BaseCoverage.glyphs.sort(key=gid)
+                    j = st.BaseCoverage.glyphs.index(wide)
+                    src = st.BaseArray.BaseRecord[i]
+                    rec = otTables.BaseRecord()
+                    rec.BaseAnchor = []
+                    for anc in src.BaseAnchor:
+                        if anc is not None:
+                            na = deepcopy(anc)
+                            na.XCoordinate = round(s * na.XCoordinate + dx)
+                            rec.BaseAnchor.append(na)
+                        else:
+                            rec.BaseAnchor.append(None)
+                    st.BaseArray.BaseRecord.insert(j, rec)
+                    st.BaseArray.BaseCount = len(st.BaseArray.BaseRecord)
+                    gpos_moved += 1
+        print(f"GPOS: wide-conjunct base records added: {gpos_moved}")
+
+    if made_wide:
+        # extend rule C (aa-tuck) backtrack coverage: aa after a conjunct
+        # collapses to 0 charged columns in WT just like after reph2/yaph2
+        # (wt13), so the tuck must fire there too. The chain lookup runs
+        # BEFORE the wide substitution, so the backtrack must carry the
+        # ORIGINAL conjunct names (the pre-wide stream), not the _w names.
+        st_c.BacktrackCoverage[0].glyphs.extend(made_wide.keys())
+        st_c.BacktrackCoverage[0].glyphs.sort(key=gid)
+
+    # --- 4b. prebase-matra cancellation --------------------------------
+    # WT live (probe_ra): a PRE-BASE matra following a conjunct cluster in
+    # codepoint order (দ্বিতীয়'s ি, ক্রোধ's ো) collapses to 0 charged
+    # columns, so those clusters must STAY 1 cell wide. Contextual rule:
+    # [conjunct][pre-base matra] -> conjunct_n (composite alias, 1 cell),
+    # wired BEFORE the wide-ss so the alias misses the wide substitution.
+    aliases = {}
+    if made_wide:
+        from fontTools.ttLib.tables._g_l_y_f import Glyph, GlyphComponent
+        for g in made_wide:
+            alias = g + "_n"
+            if alias in font.getGlyphOrder():
+                continue
+            gl = Glyph()
+            comp = GlyphComponent()
+            comp.glyphName = g
+            comp.x, comp.y = 0, 0
+            gl.components = [comp]
+            gl.numberOfComponents = 1
+            glyf[alias] = gl  # auto-appends to glyphOrder
+            font["hmtx"].metrics[alias] = (cell, font["hmtx"][g][1])
+            aliases[g] = alias
+        print(f"prebase-cancel aliases: {len(aliases)}")
+
+    if made_wide and aliases:
+        mapping = {g: made_wide[g][0] for g in
+                   sorted(made_wide, key=gid)}
+        m = otTables.SingleSubst()
+        m.mapping = mapping
+        lk_w = otTables.Lookup()
+        lk_w.LookupType = 1
+        lk_w.LookupFlag = 0
+        lk_w.SubTable = [m]
+
+        ss_n = otTables.SingleSubst()
+        ss_n.mapping = {g: aliases[g] for g in sorted(aliases, key=gid)}
+        lk_sn = otTables.Lookup()
+        lk_sn.LookupType = 1
+        lk_sn.LookupFlag = 0
+        lk_sn.SubTable = [ss_n]
+
+        pre = [q for q in PREBASE_GLYPHS if q in set(font.getGlyphOrder())]
+        st_x = otTables.ChainContextSubst()
+        st_x.Format = 3
+        # pre-base matras REORDER to the left: the matra is the BACKTRACK
+        # of [matra][conjunct], not the lookahead
+        st_x.BacktrackCoverage = [cov(pre)]
+        st_x.InputCoverage = [cov(list(aliases.keys()))]
+        st_x.LookAheadCoverage = []
+        st_x.SubstCount = 1
+        rec_x = otTables.SubstLookupRecord()
+        rec_x.SequenceIndex = 0
+        rec_x.LookupListIndex = 0  # patched after indices known
+        st_x.SubLookupRecord = [rec_x]
+        st_x.SubstLookupRecord = [rec_x]  # both names (duality note)
+        lk_cx = otTables.Lookup()
+        lk_cx.LookupType = 6
+        lk_cx.LookupFlag = 0
+        lk_cx.SubTable = [st_x]
+
+        gs.LookupList.Lookup.extend([lk_sn, lk_cx, lk_w])
+        base_idx = gs.LookupList.LookupCount
+        gs.LookupList.LookupCount = base_idx + 3
+        rec_x.LookupListIndex = base_idx  # the narrow single-subst
+        # NOTE: the narrow-ss must NOT appear in any feature's index list
+        # (unconditional-fire bug, qa-proven 2026-08-30) — it is reachable
+        # only as the chain's nested lookup. pres gets chain + wide-ss.
+        for fr in gs.FeatureList.FeatureRecord:
+            if fr.FeatureTag != "pres":
+                continue
+            idxs = list(fr.Feature.LookupListIndex)
+            idxs.extend([base_idx + 1, base_idx + 2])
+            fr.Feature.LookupListIndex = idxs
+            fr.Feature.LookupCount = len(idxs)
+        rules.append(f"wide: {len(mapping)} conjuncts -> *_w; "
+                     f"prebase-cancel aliases: {len(aliases)}")
+        print(f"GSUB: lookups {base_idx}(narrow-ss) "
+              f"{base_idx + 1}(narrow-chain) {base_idx + 2}(wide-ss) "
+              f"appended to pres (last)")
+
+    # invalidate the cached reverse glyph map so save-time Coverage
+    # compiles see glyphs added after the first getGlyphID call
+    font.setGlyphOrder(font.getGlyphOrder())
 
     # 2026-09-03 incident: this block ran on --version alone and clobbered
     # mono_convert's family ("Siyam Rupali Mono WT9") back to the default

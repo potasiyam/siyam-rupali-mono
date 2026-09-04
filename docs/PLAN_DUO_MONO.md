@@ -125,3 +125,21 @@ PY tools/shape_check.py build/SiyamRupaliDuo-0100.ttf --cell 1024 --max-cells 6 
 
 - 2-cell wide conjuncts for WT's conjunct residual (open work 2).
 - ss01 hasanta fallback (open work 4), WOFF2 (5), NBSP-escape system (6).
+
+
+## ADDENDUM 2026-09-03 (late 4) — 0.1.1 revisions from author testing
+
+- **Duo spec is v2 (literal duospace).** The uniform Bengali zoom
+  (s≈1.378) was rejected by the author ("expanded Siyam Rupali — not the
+  plan"). Duo now converts every bn_* glyph to exactly --beng-cell
+  (2048 = 2 Latin cells) via the standard advance-ratio centering rule;
+  Latin/danda/space = 1024; marks untouched. WPF: A=24px, ক=48px,
+  কি=96px, ক্ত=48px. The interlock-gap analysis above stands as the
+  recorded trade-off of fixed classes (accepted: duospace separation).
+- **Mono 0.1.1 adds the wide-conjunct stage** (gen_wt9_fixes stage 4):
+  all conjunct clusters → 2-cell natural-art glyphs, aa-tuck extended to
+  them, prebase-matra cancellation chain ([prebase][conjunct] → 1-cell
+  composite alias). Empirical WT charge table in AGENTS.md. Shaped
+  advance == WT charge on all 31 live-measured rows.
+- Deliverable files: SiyamRupaliMono-0101.ttf / SiyamRupaliDuo-0101.ttf,
+  both version 0.1.1.
