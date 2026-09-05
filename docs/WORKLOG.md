@@ -745,3 +745,26 @@ is accepted, not to be fixed font-side. WT is the primary terminal
 surface for Mono; WezTerm users get phantom columns on merged clusters
 until ConPTY charges shaped cluster widths (upstream PR #16916
 direction). AGENTS.md decision block updated.
+
+## 2026-09-05 (final) — PROJECT RESET: "Delete all. this is not gonna work. Work on reset to base font again"
+
+Author abandoned the terminal-mono approach. System reset executed
+(tools/reset_to_base.ps1):
+
+- Uninstalled + deleted "Siyam Rupali Mono" and "Siyam Rupali Duo"
+  (0101) from HKCU fonts. Registry verified clean.
+- Windows Terminal profile faces restored to the default
+  ("Cascadia Mono"; backup settings.json.bak-reset).
+- Temp ~/.wezterm.lua (project-created test config) deleted.
+- The ORIGINAL Siyam Rupali (family "Siyam Rupali",
+  C:\Program Files\Avro Keyboard\data\fonts\Siyamrupali.ttf) is
+  untouched in Avro's HKLM registration and serves all Bengali text —
+  fresh-process probe: Mono/Duo names now fall back to it (ka=40.03px
+  = proportional original).
+
+KEPT (the record): full git history, tools/, docs/ (WORKLOG,
+PLAN_DUO_MONO, PROOF, SPACING_REPORT, VERSIONS, REPORT), legacy/
+base-1.070ship.ttf. build/ artifacts remain on disk (gitignored,
+regenerable). The measured knowledge in these docs — WT/ConPTY charge
+tables, the shaping-vs-grid split, cache-poisoning discipline — is the
+durable output of this project and stands independent of the verdict.

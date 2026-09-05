@@ -1,5 +1,12 @@
 # AGENTS.md — siyam-rupali-mono
 
+**STATUS 2026-09-05: PAUSED BY AUTHOR VERDICT** — "Delete all. this is
+not gonna work. Work on reset to base font again." Both canonical fonts
+were uninstalled; the system is back on the original Siyam Rupali (via
+Avro). Do NOT reinstall anything or continue the mono line without a
+new author directive. Repo sources/history are kept as the record; the
+measured terminal models below remain valid knowledge.
+
 Terminal/mono conversion of Siyam Rupali. Read the brain's spec first:
 `../agentic-font-dev/AGENTS.md` (operational spec + named incidents) and the
 global rules at `C:\Users\Siyam\.zcode\AGENTS.md`. This file pins only the
