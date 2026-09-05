@@ -574,6 +574,81 @@ def main():
               f"{base_idx + 1}(narrow-chain) {base_idx + 2}(wide-ss) "
               f"appended to pres (last)")
 
+    # --- 4c. aa-after-cluster natural ligatures -------------------------
+    # Author bug 2026-09-05: in হত্যা the aa-tuck (-1 cell) drew the া ON
+    # TOP of the ্য stroke inside C_yaph2 (same class on wide conjuncts:
+    # স্বা). Natural compose instead: [C][yaphala][aa] / [conjunct][aa]
+    # at ORIGINAL relative offsets, scaled to the 2-cell frame. Keyed on
+    # the ALREADY-TUCKED pair [prefix][bn_aakaar_tuck] — HB applies
+    # lookups in lookup-index order, so this (last) runs after the chain
+    # that produces the tuck.
+    aa_pairs = {}
+    for c in CONSONANT_GLYPHS:
+        y = f"{c}_yaph2"
+        if y in font.getGlyphOrder() and c in orig["glyf"].keys():
+            aa_pairs[y] = (f"{y}_aa",
+                           [(c, 0.0),
+                            ("bn_yaphala", float(orig["hmtx"][c][0])),
+                            ("bn_aakaar", float(orig["hmtx"][c][0]
+                                               + orig["hmtx"]["bn_yaphala"][0]))])
+    for g in made_wide:
+        if g in orig["glyf"].keys():
+            # key on the _w NAME: by lookup-20 time the wide-ss has
+            # already renamed the stream glyph
+            wide = made_wide[g][0]
+            aa_pairs[wide] = (f"{wide}_aa",
+                              [(g, 0.0),
+                               ("bn_aakaar", float(orig["hmtx"][g][0]))])
+    made_aa = {}
+    for prefix, (out, parts) in aa_pairs.items():
+        cache3 = {}
+        xs = []
+        for gname, pen in parts:
+            b = glyph_bbox(orig["glyf"], gname, cache3)
+            xs += [pen + b[0], pen + b[2]]
+        lo, hi = min(xs), max(xs)
+        bw = hi - lo
+        sc = min(1.0, 0.97 * cell / bw)
+        dx = (2 * cell - sc * bw) / 2.0 - sc * lo
+        pen3 = TTGlyphPen(None)
+        for gname, pen in parts:
+            tpen = TransformPen(RoundingPen(pen3),
+                                (sc, 0, 0, 1, sc * pen + dx, 0))
+            draw_decomposed(orig["glyf"][gname], orig["glyf"], tpen)
+        glyf[out] = pen3.glyph()  # auto-appends to glyphOrder
+        font["hmtx"].metrics[out] = (2 * cell, round(sc * lo + dx))
+        made_aa[prefix] = out
+    print(f"aa natural ligatures: {len(made_aa)} glyphs (advance {2 * cell})")
+
+    if made_aa:
+        by_first = {}
+        for prefix, out in made_aa.items():
+            lig = otTables.Ligature()
+            lig.Component = ["bn_aakaar_tuck"]
+            lig.CompCount = 2
+            lig.LigGlyph = out
+            by_first.setdefault(prefix, []).append(lig)
+        sub_aa = otTables.LigatureSubst()
+        sub_aa.Format = 1
+        sub_aa.Coverage = otTables.Coverage()
+        sub_aa.Coverage.glyphs = sorted(by_first, key=gid)
+        sub_aa.ligatures = {k: by_first[k] for k in sorted(by_first, key=gid)}
+        lk_aa = otTables.Lookup()
+        lk_aa.LookupType = 4
+        lk_aa.LookupFlag = 0
+        lk_aa.SubTable = [sub_aa]
+        gs.LookupList.Lookup.append(lk_aa)
+        aa_idx = gs.LookupList.LookupCount
+        gs.LookupList.LookupCount = aa_idx + 1
+        for fr in gs.FeatureList.FeatureRecord:
+            if fr.FeatureTag != "pres":
+                continue
+            idxs = list(fr.Feature.LookupListIndex)
+            idxs.append(aa_idx)
+            fr.Feature.LookupListIndex = idxs
+            fr.Feature.LookupCount = len(idxs)
+        print(f"GSUB: aa-ligature lookup {aa_idx} appended to pres (last)")
+
     # invalidate the cached reverse glyph map so save-time Coverage
     # compiles see glyphs added after the first getGlyphID call
     font.setGlyphOrder(font.getGlyphOrder())

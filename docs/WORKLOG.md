@@ -713,3 +713,20 @@ was not the plan". All three root-caused and fixed.
   charging still gaps (virama columns) — terminal-side; and the kitty/
   VTE caveat stands (wide conjuncts overlap on 1-cell-grant hosts —
   author decision, shared Mono).
+
+## 2026-09-05 — aa-after-cluster collision fix (author report: হত্যা's া on ্য)
+
+Author report: "in হত্যা, া renders before/ontop of ্য". Root cause:
+the aa-tuck (−1 cell, wt13) slides the া INTO the C_yaph2 glyph's second
+column, whose ্য art fills it — same class on wide conjuncts (স্বা).
+Fix (gen_wt9_fixes stage 4c): aa natural-compose ligatures —
+[C][yaphala][া] / [conjunct][া] at ORIGINAL relative offsets scaled to
+the 2-cell frame (267 glyphs), wired as LigatureSubst keyed on the
+ALREADY-TUCKED pair [prefix][bn_aakaar_tuck] (lookup index order puts
+it after the tuck chain). Wide-conj keys must use the _w stream names
+(first cut keyed originals and never fired). reph2+aa (কর্তা) untouched
+— its tucked art was clean.
+Gates: matrix 0 failures; 17/17 reference rows shaped==charged; visual:
+হত্যা/বিদ্যা/স্বা render া right of the cluster, no overlap. Installed
+fresh (hashes match build). Note: WPF/DWrite leaves ত্‌ম unmerged in
+Duo (6 cells) vs HarfBuzz merged (4) — DWrite quirk, editors use HB.
