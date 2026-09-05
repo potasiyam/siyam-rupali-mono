@@ -730,3 +730,18 @@ Gates: matrix 0 failures; 17/17 reference rows shaped==charged; visual:
 হত্যা/বিদ্যা/স্বা render া right of the cluster, no overlap. Installed
 fresh (hashes match build). Note: WPF/DWrite leaves ত্‌ম unmerged in
 Duo (6 cells) vs HarfBuzz merged (4) — DWrite quirk, editors use HB.
+
+## 2026-09-05 (later) — author report: ত্যা "squeezed in 1 char + empty space"
+
+Captured both terminals on 0.1.1 (PrintWindow, build/probe/cap_wt_*.png,
+cap_wez*.png): Windows Terminal renders হত্যা/ত্যা/বিদ্যা/স্বাধীনতা
+compact and grid-exact (ত্যা = merged 2-cell glyph in its 2 charged
+columns). WezTerm draws the same merged glyph but ConPTY charges 4 raw
+codepoints -> 2 phantom columns. This is the WezTerm raw-cp residual
+(3rd report of the same class: ক্/ক্ত, আত্/আত্ম, ত্যা).
+
+**AUTHOR VERDICT (AskUserQuestion): "Keep WT-targeted"** — the residual
+is accepted, not to be fixed font-side. WT is the primary terminal
+surface for Mono; WezTerm users get phantom columns on merged clusters
+until ConPTY charges shaped cluster widths (upstream PR #16916
+direction). AGENTS.md decision block updated.
