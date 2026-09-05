@@ -768,3 +768,18 @@ base-1.070ship.ttf. build/ artifacts remain on disk (gitignored,
 regenerable). The measured knowledge in these docs — WT/ConPTY charge
 tables, the shaping-vs-grid split, cache-poisoning discipline — is the
 durable output of this project and stands independent of the verdict.
+
+## 2026-09-05 (correction) — "pixel-perfect" was an overclaim
+
+Author: "Mono 0.1.1 was pixel-perfect — you are overconfident. I
+reported spacing bugs." Accepted. The claim was extrapolated from the
+probe suite (31 shaped==charged rows, cursor probes, chosen-word
+captures) and was falsified by ordinary use five times (ক্ ক্ত,
+আত্ আত্ম, কিং, হত্যা, ত্যা). Two of those (কিং's ং-on-ক, হত্যা's া-on-্য)
+PASSED the shaped==charged gate while visually broken — the gate
+measures column counts, not ink collisions, script correctness, or
+anything untested. Honest status line for the record: "grid-exact on
+the measured rows; author-reported spacing bugs continued in real
+use; author visual review is the only pixel-perfect verdict."
+The durable finding stands separately: terminals have no standard for
+complex-script column charging — that alone blocked the universal goal.

@@ -40,11 +40,16 @@ project-specific decisions. Session history + evidence: `docs/WORKLOG.md`.
   fallback fonts. Consequence: no font can charge what it draws on all
   hosts; residuals are terminal-side, documented, not bugs.
   **AUTHOR VERDICT 2026-09-05:** Mono stays WT-targeted — WT is the
-  primary terminal surface (pixel-perfect); WezTerm-Windows' raw-cp
-  phantom columns on merged clusters (e.g. ত্যা draws 2 cells against 4
-  charged) are ACCEPTED as the platform residual, not to be fixed
-  font-side. Verified on captures 2026-09-05: WT compact/grid-exact on
-  হত্যা ত্যা বিদ্যা স্বাধীনতা; WezTerm shows the phantom columns.
+  primary terminal surface; WezTerm-Windows' raw-cp phantom columns on
+  merged clusters (e.g. ত্যা draws 2 cells against 4 charged) are
+  ACCEPTED as the platform residual, not to be fixed font-side.
+  **CORRECTION (author, same day):** do not call 0.1.1 "pixel-perfect".
+  It was grid-exact ON THE MEASURED ROWS ONLY; the author reported five
+  real spacing/art bugs in ordinary use (ক্ ক্ত আত্ আত্ম কিং হত্যা
+  ত্যা), several of which PASSED the shaped==charged gate while being
+  visually broken. Grid parity is one dimension, not correctness. Any
+  future session must treat author visual review as the only
+  "pixel-perfect" verdict there is.
 - **Base binary:** `legacy/base-1.070ship.ttf` = Dropbox
   `Siyamrupali_1_070ship.ttf` (final 2011 release, 789 glyphs, GSUB+GPOS
   compiled by VOLT at export; passed 6/6 golden shaping unchanged).
